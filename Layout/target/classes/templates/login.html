@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Sử dụng lại icon set và font từ trang chủ -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <!-- Liên kết đến file CSS chung (styles.css) -->
+    <link rel="stylesheet" href="styles.css" />
+    <title>Đăng nhập | TravelGO</title>
+    
+    <style>
+      /* --- CSS TÙY CHỈNH CHO GIAO DIỆN ĐĂNG NHẬP --- */
+      
+      /* 1. KHUNG HÌNH CHÍNH VÀ ANIMATION NỀN */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .login__container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Áp dụng animation cho container để hình nền hiện ra từ từ */
+        animation: fadeIn 1.5s ease-out forwards;
+        
+        background-color: var(--extra-light); 
+        /* Sử dụng ảnh du lịch làm nền full screen */
+        background-image: url('assets/bg-dulich.jpg'); 
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        padding: 2rem;
+        opacity: 0; /* Bắt đầu với opacity 0 trước khi animation chạy */
+      }
+
+      .login__container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        /* Giữ lớp phủ tối để tăng độ tương phản cho text trên form */
+        background: rgba(0, 0, 0, 0.5); 
+      }
+
+      /* 2. CARD DROP-DOWN ANIMATION (Áp dụng cho toàn bộ form) */
+      @keyframes dropDown {
+        0% {
+          transform: translateY(-50px); /* Bắt đầu từ trên xuống */
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .login__card {
+        position: relative;
+        z-index: 10;
+        
+        /* ĐÃ XÓA: background-image: url('assets/vietnam-logo.png'); */
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 80%;
+        
+        /* ĐÃ SỬA: Giảm độ mờ từ 0.95 xuống 0.8 (tăng độ trong suốt) */
+        background-color: rgba(255, 255, 255, 0.8); 
+        
+        padding: 3rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+
+        /* Áp dụng animation cho toàn bộ card */
+        animation: dropDown 1s ease-out 0.8s both; /* Trễ 0.8s để chạy sau nền */
+        opacity: 0; /* Bắt đầu với opacity 0 */
+      }
+      
+      /* Thêm style cho logo text mới */
+      .login__brand {
+          display: block;
+          font-size: 2.5rem; /* Kích thước lớn */
+          font-weight: 800;
+          color: var(--primary-color); /* Sử dụng màu thương hiệu chính */
+          text-decoration: none;
+          margin-bottom: 1.5rem;
+      }
+
+      /* 3. CÁC THÀNH PHẦN KHÁC */
+
+      /* Đảm bảo logo chữ (nếu có) không hiển thị */
+      .login__card .logo {
+          display: none; 
+      }
+      /* Ẩn logo image bên trong card vì nó đã làm background của card */
+      .login__card .logo__img {
+        display: none; 
+      }
+      
+      .login__card h2 {
+        font-size: 2rem;
+        color: var(--text-dark); 
+        margin-bottom: 0.5rem;
+      }
+
+      .login__card p {
+        color: var(--text-dark); 
+        margin-bottom: 2rem;
+      }
+
+      .input__group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+
+      .input__group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark); 
+      }
+
+      .input__group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--text-light); 
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .input__group input:focus {
+        border-color: var(--primary-color); 
+        box-shadow: 0 0 0 3px rgba(40, 135, 255, 0.2); 
+      }
+      
+      /* Tái sử dụng style nút .btn đã có trong styles.css */
+      .btn-login {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        border-radius: 5rem; 
+      }
+
+      /* Tùy chỉnh màu link sử dụng màu chính */
+      .forgot__password a, .register__link a {
+        color: var(--primary-color); 
+        font-weight: 500;
+        transition: color 0.3s;
+        text-decoration: none;
+      }
+      .forgot__password a:hover, .register__link a:hover {
+        color: var(--primary-color-dark);
+        text-decoration: underline;
+      }
+
+      .forgot__password {
+        margin-bottom: 1.5rem;
+        text-align: right;
+      }
+
+      .register__link {
+        margin-top: 2rem;
+        color: var(--text-dark); 
+      }
+
+      /* Responsive cho thiết bị di động */
+      @media (max-width: 600px) {
+          .login__card {
+              margin: 1rem;
+              padding: 2rem;
+          }
+          .login__card h2 {
+              font-size: 1.5rem;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Container bao ngoài đảm bảo form luôn ở giữa -->
+    <div class="login__container">
+      <div class="login__card">
+        <!-- ĐÃ THÊM: Logo text có thể nhấn để quay về trang chủ -->
+        <a href="index.html" class="login__brand">TravelGO</a>
+        
+        <h2>Đăng nhập</h2>
+        <p>Chào mừng trở lại! Hãy tiếp tục hành trình khám phá thế giới cùng chúng tôi.</p>
+
+        <form>
+          <div class="input__group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="Nhập địa chỉ email của bạn" 
+              required 
+            />
+          </div>
+          
+          <div class="input__group">
+            <label for="password">Mật khẩu</label>
+            <input 
+              type="password"
+              id="password" 
+              placeholder="Nhập mật khẩu" 
+              required 
+            />
+          </div>
+
+          <div class="forgot__password">
+            <a href="#">Quên mật khẩu?</a>
+          </div>
+
+          <!-- Sử dụng class .btn (từ styles.css) và thêm .btn-login để tùy chỉnh padding, width -->
+          <button type="submit" class="btn btn-login">
+            Đăng nhập
+          </button>
+        </form>
+
+        <div class="register__link">
+          Bạn chưa có tài khoản? <a href="#">Đăng ký ngay</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
