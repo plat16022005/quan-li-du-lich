@@ -203,13 +203,14 @@
         <h2>Đăng nhập</h2>
         <p>Chào mừng trở lại! Hãy tiếp tục hành trình khám phá thế giới cùng chúng tôi.</p>
 
-        <form>
+        <form action="/do-login" method="post">
           <div class="input__group">
-            <label for="email">Email</label>
+            <label for="email">Tên đăng nhập</label>
             <input 
-              type="email" 
-              id="email" 
-              placeholder="Nhập địa chỉ email của bạn" 
+              type="text" 
+              id="username"
+              name="username" 
+              placeholder="Nhập tên đăng nhập" 
               required 
             />
           </div>
@@ -218,7 +219,8 @@
             <label for="password">Mật khẩu</label>
             <input 
               type="password"
-              id="password" 
+              id="password"
+              name="password" 
               placeholder="Nhập mật khẩu" 
               required 
             />
