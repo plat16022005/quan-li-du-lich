@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+	crossorigin="anonymous">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+	crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Sử dụng lại icon set và font từ trang chủ -->
     <link
@@ -10,7 +19,7 @@
     />
     <!-- Liên kết đến file CSS chung (styles.css) -->
     <link rel="stylesheet" href="styles.css" />
-    <title>Đăng nhập | TravelGO</title>
+    <title>TravelGO</title>
     
     <style>
       /* --- CSS TÙY CHỈNH CHO GIAO DIỆN ĐĂNG NHẬP --- */
@@ -194,11 +203,26 @@
     </style>
   </head>
   <body>
-    <!-- Container bao ngoài đảm bảo form luôn ở giữa -->
+  	<!-- ✅ Hiển thị alert thành công -->
+	<div th:if="${success}"
+		class="alert alert-success alert-dismissible fade show" role="alert"
+		style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+		<strong>Thành công!</strong> <span th:text="${success}"></span>
+		<button type="button" class="btn-close" data-bs-dismiss="alert"
+			aria-label="Close"></button>
+	</div>
+	<div th:if="${error}" class="alert alert-danger alert-dismissible"
+		role="alert"
+		style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+		<strong>Lỗi!</strong> <span th:text="${error}"></span>
+		<button type="button" class="btn-close" data-bs-dismiss="alert"
+			aria-label="Close"></button>
+	</div>
+	<!-- Container bao ngoài đảm bảo form luôn ở giữa -->
     <div class="login__container">
       <div class="login__card">
         <!-- ĐÃ THÊM: Logo text có thể nhấn để quay về trang chủ -->
-        <a href="index.html" class="login__brand">TravelGO</a>
+        <a href="/" class="login__brand">TravelGO</a>
         
         <h2>Đăng nhập</h2>
         <p>Chào mừng trở lại! Hãy tiếp tục hành trình khám phá thế giới cùng chúng tôi.</p>
@@ -227,7 +251,7 @@
           </div>
 
           <div class="forgot__password">
-            <a href="#">Quên mật khẩu?</a>
+            <a href="forgot-pass">Quên mật khẩu?</a>
           </div>
 
           <!-- Sử dụng class .btn (từ styles.css) và thêm .btn-login để tùy chỉnh padding, width -->
@@ -237,7 +261,7 @@
         </form>
 
         <div class="register__link">
-          Bạn chưa có tài khoản? <a href="#">Đăng ký ngay</a>
+          Bạn chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
 	crossorigin="anonymous"></script>
-<meta charset="UTF-8" />
+  <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Sử dụng lại icon set và font từ trang chủ -->
     <link
@@ -19,10 +19,10 @@
     />
     <!-- Liên kết đến file CSS chung (styles.css) -->
     <link rel="stylesheet" href="styles.css" />
-    <title>TravelGO</title>
+    <title>Đăng ký | TravelGO</title>
     
     <style>
-      /* --- CSS TÙY CHỈNH CHO GIAO DIỆN ĐĂNG NHẬP --- */
+      /* --- CSS TÙY CHỈNH CHO GIAO DIỆN CHUNG (Đăng ký, Đăng nhập, Quên mật khẩu) --- */
       
       /* 1. KHUNG HÌNH CHÍNH VÀ ANIMATION NỀN */
       @keyframes fadeIn {
@@ -79,19 +79,16 @@
         position: relative;
         z-index: 10;
         
-        /* ĐÃ XÓA: background-image: url('assets/vietnam-logo.png'); */
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: 80%;
+        /* Độ trong suốt 90% mờ */
+        background-color: rgba(255, 255, 255, 0.9); 
         
-        /* ĐÃ SỬA: Giảm độ mờ từ 0.95 xuống 0.8 (tăng độ trong suốt) */
-        background-color: rgba(255, 255, 255, 0.8); 
-        
-        padding: 3rem;
+        /* Tăng padding ngang để phù hợp với chiều rộng mới */
+        padding: 3rem 4rem; 
         border-radius: 1rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         width: 100%;
-        max-width: 400px;
+        /* Tăng max-width lên 600px để form rộng hơn và chứa 2 cột */
+        max-width: 600px; 
         text-align: center;
 
         /* Áp dụng animation cho toàn bộ card */
@@ -99,7 +96,7 @@
         opacity: 0; /* Bắt đầu với opacity 0 */
       }
       
-      /* Thêm style cho logo text mới */
+      /* 3. LOGO VÀ CÁC THÀNH PHẦN KHÁC */
       .login__brand {
           display: block;
           font-size: 2.5rem; /* Kích thước lớn */
@@ -108,17 +105,6 @@
           text-decoration: none;
           margin-bottom: 1.5rem;
       }
-
-      /* 3. CÁC THÀNH PHẦN KHÁC */
-
-      /* Đảm bảo logo chữ (nếu có) không hiển thị */
-      .login__card .logo {
-          display: none; 
-      }
-      /* Ẩn logo image bên trong card vì nó đã làm background của card */
-      .login__card .logo__img {
-        display: none; 
-      }
       
       .login__card h2 {
         font-size: 2rem;
@@ -126,14 +112,23 @@
         margin-bottom: 0.5rem;
       }
 
+      /* Điều chỉnh khoảng cách dưới đoạn P cho thoáng */
       .login__card p {
         color: var(--text-dark); 
-        margin-bottom: 2rem;
+        margin-bottom: 2rem; 
       }
 
-      .input__group {
-        margin-bottom: 1.5rem;
-        text-align: left;
+      /* Thêm CSS cho việc đặt 2 trường cạnh nhau trên desktop */
+      .form__row {
+          display: flex;
+          gap: 1.5rem; /* Khoảng cách giữa 2 cột */
+          margin-bottom: 1.5rem;
+      }
+      
+      /* Đảm bảo mỗi input group chiếm 50% trong hàng */
+      .form__row .input__group {
+          flex: 1 1 50%;
+          margin-bottom: 0; /* Dùng margin-bottom của .form__row để kiểm soát khoảng cách */
       }
 
       .input__group label {
@@ -169,13 +164,13 @@
       }
 
       /* Tùy chỉnh màu link sử dụng màu chính */
-      .forgot__password a, .register__link a {
+      .forgot__password a, .register__link a, .login__link a {
         color: var(--primary-color); 
         font-weight: 500;
         transition: color 0.3s;
         text-decoration: none;
       }
-      .forgot__password a:hover, .register__link a:hover {
+      .forgot__password a:hover, .register__link a:hover, .login__link a:hover {
         color: var(--primary-color-dark);
         text-decoration: underline;
       }
@@ -185,7 +180,7 @@
         text-align: right;
       }
 
-      .register__link {
+      .register__link, .login__link {
         margin-top: 2rem;
         color: var(--text-dark); 
       }
@@ -193,17 +188,31 @@
       /* Responsive cho thiết bị di động */
       @media (max-width: 600px) {
           .login__card {
+              /* Đảm bảo card vẫn nhỏ gọn trên mobile */
+              max-width: 100%; 
               margin: 1rem;
-              padding: 2rem;
+              padding: 2rem; 
           }
           .login__card h2 {
               font-size: 1.5rem;
+          }
+          
+          /* Trên mobile, chuyển về xếp chồng (xuống hàng) */
+          .form__row {
+              flex-direction: column;
+              gap: 0;
+              margin-bottom: 0; 
+          }
+          
+          /* Thêm lại margin-bottom cho từng input group để tạo khoảng cách giữa các trường */
+          .form__row .input__group {
+              margin-bottom: 1.5rem;
           }
       }
     </style>
   </head>
   <body>
-  	<!-- ✅ Hiển thị alert thành công -->
+    	<!-- ✅ Hiển thị alert thành công -->
 	<div th:if="${success}"
 		class="alert alert-success alert-dismissible fade show" role="alert"
 		style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
@@ -218,50 +227,96 @@
 		<button type="button" class="btn-close" data-bs-dismiss="alert"
 			aria-label="Close"></button>
 	</div>
-	<!-- Container bao ngoài đảm bảo form luôn ở giữa -->
+    <!-- Container bao ngoài đảm bảo form luôn ở giữa -->
     <div class="login__container">
       <div class="login__card">
-        <!-- ĐÃ THÊM: Logo text có thể nhấn để quay về trang chủ -->
+        <!-- Logo text có thể nhấn để quay về trang chủ -->
         <a href="/" class="login__brand">TravelGO</a>
         
-        <h2>Đăng nhập</h2>
-        <p>Chào mừng trở lại! Hãy tiếp tục hành trình khám phá thế giới cùng chúng tôi.</p>
+        <h2>Tạo Tài Khoản Mới</h2>
+        <p>Tham gia cùng TravelGO để khám phá những chuyến đi tuyệt vời nhất!</p>
 
-        <form action="/do-login" method="post">
-          <div class="input__group">
-            <label for="email">Tên đăng nhập</label>
-            <input 
-              type="text" 
-              id="username"
-              name="username" 
-              placeholder="Nhập tên đăng nhập" 
-              required 
-            />
+        <form action = "do-register" method = "post">
+          <!-- Row 1: Tên đăng nhập & Họ và Tên -->
+          <div class="form__row">
+            <div class="input__group">
+              <label for="username">Tên đăng nhập</label>
+              <input 
+                type="text" 
+                id="username"
+                name = "username" 
+                placeholder="Chọn tên đăng nhập" 
+                required 
+              />
+            </div>
+            <div class="input__group">
+              <label for="name">Họ và Tên</label>
+              <input 
+                type="text" 
+                id="name"
+                name="hoVaTen"
+                placeholder="Nhập tên của bạn" 
+                required 
+              />
+            </div>
           </div>
           
-          <div class="input__group">
-            <label for="password">Mật khẩu</label>
-            <input 
-              type="password"
-              id="password"
-              name="password" 
-              placeholder="Nhập mật khẩu" 
-              required 
-            />
+          <!-- Row 2: Email & Số điện thoại -->
+          <div class="form__row">
+            <div class="input__group">
+              <label for="email">Email</label>
+              <input 
+                type="email" 
+                id="email"
+                name="email"
+                placeholder="Nhập địa chỉ email của bạn" 
+                required 
+              />
+            </div>
+            <div class="input__group">
+              <label for="phone">Số điện thoại</label>
+              <input 
+                type="tel" 
+                id="phone"
+                name="soDienThoai"
+                placeholder="Nhập số điện thoại" 
+                required 
+              />
+            </div>
+          </div>
+          
+          <!-- Row 3: Mật khẩu & Xác nhận Mật khẩu -->
+          <div class="form__row">
+            <div class="input__group">
+              <label for="password">Mật khẩu</label>
+              <input 
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Tạo mật khẩu (tối thiểu 6 ký tự)" 
+                required 
+              />
+            </div>
+            <div class="input__group">
+              <label for="confirm-password">Xác nhận Mật khẩu</label>
+              <input 
+                type="password"
+                id="confirm-password"
+                name="rePassword"
+                placeholder="Nhập lại mật khẩu" 
+                required 
+              />
+            </div>
           </div>
 
-          <div class="forgot__password">
-            <a href="forgot-pass">Quên mật khẩu?</a>
-          </div>
-
-          <!-- Sử dụng class .btn (từ styles.css) và thêm .btn-login để tùy chỉnh padding, width -->
+          <!-- Nút đăng ký -->
           <button type="submit" class="btn btn-login">
-            Đăng nhập
+            Đăng Ký
           </button>
         </form>
 
-        <div class="register__link">
-          Bạn chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+        <div class="login__link">
+          Bạn đã có tài khoản? <a href="/login">Đăng nhập ngay</a>
         </div>
       </div>
     </div>
