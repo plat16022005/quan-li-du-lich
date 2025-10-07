@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị Du Lịch - Tổng Quan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-bar {
+            transition: height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
+            <div class="flex items-center justify-center h-20 border-b border-gray-700">
+                <i class="fas fa-route text-3xl text-blue-400"></i>
+                <span class="ml-3 text-2xl font-bold">TravelGO</span>
+            </div>
+            <nav class="mt-8 px-4">
+                <a href="#" class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md">
+                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
+                    <span class="ml-4">Tổng quan</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-map-marked-alt w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Tour</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-users w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Hành khách</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-user-tie w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Nhân viên</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-tags w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Khuyến mãi</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-chart-pie w-6 text-center"></i>
+                    <span class="ml-4">Xuất báo cáo</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+                 <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                    <span class="ml-4">Đăng xuất</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <!-- Header -->
+            <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
+                <div class="flex items-center">
+                    <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Bảng điều khiển</h1>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                    </button>
+                    <div class="flex items-center">
+                        <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ" alt="Avatar" class="h-10 w-10 rounded-full object-cover">
+                        <div class="ml-3">
+                            <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
+                            <p class="text-xs text-gray-500">Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="flex-1 p-6">
+                <!-- Stat cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tổng doanh thu (Tháng)</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">1.250M ₫</p>
+                            <p class="text-xs text-green-500 flex items-center mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i> 12.5% so với tháng trước
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 text-blue-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tour đang hoạt động</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">32</p>
+                             <p class="text-xs text-gray-500 flex items-center mt-1">
+                                &nbsp; <!-- Placeholder for alignment -->
+                            </p>
+                        </div>
+                        <div class="bg-green-100 text-green-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-route text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Khách hàng mới</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">152</p>
+                            <p class="text-xs text-green-500 flex items-center mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i> 8% so với tháng trước
+                            </p>
+                        </div>
+                         <div class="bg-yellow-100 text-yellow-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-user-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tổng nhân viên</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">48</p>
+                             <p class="text-xs text-gray-500 flex items-center mt-1">
+                                &nbsp; <!-- Placeholder for alignment -->
+                            </p>
+                        </div>
+                         <div class="bg-indigo-100 text-indigo-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-user-tie text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Phân tích Doanh thu</h3>
+                        <div class="h-80 mt-4 flex items-end justify-around" id="revenue-chart">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Cơ cấu Tour</h3>
+                        <div class="h-80 mt-4 flex items-center justify-center">
+                             <div class="relative w-56 h-56">
+                                <div class="absolute w-full h-full rounded-full" style="background: conic-gradient(#3B82F6 0% 45%, #10B981 45% 75%, #F59E0B 75% 90%, #8B5CF6 90% 100%);"></div>
+                                <div class="absolute inset-4 bg-white rounded-full"></div>
+                             </div>
+                        </div>
+                         <div class="mt-4 space-y-2 text-sm text-gray-600">
+                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-blue-500 mr-2"></span> Tour Trong Nước (45%)</div>
+                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-green-500 mr-2"></span> Tour Nước Ngoài (30%)</div>
+                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-yellow-500 mr-2"></span> Tour Theo Yêu Cầu (15%)</div>
+                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-indigo-500 mr-2"></span> Tour Trọn Gói (10%)</div>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Recent activities and upcoming tours -->
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Tour Sắp Khởi Hành</h3>
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-500">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Tên Tour</th>
+                                        <th scope="col" class="px-6 py-3">Ngày Đi</th>
+                                        <th scope="col" class="px-6 py-3">Số khách</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Khám phá Đà Nẵng - Hội An</td>
+                                        <td class="px-6 py-4">25/10/2025</td>
+                                        <td class="px-6 py-4">25/30</td>
+                                    </tr>
+                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Hành trình Tây Bắc</td>
+                                        <td class="px-6 py-4">28/10/2025</td>
+                                        <td class="px-6 py-4"><span class="font-bold text-red-500">30/30 (Đầy)</span></td>
+                                    </tr>
+                                     <tr class="bg-white hover:bg-gray-50">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Về Miền Tây Sông Nước</td>
+                                        <td class="px-6 py-4">02/11/2025</td>
+                                        <td class="px-6 py-4">18/25</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Hoạt động gần đây</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fas fa-plus"></i></div></div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-700"><span class="font-semibold">Nguyễn Văn A</span> đã thêm tour mới <span class="font-semibold">"Khám phá Phú Quốc"</span>.</p>
+                                    <p class="text-xs text-gray-500 mt-1">2 giờ trước</p>
+                                </div>
+                            </li>
+                             <li class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center"><i class="fas fa-pencil-alt"></i></div></div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-700"><span class="font-semibold">Trần Thị B</span> đã cập nhật thông tin khuyến mãi <span class="font-semibold">"Thu Quyến Rũ"</span>.</p>
+                                    <p class="text-xs text-gray-500 mt-1">5 giờ trước</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-user-check"></i></div></div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-700">Khách hàng <span class="font-semibold">Lê Văn C</span> vừa hoàn tất thanh toán tour <span class="font-semibold">"Hành trình Tây Bắc"</span>.</p>
+                                    <p class="text-xs text-gray-500 mt-1">Hôm qua</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                 </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Script for mobile sidebar toggle
+        const menuButton = document.getElementById('menu-button');
+        const sidebar = document.getElementById('sidebar');
+
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        
+        // Simple script to generate a fake bar chart
+        const chartContainer = document.getElementById('revenue-chart');
+        const months = ['T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11'];
+        const data = [65, 59, 80, 81, 56, 85, 95];
+
+        months.forEach((month, index) => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'flex flex-col items-center h-full justify-end';
+            
+            const bar = document.createElement('div');
+            const height = (data[index] / 100) * 100;
+            bar.className = 'chart-bar w-8 md:w-10 bg-blue-500 rounded-t-lg hover:bg-blue-600';
+            bar.style.height = '0%'; // Start at 0
+            
+            const label = document.createElement('span');
+            label.className = 'text-xs text-gray-500 mt-2';
+            label.textContent = month;
+            
+            barWrapper.appendChild(bar);
+            barWrapper.appendChild(label);
+            chartContainer.appendChild(barWrapper);
+            
+            // Animate bar height
+            setTimeout(() => {
+                bar.style.height = `${height}%`;
+            }, 100 * (index + 1));
+        });
+    </script>
+</body>
+</html>

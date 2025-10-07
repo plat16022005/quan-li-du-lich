@@ -31,14 +31,14 @@ public class UserController {
     @PostMapping("/do-login")
     public String handleLogin(@RequestParam String username,
                               @RequestParam String password,
-  							RedirectAttributes redirectAttributes) {
+  							RedirectAttributes redirectAttributes,
+  							HttpSession session) {
         User user = userService.login(username, password);
 
         if (user != null) {
-        	redirectAttributes.addAttribute("success", "Đăng nhập thành công!");
-        	redirectAttributes.addAttribute("tenNguoiDung", user.getHoTen());
-        	redirectAttributes.addAttribute("username", user.getTenDangNhap());
-            return "welcome";
+        	session.setAttribute("username", username);
+        	session.setAttribute("password", password);
+        	return "redirect:/home";
         } else {
         	redirectAttributes.addFlashAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
             return "redirect:/login";
@@ -154,6 +154,22 @@ public class UserController {
     	{
     		redirectAttributes.addFlashAttribute("error", "Vui lòng nhập lại đúng mật khẩu!");
     		return "redirect:/reset-pass";
+    	}
+    }
+    
+    @GetMapping("/home")
+    public String showHomePage(HttpSession session)
+    {
+    	String username = (String) session.getAttribute("username");
+    	String password = (String) session.getAttribute("password");
+    	User user = userService.login(username, password);
+    	if (user.getMaVaiTro() == 1)
+    	{
+    		return "admin/dashboard";
+    	}
+    	else
+    	{
+    		return "welcome";
     	}
     }
 }
