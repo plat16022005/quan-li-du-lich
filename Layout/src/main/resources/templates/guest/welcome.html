@@ -14,23 +14,24 @@
 <title>Chào mừng</title>
 </head>
 <style>
-  .alert {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 1s ease, transform 1s ease; /* 👈 hiệu ứng cả mờ và trượt */
-  }
+.alert {
+	opacity: 0;
+	transform: translateY(-20px);
+	transition: opacity 1s ease, transform 1s ease;
+	/* 👈 hiệu ứng cả mờ và trượt */
+}
 
-  /* Khi thêm class .show thì alert sẽ hiện dần lên */
-  .alert.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Khi thêm class .show thì alert sẽ hiện dần lên */
+.alert.show {
+	opacity: 1;
+	transform: translateY(0);
+}
 
-  /* Khi thêm class .fade-out thì alert sẽ mờ dần biến mất */
-  .alert.fade-out {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
+/* Khi thêm class .fade-out thì alert sẽ mờ dần biến mất */
+.alert.fade-out {
+	opacity: 0;
+	transform: translateY(-20px);
+}
 </style>
 <script>
   window.addEventListener('DOMContentLoaded', () => {

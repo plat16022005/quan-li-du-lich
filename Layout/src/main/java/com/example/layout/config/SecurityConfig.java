@@ -12,25 +12,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            // ❌ Tắt CSRF để tránh lỗi 403 khi submit form (sau này có thể bật lại)
-            .csrf(csrf -> csrf.disable())
-
-            // ✅ Cho phép mọi request (chưa khóa chặt bảo mật)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll() // cho phép truy cập form login
-                .anyRequest().permitAll()
-            )
-
-            // ✅ Dùng trang login của bạn thay vì login mặc định
-            .formLogin(form -> form
-                .loginPage("/login")           // dùng login.html của bạn
-                .loginProcessingUrl("/login")  // nơi form gửi POST (phải trùng form action)
-                .permitAll()
-            )
-
-            // ✅ Cho phép logout bình thường
-            .logout(logout -> logout.permitAll());
+    	http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+            .anyRequest().permitAll()
+        )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login") // ✅ đổi chỗ này
+            .permitAll()
+        );
 
         return http.build();
     }

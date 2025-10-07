@@ -22,6 +22,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EmailService emailService;
+   
     
     @GetMapping("/login")
     public String showLoginForm() {
@@ -34,11 +35,13 @@ public class UserController {
   							RedirectAttributes redirectAttributes,
   							HttpSession session) {
         User user = userService.login(username, password);
-
+        
         if (user != null) {
-        	session.setAttribute("username", username);
-        	session.setAttribute("password", password);
-        	return "redirect:/home";
+        	session.setAttribute("user", user);
+        	if (user.getMaVaiTro() == 1)
+        		return "redirect:/manager/home";
+        	else
+        		return "redirect:/home";
         } else {
         	redirectAttributes.addFlashAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
             return "redirect:/login";
@@ -156,20 +159,16 @@ public class UserController {
     		return "redirect:/reset-pass";
     	}
     }
-    
-    @GetMapping("/home")
-    public String showHomePage(HttpSession session)
+    @GetMapping("/access-denied")
+    public String showAccessDeniedForm()
     {
-    	String username = (String) session.getAttribute("username");
-    	String password = (String) session.getAttribute("password");
-    	User user = userService.login(username, password);
-    	if (user.getMaVaiTro() == 1)
-    	{
-    		return "admin/dashboard";
-    	}
-    	else
-    	{
-    		return "welcome";
-    	}
+    	return "access-denied";
+    }
+    @GetMapping("/logout")
+    public String handleLogout(HttpSession session,
+    						RedirectAttributes redirectAttributes)
+    {
+    	session.invalidate();
+    	return "redirect:/login";
     }
 }
