@@ -37,6 +37,63 @@ public class DatCho {
         inverseJoinColumns = @JoinColumn(name = "MaKM")
     )
     private Set<KhuyenMai> khuyenMais;
+
+	public Integer getMaDatCho() {
+		return maDatCho;
+	}
+
+	public void setMaDatCho(Integer maDatCho) {
+		this.maDatCho = maDatCho;
+	}
+
+	public KhachHang getKhachHang() {
+		return khachHang;
+	}
+
+	public void setKhachHang(KhachHang khachHang) {
+		this.khachHang = khachHang;
+	}
+
+	public ChuyenDuLich getChuyenDuLich() {
+		return chuyenDuLich;
+	}
+
+	public void setChuyenDuLich(ChuyenDuLich chuyenDuLich) {
+		this.chuyenDuLich = chuyenDuLich;
+	}
+
+	public Date getNgayDat() {
+		return ngayDat;
+	}
+
+	public void setNgayDat(Date ngayDat) {
+		this.ngayDat = ngayDat;
+	}
+
+	public String getTrangThai() {
+		return trangThai;
+	}
+
+	public void setTrangThai(String trangThai) {
+		this.trangThai = trangThai;
+	}
+
+	public Set<ChiTietDatCho> getChiTietDatChos() {
+		return chiTietDatChos;
+	}
+
+	public void setChiTietDatChos(Set<ChiTietDatCho> chiTietDatChos) {
+		this.chiTietDatChos = chiTietDatChos;
+	}
+
+	public Set<KhuyenMai> getKhuyenMais() {
+		return khuyenMais;
+	}
+
+	public void setKhuyenMais(Set<KhuyenMai> khuyenMais) {
+		this.khuyenMais = khuyenMais;
+	}
     
     // Getters and setters
+    
 }

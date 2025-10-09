@@ -30,5 +30,54 @@ public class GiaoDich {
     @Column(name = "LoaiGD", length = 20)
     private String loaiGD;
 
+	public Integer getMaGiaoDich() {
+		return maGiaoDich;
+	}
+
+	public void setMaGiaoDich(Integer maGiaoDich) {
+		this.maGiaoDich = maGiaoDich;
+	}
+
+	public KhachHang getKhachHang() {
+		return khachHang;
+	}
+
+	public void setKhachHang(KhachHang khachHang) {
+		this.khachHang = khachHang;
+	}
+
+	public DatCho getDatCho() {
+		return datCho;
+	}
+
+	public void setDatCho(DatCho datCho) {
+		this.datCho = datCho;
+	}
+
+	public BigDecimal getSoTien() {
+		return soTien;
+	}
+
+	public void setSoTien(BigDecimal soTien) {
+		this.soTien = soTien;
+	}
+
+	public Date getNgayGiaoDich() {
+		return ngayGiaoDich;
+	}
+
+	public void setNgayGiaoDich(Date ngayGiaoDich) {
+		this.ngayGiaoDich = ngayGiaoDich;
+	}
+
+	public String getLoaiGD() {
+		return loaiGD;
+	}
+
+	public void setLoaiGD(String loaiGD) {
+		this.loaiGD = loaiGD;
+	}
+
     // Getters and setters
+    
 }

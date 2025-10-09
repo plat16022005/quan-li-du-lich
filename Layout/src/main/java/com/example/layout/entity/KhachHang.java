@@ -25,6 +25,46 @@ public class KhachHang {
     @Column(name = "GioiTinh", length = 10)
     private String gioiTinh;
 
+	public Integer getMaKhachHang() {
+		return maKhachHang;
+	}
+
+	public void setMaKhachHang(Integer maKhachHang) {
+		this.maKhachHang = maKhachHang;
+	}
+
+	public User getTaiKhoan() {
+		return taiKhoan;
+	}
+
+	public void setTaiKhoan(User taiKhoan) {
+		this.taiKhoan = taiKhoan;
+	}
+
+	public String getDiaChi() {
+		return diaChi;
+	}
+
+	public void setDiaChi(String diaChi) {
+		this.diaChi = diaChi;
+	}
+
+	public Date getNgaySinh() {
+		return ngaySinh;
+	}
+
+	public void setNgaySinh(Date ngaySinh) {
+		this.ngaySinh = ngaySinh;
+	}
+
+	public String getGioiTinh() {
+		return gioiTinh;
+	}
+
+	public void setGioiTinh(String gioiTinh) {
+		this.gioiTinh = gioiTinh;
+	}
+
     // Getters and setters
 
 

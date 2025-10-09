@@ -29,5 +29,55 @@ public class PhanHoi {
     @Temporal(TemporalType.TIMESTAMP)
     private Date ngayTao;
 
+	public Integer getMaPhanHoi() {
+		return maPhanHoi;
+	}
+
+	public void setMaPhanHoi(Integer maPhanHoi) {
+		this.maPhanHoi = maPhanHoi;
+	}
+
+	public KhachHang getKhachHang() {
+		return khachHang;
+	}
+
+	public void setKhachHang(KhachHang khachHang) {
+		this.khachHang = khachHang;
+	}
+
+	public ChuyenDuLich getChuyenDuLich() {
+		return chuyenDuLich;
+	}
+
+	public void setChuyenDuLich(ChuyenDuLich chuyenDuLich) {
+		this.chuyenDuLich = chuyenDuLich;
+	}
+
+	public String getNoiDung() {
+		return noiDung;
+	}
+
+	public void setNoiDung(String noiDung) {
+		this.noiDung = noiDung;
+	}
+
+	public Integer getDanhGia() {
+		return danhGia;
+	}
+
+	public void setDanhGia(Integer danhGia) {
+		this.danhGia = danhGia;
+	}
+
+	public Date getNgayTao() {
+		return ngayTao;
+	}
+
+	public void setNgayTao(Date ngayTao) {
+		this.ngayTao = ngayTao;
+	}
+
     // Getters and setters
+    
+    
 }
