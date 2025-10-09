@@ -2,14 +2,16 @@ package com.example.layout.controller.manager;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.layout.entity.User;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequestMapping("/manager")
 public class ManagerGuestController {
-	@GetMapping("/manager/guest")
+	@GetMapping("/guest")
     public String showGuestForm(HttpSession session) {
 		User user = (User) session.getAttribute("user");
 		if (user == null)
