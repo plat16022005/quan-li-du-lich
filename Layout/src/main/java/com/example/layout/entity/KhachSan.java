@@ -20,8 +20,8 @@ public class KhachSan {
     @Column(name = "SoDienThoai", length = 20)
     private String soDienThoai;
 
-    @ManyToMany(mappedBy = "khachSans")
-    private Set<ChuyenDuLich> chuyenDuLichs;
+//    @ManyToMany(mappedBy = "khachSans")
+//    private Set<ChuyenDuLich> chuyenDuLichs;
 
 	public Integer getMaKhachSan() {
 		return maKhachSan;
@@ -55,13 +55,13 @@ public class KhachSan {
 		this.soDienThoai = soDienThoai;
 	}
 
-	public Set<ChuyenDuLich> getChuyenDuLichs() {
-		return chuyenDuLichs;
-	}
-
-	public void setChuyenDuLichs(Set<ChuyenDuLich> chuyenDuLichs) {
-		this.chuyenDuLichs = chuyenDuLichs;
-	}
+//	public Set<ChuyenDuLich> getChuyenDuLichs() {
+//		return chuyenDuLichs;
+//	}
+//
+//	public void setChuyenDuLichs(Set<ChuyenDuLich> chuyenDuLichs) {
+//		this.chuyenDuLichs = chuyenDuLichs;
+//	}
 
     // Getters and setters
     

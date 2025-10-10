@@ -261,4 +261,9 @@ public class ManagerTourController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/tour/detail/{maTour}")
+    public String showTourDetailForm()
+    {
+    	return "manager/tour_detail";
+    }
 }

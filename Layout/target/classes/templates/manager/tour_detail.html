@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm Chi Tiết Tour</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .modal.hidden { opacity: 0; visibility: hidden; }
+    .modal-content { transition: transform 0.3s ease; }
+    .modal.hidden .modal-content { transform: translateY(-50px); }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- 🔹 Layout Sidebar -->
+<div class="flex h-screen overflow-hidden">
+  <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
+    <div class="flex items-center justify-center h-20 border-b border-gray-700">
+      <i class="fas fa-route text-3xl text-blue-400"></i>
+      <span class="ml-3 text-2xl font-bold">TravelGO</span>
+    </div>
+    <nav class="mt-8 px-4">
+      <a href="/manager/home" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg">
+        <i class="fas fa-tachometer-alt w-6 text-center"></i>
+        <span class="ml-4">Tổng quan</span>
+      </a>
+      <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
+        <i class="fas fa-map-marked-alt w-6 text-center"></i>
+        <span class="ml-4">Quản lý Tour</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 🔹 Main content -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20">
+      <div class="flex items-center">
+        <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+        <h1 class="text-2xl font-semibold text-gray-800">Thêm Chi Tiết Cho Tour #<span id="tour-id-label"></span></h1>
+      </div>
+      <button onclick="window.history.back()" class="text-gray-600 hover:text-gray-800">
+        <i class="fas fa-arrow-left mr-1"></i> Quay lại
+      </button>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6 space-y-8">
+
+      <!-- 📍 Địa điểm & Lịch trình -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">📍 Địa điểm & Lịch trình</h2>
+          <button onclick="openModal('add-dia-diem-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <i class="fas fa-plus mr-2"></i> Thêm địa điểm
+          </button>
+        </div>
+		<table class="w-full text-sm text-left text-gray-600 mb-4">
+		  <thead class="bg-gray-50 text-gray-700">
+		    <tr>
+		      <th class="px-4 py-2 w-20">Ngày</th>
+		      <th class="px-4 py-2 w-56">Địa điểm</th>
+		      <th class="px-4 py-2 w-64">Hoạt động</th>
+		      <th class="px-4 py-2 w-48">Phương tiện</th>
+		      <th class="px-4 py-2 w-48">Khách sạn</th>
+		      <th class="px-4 py-2 text-right">Hành động</th>
+		    </tr>
+		  </thead>
+		  <tbody id="lich-trinh-body">
+		  </tbody>
+		</table>
+		<button onclick="addLichTrinhRow()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+		  <i class="fas fa-plus mr-1"></i> Thêm lịch trình
+		</button>
+      </section>
+
+      <!-- 🏨 Khách sạn -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">🏨 Khách sạn</h2>
+          <button onclick="openModal('add-hotel-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <i class="fas fa-plus mr-2"></i> Thêm khách sạn
+          </button>
+        </div>
+        <div id="hotel-list" class="space-y-2">
+          <!-- Khách sạn được chọn sẽ hiện ở đây -->
+        </div>
+      </section>
+
+      <!-- 🚍 Phương tiện -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">🚍 Phương tiện</h2>
+          <button onclick="openModal('add-vehicle-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <i class="fas fa-plus mr-2"></i> Thêm phương tiện
+          </button>
+        </div>
+        <div id="vehicle-list" class="space-y-2">
+          <!-- Phương tiện được chọn sẽ hiện ở đây -->
+        </div>
+      </section>
+
+      <div class="flex justify-end">
+        <button onclick="saveAllDetails()" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">
+          Lưu chi tiết tour
+        </button>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- 🪄 Modal Thêm địa điểm -->
+<div id="add-dia-diem-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+  <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Thêm địa điểm mới</h3>
+      <button onclick="closeModal('add-dia-diem-modal')" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+    <label>Tên địa điểm</label>
+    <input id="new-dia-diem-ten" class="w-full border rounded p-2 mb-3">
+    <label>Địa chỉ</label>
+    <input id="new-dia-diem-diachi" class="w-full border rounded p-2 mb-4">
+    <div class="flex justify-end">
+      <button onclick="saveNewDiaDiem()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🏨 Modal Thêm khách sạn -->
+<div id="add-hotel-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+  <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Thêm khách sạn mới</h3>
+      <button onclick="closeModal('add-hotel-modal')" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+    <label>Tên khách sạn</label>
+    <input id="new-hotel-ten" class="w-full border rounded p-2 mb-3">
+    <label>Địa chỉ</label>
+    <input id="new-hotel-diachi" class="w-full border rounded p-2 mb-3">
+    <label>Số điện thoại</label>
+    <input id="new-hotel-sdt" class="w-full border rounded p-2 mb-4">
+    <div class="flex justify-end">
+      <button onclick="saveNewHotel()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🚍 Modal Thêm phương tiện -->
+<div id="add-vehicle-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+  <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Thêm phương tiện mới</h3>
+      <button onclick="closeModal('add-vehicle-modal')" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+    <label>Loại phương tiện</label>
+    <input id="new-vehicle-loai" class="w-full border rounded p-2 mb-3">
+    <label>Biển số</label>
+    <input id="new-vehicle-biens" class="w-full border rounded p-2 mb-3">
+    <label>Số chỗ ngồi</label>
+    <input id="new-vehicle-socho" class="w-full border rounded p-2 mb-4" type="number">
+    <div class="flex justify-end">
+      <button onclick="saveNewVehicle()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal functions
+  function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  async function addLichTrinhRow() {
+	  const body = document.getElementById('lich-trinh-body');
+
+	  // Lấy danh sách từ API
+	  const vehicles = await fetch('/manager/phuongtien/all').then(res => res.json());
+	  const hotels = await fetch('/manager/khachsan/all').then(res => res.json());
+	  const diadiems = await fetch('/manager/diadiem/all').then(res => res.json());
+
+	  const row = document.createElement('tr');
+	  row.innerHTML = `
+	    <td class="px-4 py-2"><input type="number" min="1" class="border rounded p-1 w-20"></td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn địa điểm --</option>
+	        ${diadiems.map(d => `<option value="${d.maDiaDiem}">${d.tenDiaDiem}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2"><input type="text" placeholder="Mô tả hoạt động" class="border rounded p-1 w-full"></td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn phương tiện --</option>
+	        ${vehicles.map(v => `<option value="${v.maPhuongTien}">${v.loaiPhuongTien} - ${v.bienSo}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn khách sạn --</option>
+	        ${hotels.map(h => `<option value="${h.maKhachSan}">${h.tenKhachSan}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2 text-right">
+	      <button class="text-red-600 hover:text-red-800" onclick="this.closest('tr').remove()">
+	        <i class="fas fa-trash"></i>
+	      </button>
+	    </td>
+	  `;
+	  body.appendChild(row);
+	}
+
+
+  function saveAllDetails() {
+    alert('Lưu toàn bộ chi tiết cho tour — bạn sẽ kết nối API ở đây.');
+  }
+
+  function saveNewDiaDiem() {
+    // TODO: Gọi API lưu địa điểm mới
+    closeModal('add-dia-diem-modal');
+  }
+  function saveNewHotel() {
+    // TODO: Gọi API lưu khách sạn
+    closeModal('add-hotel-modal');
+  }
+  function saveNewVehicle() {
+    // TODO: Gọi API lưu phương tiện
+    closeModal('add-vehicle-modal');
+  }
+</script>
+<script>
+
+  // 🪄 Modal
+  function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  // 📌 Lưu khách sạn mới
+  async function saveNewHotel() {
+    const ten = document.getElementById('new-hotel-ten').value.trim();
+    const diachi = document.getElementById('new-hotel-diachi').value.trim();
+    const sdt = document.getElementById('new-hotel-sdt').value.trim();
+
+    if (!ten || !diachi || !sdt) {
+      alert('Vui lòng nhập đầy đủ thông tin khách sạn');
+      return;
+    }
+
+    const data = { tenKhachSan: ten, diaChi: diachi, soDienThoai: sdt };
+
+    const res = await fetch('/manager/khachsan/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      alert('✅ Đã thêm khách sạn mới');
+      closeModal('add-hotel-modal');
+      document.getElementById('new-hotel-ten').value = '';
+      document.getElementById('new-hotel-diachi').value = '';
+      document.getElementById('new-hotel-sdt').value = '';
+      saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
+      location.reload();     
+      await loadHotels(); // refresh danh sách khách sạn
+    } else {
+      alert('❌ Thêm khách sạn thất bại');
+    }
+  }
+
+  // 🚍 Lưu phương tiện mới
+  async function saveNewVehicle() {
+    const loai = document.getElementById('new-vehicle-loai').value.trim();
+    const biens = document.getElementById('new-vehicle-biens').value.trim();
+    const socho = document.getElementById('new-vehicle-socho').value.trim();
+
+    if (!loai || !biens || !socho) {
+      alert('Vui lòng nhập đầy đủ thông tin phương tiện');
+      return;
+    }
+
+    const data = { loaiPhuongTien: loai, bienSo: biens, soChoNgoi: Number(socho) };
+
+    const res = await fetch('/manager/phuongtien/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      alert('✅ Đã thêm phương tiện mới');
+      closeModal('add-vehicle-modal');
+      document.getElementById('new-vehicle-loai').value = '';
+      document.getElementById('new-vehicle-biens').value = '';
+      document.getElementById('new-vehicle-socho').value = '';
+      saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
+      location.reload();     
+      await loadVehicles(); // refresh danh sách phương tiện
+    } else {
+      alert('❌ Thêm phương tiện thất bại');
+    }
+  }
+
+  // 🏨 Load danh sách khách sạn để hiển thị dropdown
+  async function loadHotels() {
+    const hotels = await fetch('/manager/khachsan/all').then(res => res.json());
+    const list = document.getElementById('hotel-list');
+    list.innerHTML = hotels.map(h => `
+      <div class="border p-2 rounded flex justify-between items-center">
+        <div>
+          <p class="font-semibold">${h.tenKhachSan}</p>
+          <p class="text-sm text-gray-600">${h.diaChi} - 📞 ${h.soDienThoai}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 🚍 Load danh sách phương tiện để hiển thị dropdown
+  async function loadVehicles() {
+    const vehicles = await fetch('/manager/phuongtien/all').then(res => res.json());
+    const list = document.getElementById('vehicle-list');
+    list.innerHTML = vehicles.map(v => `
+      <div class="border p-2 rounded flex justify-between items-center">
+        <div>
+          <p class="font-semibold">${v.loaiPhuongTien}</p>
+          <p class="text-sm text-gray-600">Biển số: ${v.bienSo} — ${v.soChoNgoi} chỗ</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 🧭 Khởi chạy khi load trang
+  window.addEventListener('DOMContentLoaded', async () => {
+    await loadHotels();
+    await loadVehicles();
+    restoreLichTrinhFromLocalStorage();
+  });
+  function saveNewDiaDiem() {
+	  const ten = document.getElementById('new-dia-diem-ten').value.trim();
+	  const diachi = document.getElementById('new-dia-diem-diachi').value.trim();
+
+	  if (!ten || !diachi) {
+	    alert('Vui lòng nhập đầy đủ thông tin địa điểm');
+	    return;
+	  }
+
+	  fetch('/manager/diadiem/add', {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify({ tenDiaDiem: ten, diaChi: diachi })
+	  })
+	    .then(res => {
+	      if (!res.ok) throw new Error('Lỗi khi thêm địa điểm');
+	      return res.json();
+	    })
+	    .then(data => {
+	      saveLichTrinhToLocalStorage();
+	      console.log('Thêm thành công:', data);
+	      closeModal('add-dia-diem-modal');
+	      
+	      // ✅ Refresh lại trang
+	      location.reload();
+	    })
+	    .catch(err => {
+	      console.error(err);
+	      alert('❌ Thêm địa điểm thất bại!');
+	    });
+	}
+  function saveLichTrinhToLocalStorage() {
+	  const rows = document.querySelectorAll('#lich-trinh-body tr');
+	  const lichTrinhData = [];
+
+	  rows.forEach(row => {
+	    const inputs = row.querySelectorAll('input, select');
+	    const data = {
+	      ngay: inputs[0].value,
+	      diaDiem: inputs[1].value,
+	      hoatDong: inputs[2].value,
+	      phuongTien: inputs[3].value,
+	      khachSan: inputs[4].value
+	    };
+	    lichTrinhData.push(data);
+	  });
+
+	  localStorage.setItem('lichTrinhRows', JSON.stringify(lichTrinhData));
+	}
+  function restoreLichTrinhFromLocalStorage() {
+	  const lichTrinhData = JSON.parse(localStorage.getItem('lichTrinhRows') || '[]');
+	  lichTrinhData.forEach(data => addLichTrinhRowWithData(data));
+	}
+  async function addLichTrinhRowWithData(data) {
+	  const body = document.getElementById('lich-trinh-body');
+
+	  // Lấy dữ liệu mới từ server
+	  const vehicles = await fetch('/manager/phuongtien/all').then(res => res.json());
+	  const hotels = await fetch('/manager/khachsan/all').then(res => res.json());
+	  const diadiems = await fetch('/manager/diadiem/all').then(res => res.json());
+
+	  const row = document.createElement('tr');
+	  row.innerHTML = `
+	    <td class="px-4 py-2"><input type="number" value="${data.ngay}" class="border rounded p-1 w-20"></td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn địa điểm --</option>
+	        ${diadiems.map(d => `<option value="${d.maDiaDiem}" ${d.maDiaDiem == data.diaDiem ? 'selected' : ''}>${d.tenDiaDiem}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2"><input type="text" value="${data.hoatDong}" class="border rounded p-1 w-full"></td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn phương tiện --</option>
+	        ${vehicles.map(v => `<option value="${v.maPhuongTien}" ${v.maPhuongTien == data.phuongTien ? 'selected' : ''}>${v.loaiPhuongTien} - ${v.bienSo}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full">
+	        <option value="">-- Chọn khách sạn --</option>
+	        ${hotels.map(h => `<option value="${h.maKhachSan}" ${h.maKhachSan == data.khachSan ? 'selected' : ''}>${h.tenKhachSan}</option>`).join('')}
+	      </select>
+	    </td>
+	    <td class="px-4 py-2 text-right">
+	      <button class="text-red-600 hover:text-red-800" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button>
+	    </td>
+	  `;
+	  body.appendChild(row);
+	}
+  async function saveAllDetails() {
+	  const tourId = document.getElementById('tour-id-label').textContent.trim();
+	  const rows = document.querySelectorAll('#lich-trinh-body tr');
+
+	  if (rows.length === 0) {
+	    alert('⚠️ Bạn chưa thêm lịch trình nào!');
+	    return;
+	  }
+
+	  const lichTrinhList = [];
+
+	  rows.forEach(row => {
+	    const inputs = row.querySelectorAll('input, select');
+	    lichTrinhList.push({
+	      maTour: Number(tourId),
+	      thuTuNgay: Number(inputs[0].value),
+	      maDiaDiem: Number(inputs[1].value),
+	      hoatDong: inputs[2].value,
+	      maPhuongTien: Number(inputs[3].value),
+	      maKhachSan: Number(inputs[4].value)
+	    });
+	  });
+
+	  try {
+	    const res = await fetch('/manager/lichtrinh/add-multiple', {
+	      method: 'POST',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify(lichTrinhList)
+	    });
+
+	    if (res.ok) {
+	      alert('✅ Đã lưu chi tiết tour thành công!');
+	      localStorage.removeItem('lichTrinhRows'); // 🧹 Xóa dữ liệu tạm
+	      location.reload(); // hoặc chuyển hướng sang trang quản lý
+	    } else {
+	      const errorText = await res.text();
+	      console.error('Lỗi khi lưu lịch trình:', errorText);
+	      alert('❌ Lưu chi tiết tour thất bại!');
+	    }
+	  } catch (err) {
+	    console.error(err);
+	    alert('❌ Lỗi kết nối server khi lưu lịch trình');
+	  }
+	}
+
+</script>
+
+</body>
+</html>

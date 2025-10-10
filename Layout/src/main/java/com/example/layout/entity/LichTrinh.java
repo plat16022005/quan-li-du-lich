@@ -24,47 +24,69 @@ public class LichTrinh {
     @JoinColumn(name = "MaDiaDiem")
     private DiaDiem diaDiem;
 
-	public Integer getMaLichTrinh() {
-		return maLichTrinh;
-	}
+    // 🏨 Thêm quan hệ với KhachSan
+    @ManyToOne
+    @JoinColumn(name = "MaKhachSan")
+    private KhachSan khachSan;
 
-	public void setMaLichTrinh(Integer maLichTrinh) {
-		this.maLichTrinh = maLichTrinh;
-	}
+    // 🚍 Thêm quan hệ với PhuongTien
+    @ManyToOne
+    @JoinColumn(name = "MaPhuongTien")
+    private PhuongTien phuongTien;
 
-	public Tour getTour() {
-		return tour;
-	}
+    public Integer getMaLichTrinh() {
+        return maLichTrinh;
+    }
 
-	public void setTour(Tour tour) {
-		this.tour = tour;
-	}
+    public void setMaLichTrinh(Integer maLichTrinh) {
+        this.maLichTrinh = maLichTrinh;
+    }
 
-	public Integer getThuTuNgay() {
-		return thuTuNgay;
-	}
+    public Tour getTour() {
+        return tour;
+    }
 
-	public void setThuTuNgay(Integer thuTuNgay) {
-		this.thuTuNgay = thuTuNgay;
-	}
+    public void setTour(Tour tour) {
+        this.tour = tour;
+    }
 
-	public String getHoatDong() {
-		return hoatDong;
-	}
+    public Integer getThuTuNgay() {
+        return thuTuNgay;
+    }
 
-	public void setHoatDong(String hoatDong) {
-		this.hoatDong = hoatDong;
-	}
+    public void setThuTuNgay(Integer thuTuNgay) {
+        this.thuTuNgay = thuTuNgay;
+    }
 
-	public DiaDiem getDiaDiem() {
-		return diaDiem;
-	}
+    public String getHoatDong() {
+        return hoatDong;
+    }
 
-	public void setDiaDiem(DiaDiem diaDiem) {
-		this.diaDiem = diaDiem;
-	}
+    public void setHoatDong(String hoatDong) {
+        this.hoatDong = hoatDong;
+    }
 
-    // Getters and setters
-    
-    
+    public DiaDiem getDiaDiem() {
+        return diaDiem;
+    }
+
+    public void setDiaDiem(DiaDiem diaDiem) {
+        this.diaDiem = diaDiem;
+    }
+
+    public KhachSan getKhachSan() {
+        return khachSan;
+    }
+
+    public void setKhachSan(KhachSan khachSan) {
+        this.khachSan = khachSan;
+    }
+
+    public PhuongTien getPhuongTien() {
+        return phuongTien;
+    }
+
+    public void setPhuongTien(PhuongTien phuongTien) {
+        this.phuongTien = phuongTien;
+    }
 }
