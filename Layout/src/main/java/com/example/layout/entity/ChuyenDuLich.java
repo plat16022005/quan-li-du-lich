@@ -1,7 +1,9 @@
 package com.example.layout.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.Date;
+
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -18,14 +20,17 @@ public class ChuyenDuLich {
 
     @Column(name = "NgayBatDau")
     @Temporal(TemporalType.DATE)
-    private Date ngayBatDau;
+    private LocalDate ngayBatDau;
 
     @Column(name = "NgayKetThuc")
     @Temporal(TemporalType.DATE)
-    private Date ngayKetThuc;
+    private LocalDate ngayKetThuc;
 
     @Column(name = "TrangThai", length = 20)
     private String trangThai;
+
+    @Column(name = "SoLuongToiDa")
+    private int soLuongToiDa;
 
     @ManyToOne
     @JoinColumn(name = "MaHuongDanVien")
@@ -41,6 +46,7 @@ public class ChuyenDuLich {
         joinColumns = @JoinColumn(name = "MaChuyen"),
         inverseJoinColumns = @JoinColumn(name = "MaKhachSan")
     )
+    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
     private Set<KhachSan> khachSans;
 
     @ManyToMany
@@ -49,80 +55,88 @@ public class ChuyenDuLich {
         joinColumns = @JoinColumn(name = "MaChuyen"),
         inverseJoinColumns = @JoinColumn(name = "MaPhuongTien")
     )
+    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
     private Set<PhuongTien> phuongTiens;
 
-	public Integer getMaChuyen() {
-		return maChuyen;
-	}
+    // ===================== GETTERS & SETTERS =====================
 
-	public void setMaChuyen(Integer maChuyen) {
-		this.maChuyen = maChuyen;
-	}
+    public Integer getMaChuyen() {
+        return maChuyen;
+    }
 
-	public Tour getTour() {
-		return tour;
-	}
+    public void setMaChuyen(Integer maChuyen) {
+        this.maChuyen = maChuyen;
+    }
 
-	public void setTour(Tour tour) {
-		this.tour = tour;
-	}
+    public Tour getTour() {
+        return tour;
+    }
 
-	public Date getNgayBatDau() {
-		return ngayBatDau;
-	}
+    public void setTour(Tour tour) {
+        this.tour = tour;
+    }
 
-	public void setNgayBatDau(Date ngayBatDau) {
-		this.ngayBatDau = ngayBatDau;
-	}
+    public LocalDate getNgayBatDau() {
+        return ngayBatDau;
+    }
 
-	public Date getNgayKetThuc() {
-		return ngayKetThuc;
-	}
+    public void setNgayBatDau(LocalDate ngayBatDau) {
+        this.ngayBatDau = ngayBatDau;
+    }
 
-	public void setNgayKetThuc(Date ngayKetThuc) {
-		this.ngayKetThuc = ngayKetThuc;
-	}
+    public LocalDate getNgayKetThuc() {
+        return ngayKetThuc;
+    }
 
-	public String getTrangThai() {
-		return trangThai;
-	}
+    public void setNgayKetThuc(LocalDate ngayKetThuc) {
+        this.ngayKetThuc = ngayKetThuc;
+    }
 
-	public void setTrangThai(String trangThai) {
-		this.trangThai = trangThai;
-	}
+    public String getTrangThai() {
+        return trangThai;
+    }
 
-	public Nhanvien getHuongDanVien() {
-		return huongDanVien;
-	}
+    public void setTrangThai(String trangThai) {
+        this.trangThai = trangThai;
+    }
 
-	public void setHuongDanVien(Nhanvien huongDanVien) {
-		this.huongDanVien = huongDanVien;
-	}
+    public int getSoLuongToiDa() {
+        return soLuongToiDa;
+    }
 
-	public Nhanvien getTaiXe() {
-		return taiXe;
-	}
+    public void setSoLuongToiDa(int soLuongToiDa) {
+        this.soLuongToiDa = soLuongToiDa;
+    }
 
-	public void setTaiXe(Nhanvien taiXe) {
-		this.taiXe = taiXe;
-	}
+    public Nhanvien getHuongDanVien() {
+        return huongDanVien;
+    }
 
-	public Set<KhachSan> getKhachSans() {
-		return khachSans;
-	}
+    public void setHuongDanVien(Nhanvien huongDanVien) {
+        this.huongDanVien = huongDanVien;
+    }
 
-	public void setKhachSans(Set<KhachSan> khachSans) {
-		this.khachSans = khachSans;
-	}
+    public Nhanvien getTaiXe() {
+        return taiXe;
+    }
 
-	public Set<PhuongTien> getPhuongTiens() {
-		return phuongTiens;
-	}
+    public void setTaiXe(Nhanvien taiXe) {
+        this.taiXe = taiXe;
+    }
 
-	public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
-		this.phuongTiens = phuongTiens;
-	}
-    
-    // Getters and setters
-    
+    public Set<KhachSan> getKhachSans() {
+        return khachSans;
+    }
+
+    public void setKhachSans(Set<KhachSan> khachSans) {
+        this.khachSans = khachSans;
+    }
+
+    public Set<PhuongTien> getPhuongTiens() {
+        return phuongTiens;
+    }
+
+    public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
+        this.phuongTiens = phuongTiens;
+    }
 }

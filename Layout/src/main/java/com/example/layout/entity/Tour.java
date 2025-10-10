@@ -1,7 +1,9 @@
 package com.example.layout.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,64 +26,83 @@ public class Tour {
     @Column(name = "GiaCoBan", precision = 18, scale = 2)
     private BigDecimal giaCoBan;
 
+    @Column(name = "HinhAnh", length = 500)
+    private String hinhAnh;
+
     @ManyToMany
     @JoinTable(
         name = "Tour_DiaDiem",
         joinColumns = @JoinColumn(name = "MaTour"),
         inverseJoinColumns = @JoinColumn(name = "MaDiaDiem")
     )
+    @JsonIgnore  // 🛑 Thêm ở đây để bỏ qua khi serialize JSON
     private Set<DiaDiem> diaDiems;
 
-	public Integer getMaTour() {
-		return maTour;
-	}
+    @OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+    @JsonIgnore  // 🛑 Thêm ở đây để bỏ qua danh sách chuyến khi serialize JSON
+    private List<ChuyenDuLich> danhSachChuyen;
 
-	public void setMaTour(Integer maTour) {
-		this.maTour = maTour;
-	}
+    public List<ChuyenDuLich> getDanhSachChuyen() {
+        return danhSachChuyen;
+    }
 
-	public String getTenTour() {
-		return tenTour;
-	}
+    public void setDanhSachChuyen(List<ChuyenDuLich> danhSachChuyen) {
+        this.danhSachChuyen = danhSachChuyen;
+    }
 
-	public void setTenTour(String tenTour) {
-		this.tenTour = tenTour;
-	}
+    public Integer getMaTour() {
+        return maTour;
+    }
 
-	public String getMoTa() {
-		return moTa;
-	}
+    public void setMaTour(Integer maTour) {
+        this.maTour = maTour;
+    }
 
-	public void setMoTa(String moTa) {
-		this.moTa = moTa;
-	}
+    public String getTenTour() {
+        return tenTour;
+    }
 
-	public Integer getSoNgay() {
-		return soNgay;
-	}
+    public void setTenTour(String tenTour) {
+        this.tenTour = tenTour;
+    }
 
-	public void setSoNgay(Integer soNgay) {
-		this.soNgay = soNgay;
-	}
+    public String getMoTa() {
+        return moTa;
+    }
 
-	public BigDecimal getGiaCoBan() {
-		return giaCoBan;
-	}
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
+    }
 
-	public void setGiaCoBan(BigDecimal giaCoBan) {
-		this.giaCoBan = giaCoBan;
-	}
+    public Integer getSoNgay() {
+        return soNgay;
+    }
 
-	public Set<DiaDiem> getDiaDiems() {
-		return diaDiems;
-	}
+    public void setSoNgay(Integer soNgay) {
+        this.soNgay = soNgay;
+    }
 
-	public void setDiaDiems(Set<DiaDiem> diaDiems) {
-		this.diaDiems = diaDiems;
-	}
+    public BigDecimal getGiaCoBan() {
+        return giaCoBan;
+    }
 
-    // Getters and setters
-    
-    
-    
+    public void setGiaCoBan(BigDecimal giaCoBan) {
+        this.giaCoBan = giaCoBan;
+    }
+
+    public Set<DiaDiem> getDiaDiems() {
+        return diaDiems;
+    }
+
+    public void setDiaDiems(Set<DiaDiem> diaDiems) {
+        this.diaDiems = diaDiems;
+    }
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
 }
