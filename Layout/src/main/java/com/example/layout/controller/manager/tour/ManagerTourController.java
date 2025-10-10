@@ -1,4 +1,4 @@
-package com.example.layout.controller.manager;
+package com.example.layout.controller.manager.tour;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
