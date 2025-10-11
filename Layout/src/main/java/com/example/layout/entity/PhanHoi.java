@@ -1,6 +1,8 @@
 package com.example.layout.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -16,8 +18,8 @@ public class PhanHoi {
     private KhachHang khachHang;
 
     @ManyToOne
-    @JoinColumn(name = "MaChuyen")
-    private ChuyenDuLich chuyenDuLich;
+    @JoinColumn(name = "MaTour")
+    private Tour tour;
 
     @Column(name = "NoiDung")
     private String noiDung;
@@ -26,8 +28,7 @@ public class PhanHoi {
     private Integer danhGia;
 
     @Column(name = "NgayTao")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date ngayTao;
+    private LocalDate ngayTao;
 
 	public Integer getMaPhanHoi() {
 		return maPhanHoi;
@@ -45,12 +46,12 @@ public class PhanHoi {
 		this.khachHang = khachHang;
 	}
 
-	public ChuyenDuLich getChuyenDuLich() {
-		return chuyenDuLich;
+	public Tour getTour() {
+		return tour;
 	}
 
-	public void setChuyenDuLich(ChuyenDuLich chuyenDuLich) {
-		this.chuyenDuLich = chuyenDuLich;
+	public void setTour(Tour tour) {
+		this.tour = tour;
 	}
 
 	public String getNoiDung() {
@@ -69,11 +70,11 @@ public class PhanHoi {
 		this.danhGia = danhGia;
 	}
 
-	public Date getNgayTao() {
+	public LocalDate getNgayTao() {
 		return ngayTao;
 	}
 
-	public void setNgayTao(Date ngayTao) {
+	public void setNgayTao(LocalDate ngayTao) {
 		this.ngayTao = ngayTao;
 	}
 

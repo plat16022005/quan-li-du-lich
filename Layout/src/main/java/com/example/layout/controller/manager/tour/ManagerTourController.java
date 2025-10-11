@@ -262,8 +262,13 @@ public class ManagerTourController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/tour/detail/{maTour}")
-    public String showTourDetailForm()
+    public String showTourDetailForm(@PathVariable("maTour") String maTour,HttpSession session)
     {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != 1) {
+            return "redirect:/access-denied";
+        }
+    	session.setAttribute("matour", maTour);
     	return "manager/tour_detail";
     }
 }

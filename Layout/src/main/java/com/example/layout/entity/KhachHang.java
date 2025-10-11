@@ -25,6 +25,13 @@ public class KhachHang {
     @Column(name = "GioiTinh", length = 10)
     private String gioiTinh;
 
+	@Column(name = "TenKhachHang", length = 100)
+    private String tenKhachHang;
+    
+    @Column (name = "NgayThamGia")
+    @Temporal(TemporalType.DATE)
+    private Date ngayThamGia;
+
 	public Integer getMaKhachHang() {
 		return maKhachHang;
 	}
@@ -64,7 +71,21 @@ public class KhachHang {
 	public void setGioiTinh(String gioiTinh) {
 		this.gioiTinh = gioiTinh;
 	}
+    public String getTenKhachHang() {
+		return tenKhachHang;
+	}
 
+	public void setTenKhachHang(String tenKhachHang) {
+		this.tenKhachHang = tenKhachHang;
+	}
+
+	public Date getNgayThamGia() {
+		return ngayThamGia;
+	}
+
+	public void setNgayThamGia(Date ngayThamGia) {
+		this.ngayThamGia = ngayThamGia;
+	}
     // Getters and setters
 
 

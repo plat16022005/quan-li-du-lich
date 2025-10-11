@@ -3,6 +3,9 @@ package com.example.layout.controller.manager.tour;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.repository.TourRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.example.layout.repository.DiaDiemRepository;
 import com.example.layout.repository.KhachSanRepository;
 import com.example.layout.repository.PhuongTienRepository;
@@ -37,9 +40,15 @@ public class LichTrinhController {
     private PhuongTienRepository phuongTienRepository;
 
     @PostMapping("/add-multiple")
-    public ResponseEntity<?> addMultiple(@RequestBody List<LichTrinhRequest> lichTrinhList) {
+    public ResponseEntity<?> addMultiple(@RequestBody List<LichTrinhRequest> lichTrinhList, HttpSession session) {
         for (LichTrinhRequest req : lichTrinhList) {
-            var tour = tourRepository.findById(req.getMaTour()).orElse(null);
+        	String maTourSession = (String) session.getAttribute("matour");
+        	Integer maTour = Integer.parseInt(maTourSession);
+            if (maTourSession == null) {
+            	System.out.println("Không thấy");
+                return ResponseEntity.badRequest().body("❌ Không tìm thấy mã tour trong session");
+            }
+            var tour = tourRepository.findById(maTour).orElse(null);
             if (tour == null) {
                 return ResponseEntity.badRequest().body("❌ Tour không tồn tại: " + req.getMaTour());
             }
