@@ -36,7 +36,7 @@ public class UserController {
   							HttpSession session) {
         User user = userService.login(username, password);
         
-        if (user != null) {
+        if (user != null && user.getTrangThai() == true) {
         	session.setAttribute("user", user);
         	if (user.getMaVaiTro() == 1)
         		return "redirect:/manager/home";
