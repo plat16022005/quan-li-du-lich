@@ -150,6 +150,8 @@
     <input id="new-hotel-diachi" class="w-full border rounded p-2 mb-3">
     <label>Số điện thoại</label>
     <input id="new-hotel-sdt" class="w-full border rounded p-2 mb-4">
+    <label>Giá theo ngày</label>
+    <input id="new-hotel-gia" class="w-full border rounded p-2 mb-4">
     <div class="flex justify-end">
       <button onclick="saveNewHotel()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
     </div>
@@ -169,6 +171,8 @@
     <input id="new-vehicle-biens" class="w-full border rounded p-2 mb-3">
     <label>Số chỗ ngồi</label>
     <input id="new-vehicle-socho" class="w-full border rounded p-2 mb-4" type="number">
+    <label>Giá theo ngày</label>
+    <input id="new-vehicle-gia" class="w-full border rounded p-2 mb-4" type="number">
     <div class="flex justify-end">
       <button onclick="saveNewVehicle()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
     </div>
@@ -248,13 +252,13 @@
     const ten = document.getElementById('new-hotel-ten').value.trim();
     const diachi = document.getElementById('new-hotel-diachi').value.trim();
     const sdt = document.getElementById('new-hotel-sdt').value.trim();
-
+    const gia = document.getElementById('new-hotel-gia').value.trim();
     if (!ten || !diachi || !sdt) {
       alert('Vui lòng nhập đầy đủ thông tin khách sạn');
       return;
     }
 
-    const data = { tenKhachSan: ten, diaChi: diachi, soDienThoai: sdt };
+    const data = { tenKhachSan: ten, diaChi: diachi, soDienThoai: sdt , giaTheoNgay: gia};
 
     const res = await fetch('/manager/khachsan/add', {
       method: 'POST',
@@ -268,6 +272,7 @@
       document.getElementById('new-hotel-ten').value = '';
       document.getElementById('new-hotel-diachi').value = '';
       document.getElementById('new-hotel-sdt').value = '';
+      document.getElementById('new-hotel-gia').value = '';
       saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
       location.reload();     
       await loadHotels(); // refresh danh sách khách sạn
@@ -281,13 +286,13 @@
     const loai = document.getElementById('new-vehicle-loai').value.trim();
     const biens = document.getElementById('new-vehicle-biens').value.trim();
     const socho = document.getElementById('new-vehicle-socho').value.trim();
-
+    const gia = document.getElementById('new-vehicle-gia').value.trim();
     if (!loai || !biens || !socho) {
       alert('Vui lòng nhập đầy đủ thông tin phương tiện');
       return;
     }
 
-    const data = { loaiPhuongTien: loai, bienSo: biens, soChoNgoi: Number(socho) };
+    const data = { loaiPhuongTien: loai, bienSo: biens, soChoNgoi: Number(socho), giaTheoNgay: gia};
 
     const res = await fetch('/manager/phuongtien/add', {
       method: 'POST',
@@ -301,6 +306,7 @@
       document.getElementById('new-vehicle-loai').value = '';
       document.getElementById('new-vehicle-biens').value = '';
       document.getElementById('new-vehicle-socho').value = '';
+      document.getElementById('new-vehicle-gia').value = '';
       saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
       location.reload();     
       await loadVehicles(); // refresh danh sách phương tiện

@@ -32,6 +32,7 @@
             transition: height 0.5s ease-out;
         }
     </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
@@ -104,7 +105,7 @@
                     <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Tổng doanh thu (Tháng)</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">1.250M ₫</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="total-revenue">1.250M ₫</p>
                             <p class="text-xs text-green-500 flex items-center mt-1">
                                 <i class="fas fa-arrow-up mr-1"></i> 12.5% so với tháng trước
                             </p>
@@ -116,7 +117,7 @@
                     <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Tour đang hoạt động</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">32</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="active-tours">32</p>
                              <p class="text-xs text-gray-500 flex items-center mt-1">
                                 &nbsp; <!-- Placeholder for alignment -->
                             </p>
@@ -128,7 +129,7 @@
                     <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Khách hàng mới</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">152</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="new-customers">152</p>
                             <p class="text-xs text-green-500 flex items-center mt-1">
                                 <i class="fas fa-arrow-up mr-1"></i> 8% so với tháng trước
                             </p>
@@ -140,7 +141,7 @@
                     <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Tổng nhân viên</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">48</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="total-staff">>48</p>
                              <p class="text-xs text-gray-500 flex items-center mt-1">
                                 &nbsp; <!-- Placeholder for alignment -->
                             </p>
@@ -161,80 +162,33 @@
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm">
                         <h3 class="text-lg font-semibold text-gray-800">Cơ cấu Tour</h3>
-                        <div class="h-80 mt-4 flex items-center justify-center">
-                             <div class="relative w-56 h-56">
-                                <div class="absolute w-full h-full rounded-full" style="background: conic-gradient(#3B82F6 0% 45%, #10B981 45% 75%, #F59E0B 75% 90%, #8B5CF6 90% 100%);"></div>
-                                <div class="absolute inset-4 bg-white rounded-full"></div>
-                             </div>
-                        </div>
-                         <div class="mt-4 space-y-2 text-sm text-gray-600">
-                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-blue-500 mr-2"></span> Tour Trong Nước (45%)</div>
-                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-green-500 mr-2"></span> Tour Nước Ngoài (30%)</div>
-                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-yellow-500 mr-2"></span> Tour Theo Yêu Cầu (15%)</div>
-                            <div class="flex items-center"><span class="h-3 w-3 rounded-full bg-indigo-500 mr-2"></span> Tour Trọn Gói (10%)</div>
-                         </div>
+						<div class="h-80 mt-4 flex items-center justify-center">
+						    <canvas id="customer-marketing-chart" class="w-full h-full"></canvas>
+						</div>
+
                     </div>
                 </div>
 
                 <!-- Recent activities and upcoming tours -->
-                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 class="text-lg font-semibold text-gray-800">Tour Sắp Khởi Hành</h3>
-                        <div class="mt-4 overflow-x-auto">
-                            <table class="w-full text-sm text-left text-gray-500">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3">Tên Tour</th>
-                                        <th scope="col" class="px-6 py-3">Ngày Đi</th>
-                                        <th scope="col" class="px-6 py-3">Số khách</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="bg-white border-b hover:bg-gray-50">
-                                        <td class="px-6 py-4 font-medium text-gray-900">Khám phá Đà Nẵng - Hội An</td>
-                                        <td class="px-6 py-4">25/10/2025</td>
-                                        <td class="px-6 py-4">25/30</td>
-                                    </tr>
-                                    <tr class="bg-white border-b hover:bg-gray-50">
-                                        <td class="px-6 py-4 font-medium text-gray-900">Hành trình Tây Bắc</td>
-                                        <td class="px-6 py-4">28/10/2025</td>
-                                        <td class="px-6 py-4"><span class="font-bold text-red-500">30/30 (Đầy)</span></td>
-                                    </tr>
-                                     <tr class="bg-white hover:bg-gray-50">
-                                        <td class="px-6 py-4 font-medium text-gray-900">Về Miền Tây Sông Nước</td>
-                                        <td class="px-6 py-4">02/11/2025</td>
-                                        <td class="px-6 py-4">18/25</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 class="text-lg font-semibold text-gray-800">Hoạt động gần đây</h3>
-                        <ul class="mt-4 space-y-4">
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fas fa-plus"></i></div></div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-700"><span class="font-semibold">Nguyễn Văn A</span> đã thêm tour mới <span class="font-semibold">"Khám phá Phú Quốc"</span>.</p>
-                                    <p class="text-xs text-gray-500 mt-1">2 giờ trước</p>
-                                </div>
-                            </li>
-                             <li class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center"><i class="fas fa-pencil-alt"></i></div></div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-700"><span class="font-semibold">Trần Thị B</span> đã cập nhật thông tin khuyến mãi <span class="font-semibold">"Thu Quyến Rũ"</span>.</p>
-                                    <p class="text-xs text-gray-500 mt-1">5 giờ trước</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-user-check"></i></div></div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-700">Khách hàng <span class="font-semibold">Lê Văn C</span> vừa hoàn tất thanh toán tour <span class="font-semibold">"Hành trình Tây Bắc"</span>.</p>
-                                    <p class="text-xs text-gray-500 mt-1">Hôm qua</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+					<div class="w-full mt-6">
+					  <div class="bg-white p-6 rounded-lg shadow-sm w-full">
+					      <h3 class="text-lg font-semibold text-gray-800">Tour Sắp Khởi Hành</h3>
+					      <div class="mt-4 overflow-x-auto">
+					          <table class="w-full text-sm text-left text-gray-500">
+					              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+					                  <tr>
+					                      <th scope="col" class="px-6 py-3">Tên Tour</th>
+					                      <th scope="col" class="px-6 py-3">Ngày Đi</th>
+					                  </tr>
+					              </thead>
+					              <tbody id="upcoming-tours-body">
+					                  <!-- JS sẽ tự động đổ dữ liệu -->
+					              </tbody>
+					          </table>
+					      </div>
+					  </div>
+					</div>
+
                  </div>
             </main>
         </div>
@@ -277,5 +231,121 @@
             }, 100 * (index + 1));
         });
     </script>
+    <script>
+fetch('/manager/home/stats')
+  .then(res => res.json())
+  .then(data => {
+      document.getElementById('active-tours').textContent = data.chuyenDangDienRa;
+      document.getElementById('new-customers').textContent = data.khachHangMoi;
+      document.getElementById('total-staff').textContent = data.tongNhanVien;
+  })
+  .catch(err => console.error(err));
+</script>
+<script>
+fetch('/manager/home/upcoming-tours')
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.getElementById('upcoming-tours-body');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr>
+        <td colspan="3" class="text-center py-4 text-gray-500">
+          Không có tour sắp khởi hành
+        </td>
+      </tr>`;
+      return;
+    }
+
+    data.forEach(tour => {
+      const row = document.createElement('tr');
+      row.className = 'bg-white border-b hover:bg-gray-50';
+
+      // số khách đã đặt có thể là một trường tính thêm sau này, ví dụ lấy từ DatCho
+      const soKhach = tour.soKhach ?? 0;
+      const max = tour.soLuongToiDa ?? 0;
+
+      row.innerHTML = `
+        <td class="px-6 py-4 font-medium text-gray-900">${tour.tour.tenTour}</td>
+        <td class="px-6 py-4">${new Date(tour.ngayBatDau).toLocaleDateString('vi-VN')}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  })
+  .catch(err => console.error('Lỗi tải tour:', err));
+</script>
+<script>
+const marketingCtx = document.getElementById('customer-marketing-chart').getContext('2d');
+let marketingChart;
+
+const labelMapping = {
+    friend: 'Người quen giới thiệu',
+    facebook: 'Facebook',
+    tiktok: 'Tiktok',
+    google: 'Tìm kiếm trên Google',
+    youtube: 'Quảng cáo Youtube',
+    website: 'Website/Blog khác',
+    other: 'Khác'
+};
+
+async function loadMarketingChart() {
+    try {
+        const res = await fetch('/manager/report/api/marketing');
+        if (!res.ok) throw new Error('Lỗi API');
+        const data = await res.json();
+
+        const labels = Object.keys(data).map(key => labelMapping[key] || key);
+        const values = Object.values(data);
+
+        if (marketingChart) marketingChart.destroy();
+
+        marketingChart = new Chart(marketingCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        '#3B82F6', '#EF4444', '#10B981',
+                        '#F59E0B', '#8B5CF6', '#0EA5E9', '#6B7280'
+                    ],
+                    borderColor: [
+                        '#3B82F6', '#EF4444', '#10B981',
+                        '#F59E0B', '#8B5CF6', '#0EA5E9', '#6B7280'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom', // 👈 bạn có thể điều chỉnh vị trí
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const value = context.parsed;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${percentage}% (${value} khách)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error('Lỗi tải biểu đồ marketing:', err);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', loadMarketingChart);
+</script>
+
+
 </body>
 </html>

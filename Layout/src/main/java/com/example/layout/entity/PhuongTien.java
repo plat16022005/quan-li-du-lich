@@ -1,6 +1,8 @@
 package com.example.layout.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
@@ -20,8 +22,8 @@ public class PhuongTien {
     @Column(name = "SoChoNgoi")
     private Integer soChoNgoi;
 
-//    @ManyToMany(mappedBy = "phuongTiens")
-//    private Set<ChuyenDuLich> chuyenDuLichs;
+	@Column(name = "GiaTheoNgay", precision = 18, scale = 2)
+    private BigDecimal giaTheoNgay;
 
 	public Integer getMaPhuongTien() {
 		return maPhuongTien;
@@ -53,6 +55,14 @@ public class PhuongTien {
 
 	public void setSoChoNgoi(Integer soChoNgoi) {
 		this.soChoNgoi = soChoNgoi;
+	}
+	
+    public BigDecimal getGiaTheoNgay() {
+		return giaTheoNgay;
+	}
+
+	public void setGiaTheoNgay(BigDecimal giaTheoNgay) {
+		this.giaTheoNgay = giaTheoNgay;
 	}
 
 //	public Set<ChuyenDuLich> getChuyenDuLichs() {

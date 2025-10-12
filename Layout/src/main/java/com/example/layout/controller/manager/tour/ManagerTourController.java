@@ -95,6 +95,8 @@ public class ManagerTourController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayBatDau,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayKetThuc,
             @RequestParam int soLuongToiDa,
+            @RequestParam BigDecimal giaThueHDV,
+            @RequestParam BigDecimal giaThueTX,
             @RequestParam String trangThai,
             RedirectAttributes redirectAttributes
     ) {
@@ -123,6 +125,8 @@ public class ManagerTourController {
             chuyen.setNgayKetThuc(ngayKetThuc);
             chuyen.setSoLuongToiDa(soLuongToiDa);
             chuyen.setTrangThai(trangThai);
+            chuyen.setGiaThueHDV(giaThueHDV);
+            chuyen.setGiaThueTX(giaThueTX);
             chuyenDuLichService.saveChuyen(chuyen);
 
             redirectAttributes.addFlashAttribute("success", "Thêm tour và chuyến đi thành công!");

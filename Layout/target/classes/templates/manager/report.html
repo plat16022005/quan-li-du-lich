@@ -136,35 +136,77 @@
         </div>
     </div>
     
-    <script>
-        const menuButton = document.getElementById('menu-button');
-        const sidebar = document.getElementById('sidebar');
-        menuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
+<script>
+    const menuButton = document.getElementById('menu-button');
+    const sidebar = document.getElementById('sidebar');
+    menuButton.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
 
-        // Chart.js example for marketing effectiveness
-        const ctx = document.getElementById('reportChart').getContext('2d');
-        let reportChart = new Chart(ctx, {
-            type: 'doughnut', // Thay đổi thành biểu đồ tròn
+    const ctx = document.getElementById('reportChart').getContext('2d');
+    let reportChart;
+
+    // Mapping label cho marketing
+    const labelMapping = {
+        friend: 'Người quen giới thiệu',
+        facebook: 'Facebook',
+        tiktok: 'Tiktok',
+        google: 'Tìm kiếm trên Google',
+        youtube: 'Quảng cáo Youtube',
+        website: 'Website/Blog khác',
+        other: 'Khác'
+    };
+
+    // 🧮 Dữ liệu giả cho thống kê chi phí
+    const expenseData = {
+        month: {
+            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+            values: [12000000, 15000000, 11000000, 18000000, 20000000, 22000000]
+        },
+        quarter: {
+            labels: ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'],
+            values: [45000000, 50000000, 60000000, 55000000]
+        },
+        year: {
+            labels: ['2021', '2022', '2023', '2024', '2025'],
+            values: [120000000, 135000000, 150000000, 170000000, 200000000]
+        }
+    };
+
+    // Hàm vẽ biểu đồ marketing (doughnut)
+    async function loadMarketingData() {
+        const res = await fetch('/manager/report/api/marketing');
+        const data = await res.json();
+
+        const labels = Object.keys(data).map(key => labelMapping[key] || key);
+        const values = Object.values(data);
+
+        if (reportChart) reportChart.destroy();
+
+        reportChart = new Chart(ctx, {
+            type: 'doughnut',
             data: {
-                labels: ['Mạng xã hội (Facebook, Tiktok)', 'Quảng cáo Google', 'Người quen giới thiệu', 'Website trực tiếp', 'Đối tác liên kết'],
+                labels: labels,
                 datasets: [{
                     label: 'Nguồn khách hàng',
-                    data: [450, 300, 150, 80, 50], // Dữ liệu mẫu: số lượng khách hàng từ mỗi kênh
+                    data: values,
                     backgroundColor: [
                         'rgba(59, 130, 246, 0.7)',
                         'rgba(239, 68, 68, 0.7)',
                         'rgba(16, 185, 129, 0.7)',
                         'rgba(245, 158, 11, 0.7)',
-                        'rgba(139, 92, 246, 0.7)'
+                        'rgba(139, 92, 246, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(107, 114, 128, 0.7)'
                     ],
                     borderColor: [
                         'rgba(59, 130, 246, 1)',
                         'rgba(239, 68, 68, 1)',
                         'rgba(16, 185, 129, 1)',
                         'rgba(245, 158, 11, 1)',
-                        'rgba(139, 92, 246, 1)'
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(107, 114, 128, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -173,28 +215,86 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'center' // Căn giữa các mục chú thích
-                    },
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed !== null) {
-                                    label += context.parsed + ' khách';
-                                }
-                                return label;
+                            label: function (context) {
+                                return `${context.label}: ${context.parsed} khách`;
                             }
                         }
                     }
                 }
             }
         });
-    </script>
+    }
+
+    // Hàm vẽ biểu đồ chi phí (bar chart)
+    function loadExpenseData(type = 'month') {
+        const data = expenseData[type];
+
+        if (reportChart) reportChart.destroy();
+
+        reportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Tổng chi phí (VNĐ)',
+                    data: data.values,
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                // format số tiền có dấu phẩy
+                                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+                                    .format(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + ' ₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Bắt sự kiện đổi loại report
+    const reportTypeSelect = document.getElementById('report-type');
+    reportTypeSelect.addEventListener('change', (e) => {
+        const type = e.target.value;
+        const chartTitle = document.getElementById('chart-title');
+
+        if (type === 'marketing') {
+            chartTitle.textContent = "Biểu đồ thống kê hiệu quả marketing theo nguồn khách hàng";
+            loadMarketingData();
+        } else if (type === 'expense') {
+            chartTitle.textContent = "Biểu đồ thống kê tổng chi phí theo tháng (dữ liệu giả lập)";
+            loadExpenseData('month'); // mặc định theo tháng
+        }
+    });
+
+    // Load mặc định khi vào trang
+    window.addEventListener('DOMContentLoaded', loadMarketingData);
+</script>
+
+
 </body>
 </html>
 

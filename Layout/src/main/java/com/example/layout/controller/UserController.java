@@ -1,5 +1,6 @@
 package com.example.layout.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.layout.entity.User;
+import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.service.EmailService;
 import com.example.layout.service.UserService;
+import com.example.layout.entity.KhachHang;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -20,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private KhachHangRepository khachHangRepository;
     @Autowired
     private EmailService emailService;
    
@@ -41,7 +46,12 @@ public class UserController {
         	if (user.getMaVaiTro() == 1)
         		return "redirect:/manager/home";
         	else
-        		return "redirect:/home";
+        	{
+        		KhachHang kh = khachHangRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
+        		if (kh != null)
+        			return "redirect:/home";
+        		else return "redirect:/get-info";
+        	}
         } else {
         	redirectAttributes.addFlashAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
             return "redirect:/login";
@@ -170,5 +180,30 @@ public class UserController {
     {
     	session.invalidate();
     	return "redirect:/login";
+    }
+    
+    @GetMapping("/get-info")
+    public String showGetInfoForm()
+    {
+    	return "get_info";
+    }
+    
+    @PostMapping("/do-get-info")
+    public String handleGetInfo(@RequestParam String address,
+    							@RequestParam LocalDate birth_date,
+    							@RequestParam String gender,
+    							@RequestParam String source,
+    							HttpSession session)
+    {
+    	User user = (User) session.getAttribute("user");
+    	KhachHang kh = new KhachHang();
+    	kh.setTaiKhoan(user);
+    	kh.setDiaChi(address);
+    	kh.setNgaySinh(birth_date);
+    	kh.setGioiTinh(gender);
+    	kh.setBietDen(source);
+    	kh.setNgayThamGia(LocalDate.now());
+    	khachHangRepository.save(kh);
+    	return "redirect:/home";
     }
 }

@@ -1,6 +1,8 @@
 package com.example.layout.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -19,18 +21,16 @@ public class KhachHang {
     private String diaChi;
 
     @Column(name = "NgaySinh")
-    @Temporal(TemporalType.DATE)
-    private Date ngaySinh;
+    private LocalDate ngaySinh;
 
     @Column(name = "GioiTinh", length = 10)
     private String gioiTinh;
-
-	@Column(name = "TenKhachHang", length = 100)
-    private String tenKhachHang;
     
     @Column (name = "NgayThamGia")
-    @Temporal(TemporalType.DATE)
-    private Date ngayThamGia;
+    private LocalDate ngayThamGia;
+    
+	@Column (name = "BietDen", length = 100)
+    private String bietDen;
 
 	public Integer getMaKhachHang() {
 		return maKhachHang;
@@ -56,11 +56,11 @@ public class KhachHang {
 		this.diaChi = diaChi;
 	}
 
-	public Date getNgaySinh() {
+	public LocalDate getNgaySinh() {
 		return ngaySinh;
 	}
 
-	public void setNgaySinh(Date ngaySinh) {
+	public void setNgaySinh(LocalDate ngaySinh) {
 		this.ngaySinh = ngaySinh;
 	}
 
@@ -71,21 +71,23 @@ public class KhachHang {
 	public void setGioiTinh(String gioiTinh) {
 		this.gioiTinh = gioiTinh;
 	}
-    public String getTenKhachHang() {
-		return tenKhachHang;
-	}
 
-	public void setTenKhachHang(String tenKhachHang) {
-		this.tenKhachHang = tenKhachHang;
-	}
-
-	public Date getNgayThamGia() {
+	public LocalDate getNgayThamGia() {
 		return ngayThamGia;
 	}
 
-	public void setNgayThamGia(Date ngayThamGia) {
+	public void setNgayThamGia(LocalDate ngayThamGia) {
 		this.ngayThamGia = ngayThamGia;
 	}
+	
+    public String getBietDen() {
+		return bietDen;
+	}
+
+	public void setBietDen(String bietDen) {
+		this.bietDen = bietDen;
+	}
+
     // Getters and setters
 
 

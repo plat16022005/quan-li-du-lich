@@ -3,6 +3,7 @@ package com.example.layout.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -40,24 +41,28 @@ public class ChuyenDuLich {
     @JoinColumn(name = "MaTaiXe")
     private Nhanvien taiXe;
 
-    @ManyToMany
-    @JoinTable(
-        name = "Chuyen_KhachSan",
-        joinColumns = @JoinColumn(name = "MaChuyen"),
-        inverseJoinColumns = @JoinColumn(name = "MaKhachSan")
-    )
-    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
-    private Set<KhachSan> khachSans;
-
-    @ManyToMany
-    @JoinTable(
-        name = "Chuyen_PhuongTien",
-        joinColumns = @JoinColumn(name = "MaChuyen"),
-        inverseJoinColumns = @JoinColumn(name = "MaPhuongTien")
-    )
-    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
-    private Set<PhuongTien> phuongTiens;
-
+	@Column(name = "GiaThueHDV", precision = 18, scale = 2)
+    private BigDecimal giaThueHDV;
+	@Column(name = "GiaThueTX", precision = 18, scale = 2)
+    private BigDecimal giaThueTX;
+//    @ManyToMany
+//    @JoinTable(
+//        name = "Chuyen_KhachSan",
+//        joinColumns = @JoinColumn(name = "MaChuyen"),
+//        inverseJoinColumns = @JoinColumn(name = "MaKhachSan")
+//    )
+//    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
+//    private Set<KhachSan> khachSans;
+//
+//    @ManyToMany
+//    @JoinTable(
+//        name = "Chuyen_PhuongTien",
+//        joinColumns = @JoinColumn(name = "MaChuyen"),
+//        inverseJoinColumns = @JoinColumn(name = "MaPhuongTien")
+//    )
+//    @JsonIgnore  // 🛑 Tránh lazy load khi trả JSON
+//    private Set<PhuongTien> phuongTiens;
+    
     // ===================== GETTERS & SETTERS =====================
 
     public Integer getMaChuyen() {
@@ -123,20 +128,34 @@ public class ChuyenDuLich {
     public void setTaiXe(Nhanvien taiXe) {
         this.taiXe = taiXe;
     }
+	public BigDecimal getGiaThueHDV() {
+		return giaThueHDV;
+	}
 
-    public Set<KhachSan> getKhachSans() {
-        return khachSans;
-    }
+	public void setGiaThueHDV(BigDecimal giaThueHDV) {
+		this.giaThueHDV = giaThueHDV;
+	}
 
-    public void setKhachSans(Set<KhachSan> khachSans) {
-        this.khachSans = khachSans;
-    }
+	public BigDecimal getGiaThueTX() {
+		return giaThueTX;
+	}
 
-    public Set<PhuongTien> getPhuongTiens() {
-        return phuongTiens;
-    }
-
-    public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
-        this.phuongTiens = phuongTiens;
-    }
+	public void setGiaThueTX(BigDecimal giaThueTX) {
+		this.giaThueTX = giaThueTX;
+	}
+//    public Set<KhachSan> getKhachSans() {
+//        return khachSans;
+//    }
+//
+//    public void setKhachSans(Set<KhachSan> khachSans) {
+//        this.khachSans = khachSans;
+//    }
+//
+//    public Set<PhuongTien> getPhuongTiens() {
+//        return phuongTiens;
+//    }
+//
+//    public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
+//        this.phuongTiens = phuongTiens;
+//    }
 }
