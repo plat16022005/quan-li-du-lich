@@ -4,13 +4,13 @@ import com.example.layout.entity.Tour;
 import com.example.layout.repository.TourRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 public class TourService {
     private final TourRepository tourRepository;
 
