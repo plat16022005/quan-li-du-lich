@@ -9,10 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import com.example.layout.repository.DiaDiemRepository;
 import com.example.layout.repository.KhachSanRepository;
 import com.example.layout.repository.PhuongTienRepository;
-import com.example.layout.entity.Tour;
-import com.example.layout.entity.DiaDiem;
-import com.example.layout.entity.KhachSan;
-import com.example.layout.entity.PhuongTien;
+//import com.example.layout.entity.*;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +40,10 @@ public class LichTrinhController {
     @PostMapping("/add-multiple")
     public ResponseEntity<?> addMultiple(@RequestBody List<LichTrinhRequest> lichTrinhList, HttpSession session) {
         for (LichTrinhRequest req : lichTrinhList) {
-        	String maTourSession = (String) session.getAttribute("matour");
-        	Integer maTour = Integer.parseInt(maTourSession);
+            String maTourSession = (String) session.getAttribute("matour");
+            Integer maTour = Integer.parseInt(maTourSession);
             if (maTourSession == null) {
-            	System.out.println("Không thấy");
+                System.out.println("Không thấy");
                 return ResponseEntity.badRequest().body("❌ Không tìm thấy mã tour trong session");
             }
             var tour = tourRepository.findById(maTour).orElse(null);

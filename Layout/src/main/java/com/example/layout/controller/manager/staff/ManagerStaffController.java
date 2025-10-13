@@ -110,15 +110,15 @@ public class ManagerStaffController {
         nv.setTaiKhoan(taiKhoan);
         if (maVaiTro == 2)
         {
-        	nv.setChucVu("Điều hành Tour");
+            nv.setChucVu("Điều hành Tour");
         }
         else if (maVaiTro == 3)
         {
-        	nv.setChucVu("Hướng dẫn viên");
+            nv.setChucVu("Hướng dẫn viên");
         }
         else if (maVaiTro == 5)
         {
-        	nv.setChucVu("Tài xế");
+            nv.setChucVu("Tài xế");
         }
         nv.setNgayVaoLam(ngayVaoLam);
 
@@ -129,19 +129,19 @@ public class ManagerStaffController {
     @PostMapping("/staff/salary")
     @ResponseBody
     public String saveSalary(
-				            @RequestParam("maNhanVien") Integer maNhanVien,
-				            @RequestParam("luongCoBan") BigDecimal luongCoBan,
-				            @RequestParam("soNgayLam") Integer soNgayLam,
-				            @RequestParam("phuCap") BigDecimal phuCap
-				    		) 
+                                @RequestParam("maNhanVien") Integer maNhanVien,
+                                @RequestParam("luongCoBan") BigDecimal luongCoBan,
+                                @RequestParam("soNgayLam") Integer soNgayLam,
+                                @RequestParam("phuCap") BigDecimal phuCap
+                                ) 
     {
-    	System.out.println("ID nhận được từ front-end: " + maNhanVien);
+        System.out.println("ID nhận được từ front-end: " + maNhanVien);
         Nhanvien nv = nhanvienRepository.findById(maNhanVien).orElse(null);
         
         if (nv == null) 
         {
-        	System.out.println("Lỗi nè");
-        	return "error";
+            System.out.println("Lỗi nè");
+            return "error";
         }
 
         // 💰 Tính lương cơ bản mới

@@ -1,11 +1,11 @@
 package com.example.layout.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
+//import java.util.Set;
 
 @Entity
 @Table(name = "ChuyenDuLich")
