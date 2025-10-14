@@ -1,461 +1,620 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trang Quản Trị - Phản Hồi Khách Hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
         .sidebar {
-            transition: transform 0.3s ease-in-out;
+          transform: translateX(-100%);
         }
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
+        .sidebar.open {
+          transform: translateX(0);
         }
-        .modal {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .modal-content {
-            transition: transform 0.3s ease;
-        }
-        .modal.hidden .modal-content {
-            transform: translateY(-50px);
-        }
+      }
+      .modal {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .modal.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+      .modal.hidden .modal-content {
+        transform: translateY(-50px);
+      }
     </style>
-</head>
-<body class="bg-gray-100">
+  </head>
+  <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
-            <div class="flex items-center justify-center h-20 border-b border-gray-700">
-                <i class="fas fa-route text-3xl text-blue-400"></i>
-                <span class="ml-3 text-2xl font-bold">TravelGO</span>
-            </div>
-            <nav class="mt-8 px-4">
-                <a href="/manager/home" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
-                    <span class="ml-4">Tổng quan</span>
-                </a>
-                <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-map-marked-alt w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Tour</span>
-                </a>
-                <a href="/manager/guest" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
-                    <i class="fas fa-users w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Khách hàng</span>
-                </a>
-                <a href="/manager/staff" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-user-tie w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Nhân viên</span>
-                </a>
-                <a href="/manager/promotion" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-tags w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Khuyến mãi</span>
-                </a>
-                <a href="/manager/report" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-chart-pie w-6 text-center"></i>
-                    <span class="ml-4">Xuất báo cáo</span>
-                </a>
-            </nav>
-            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
-                 <a href="/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-sign-out-alt w-6 text-center"></i>
-                    <span class="ml-4">Đăng xuất</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main content -->
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            <!-- Header -->
-             <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20">
-                <div class="flex items-center">
-                    <button id="menu-button" class="md:hidden mr-4 text-gray-600">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                    <h1 class="text-2xl font-semibold text-gray-800">Danh Sách & Phản Hồi Khách Hàng</h1>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <div class="flex items-center">
-                        <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ" alt="Avatar" class="h-10 w-10 rounded-full object-cover">
-                        <div class="ml-3">
-                            <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
-                            <p class="text-xs text-gray-500">Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content -->
-            <main class="flex-1 p-6">
-                <!-- Action bar -->
-                <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-                    <div class="flex items-center space-x-4 w-full">
-						<div class="relative flex-grow">
-						  <input type="text" 
-						         id="search-input"
-						         class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" 
-						         placeholder="Tìm kiếm khách hàng...">
-						  <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-						    <i class="fas fa-search text-gray-400"></i>
-						  </span>
-						</div>
-                    </div>
-                </div>
-
-                <!-- Customers Table -->
-                <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-4">Khách Hàng</th>
-                                <th scope="col" class="px-6 py-4">Email</th>
-                                <th scope="col" class="px-6 py-4">Số điện thoại</th>
-                                <th scope="col" class="px-6 py-4">Số phản hồi</th>
-                                <th scope="col" class="px-6 py-4 text-center">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-white border-b hover:bg-gray-50">
-                                <td class="px-6 py-4 font-semibold text-gray-900">
-                                    <div class="flex items-center">
-                                        <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/40x40/9CA3AF/FFFFFF?text=VA" alt="Avatar">
-                                        Nguyễn Văn An
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">nguyen.van.an@email.com</td>
-                                <td class="px-6 py-4">090xxxx123</td>
-                                <td class="px-6 py-4 font-semibold">25,500,000₫</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 font-semibold leading-tight text-amber-700 bg-amber-100 rounded-full">VIP</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-									<button 
-									  class="view-feedback-btn text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
-									  title="Xem chi tiết và phản hồi"
-									  onclick="openFeedbackModal(1)"> <!-- 1 là ID khách hàng -->
-									  <i class="fas fa-eye mr-2"></i>Xem Phản Hồi
-									</button>
-                                </td>
-                            </tr>
-                             <tr class="bg-white border-b hover:bg-gray-50">
-                                <td class="px-6 py-4 font-semibold text-gray-900">
-                                    <div class="flex items-center">
-                                        <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/40x40/A78BFA/FFFFFF?text=TB" alt="Avatar">
-                                        Trần Thị Bình
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">tran.thi.binh@email.com</td>
-                                <td class="px-6 py-4">091xxxx456</td>
-                                <td class="px-6 py-4 font-semibold">12,200,000₫</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 font-semibold leading-tight text-violet-700 bg-violet-100 rounded-full">Thân thiết</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                     <button class="view-feedback-btn text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition" title="Xem chi tiết và phản hồi">
-                                        <i class="fas fa-eye mr-2"></i>Xem Phản Hồi
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr class="bg-white hover:bg-gray-50">
-                                <td class="px-6 py-4 font-semibold text-gray-900">
-                                    <div class="flex items-center">
-                                        <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/40x40/6EE7B7/FFFFFF?text=LC" alt="Avatar">
-                                        Lê Văn Cường
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">le.van.cuong@email.com</td>
-                                <td class="px-6 py-4">098xxxx789</td>
-                                <td class="px-6 py-4 font-semibold">4,500,000₫</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 font-semibold leading-tight text-teal-700 bg-teal-100 rounded-full">Mới</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-									<button 
-									  class="view-feedback-btn text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
-									  title="Xem chi tiết và phản hồi"
-									  onclick="openFeedbackModal(1)">
-									  <i class="fas fa-eye mr-2"></i>Xem Phản Hồi
-									</button>
-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="flex items-center justify-between mt-6">
-                    <span class="text-sm text-gray-700">
-                    </span>
-					<div class="flex items-center justify-between mt-4">
-					  <p id="pagination-info" class="text-sm text-gray-500"></p>
-					  <div>
-					    <button id="prev-page" class="px-3 py-1 border rounded-l">Trước</button>
-					    <button id="next-page" class="px-3 py-1 border rounded-r">Sau</button>
-					  </div>
-					</div>
-                </div>
-            </main>
+      <!-- Sidebar -->
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
         </div>
+        <nav class="mt-8 px-4">
+          <a
+            href="/manager/home"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i>
+            <span class="ml-4">Tổng quan</span>
+          </a>
+          <a
+            href="/manager/tour"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i>
+            <span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a
+            href="/manager/guest"
+            class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-users w-6 text-center"></i>
+            <span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a
+            href="/manager/staff"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-user-tie w-6 text-center"></i>
+            <span class="ml-4">Quản lý Nhân viên</span>
+          </a>
+          <a
+            href="/manager/promotion"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-tags w-6 text-center"></i>
+            <span class="ml-4">Quản lý Khuyến mãi</span>
+          </a>
+          <a
+            href="/manager/report"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i>
+            <span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+          <a
+            href="/logout"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Header -->
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20"
+        >
+          <div class="flex items-center">
+            <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <h1 class="text-2xl font-semibold text-gray-800">
+              Danh Sách & Phản Hồi Khách Hàng
+            </h1>
+          </div>
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ"
+                alt="Avatar"
+                class="h-10 w-10 rounded-full object-cover"
+              />
+              <div class="ml-3">
+                <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
+                <p class="text-xs text-gray-500">Admin</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 p-6">
+          <!-- Action bar -->
+          <div
+            class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <div class="relative flex-grow">
+                <input
+                  type="text"
+                  id="search-input"
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                  placeholder="Tìm kiếm khách hàng..."
+                />
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <i class="fas fa-search text-gray-400"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customers Table -->
+          <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-600">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-4">Khách Hàng</th>
+                  <th scope="col" class="px-6 py-4">Email</th>
+                  <th scope="col" class="px-6 py-4">Số điện thoại</th>
+                  <th scope="col" class="px-6 py-4">Địa chỉ</th>
+                  <th scope="col" class="px-6 py-4">Ngày tham gia</th>
+                  <th scope="col" class="px-6 py-4 text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="customer : ${customers}"
+                  class="bg-white border-b hover:bg-gray-50"
+                >
+                  <td class="px-6 py-4 font-semibold text-gray-900">
+                    <div class="flex items-center">
+                      <div
+                        th:class="|h-10 w-10 flex items-center justify-center rounded-full text-white font-bold mr-3 ${@themeUtils.getColorFromName(customer.taiKhoan.hoTen)}|"
+                      >
+                        <span
+                          th:text="${@themeUtils.getInitials(customer.taiKhoan.hoTen)}"
+                        ></span>
+                      </div>
+                      <span th:text="${customer.taiKhoan.hoTen}"></span>
+                    </div>
+                  </td>
+                  <td
+                    class="px-6 py-4"
+                    th:text="${customer.taiKhoan.email}"
+                  ></td>
+                  <td
+                    class="px-6 py-4"
+                    th:text="${customer.taiKhoan.soDienThoai}"
+                  ></td>
+                  <td class="px-6 py-4" th:text="${customer.diaChi}"></td>
+                  <td
+                    class="px-6 py-4"
+                    th:text="${#temporals.format(customer.ngayThamGia, 'dd/MM/yyyy')}"
+                  ></td>
+                  <td class="px-6 py-4 text-center">
+                    <button
+                      class="view-feedback-btn text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
+                      title="Xem chi tiết và phản hồi"
+                      th:onclick="|openFeedbackModal(${customer.maKhachHang})|"
+                    >
+                      <i class="fas fa-eye mr-2"></i>Xem chi tiết
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex items-center justify-between mt-6">
+            <span class="text-sm text-gray-700"> </span>
+            <div class="flex items-center justify-between mt-4">
+              <p id="pagination-info" class="text-sm text-gray-500"></p>
+              <div>
+                <button id="prev-page" class="px-3 py-1 border rounded-l">
+                  Trước
+                </button>
+                <button id="next-page" class="px-3 py-1 border rounded-r">
+                  Sau
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
 
     <!-- View Customer Detail & Feedback Modal -->
-    <div id="feedback-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-             <div class="flex justify-between items-center p-5 border-b">
-                <h2 class="text-xl font-bold text-gray-800">Chi Tiết & Phản Hồi Khách Hàng</h2>
-                <button id="close-modal-button" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-            <div class="p-6 overflow-y-auto">
-                <!-- Customer Info -->
-                <div class="flex items-center pb-6 border-b">
-                    <img class="h-16 w-16 rounded-full mr-4" src="https://placehold.co/64x64/9CA3AF/FFFFFF?text=VA" alt="Avatar">
-						<div>
-						  <h3 id="modal-name" class="text-lg font-bold text-gray-900"></h3>
-						  <p id="modal-email" class="text-sm text-gray-500"></p>
-						  <p class="text-sm text-gray-500">Tham gia từ: <span id="modal-join-date"></span></p>
-						</div>
-                </div>
-                <!-- Feedback List -->
-                <div class="mt-6">
-                    <h4 class="text-md font-semibold text-gray-800 mb-4">Lịch sử phản hồi</h4>
-                    <div class="space-y-6">
-                        <!-- Feedback Item 1 -->
-                        <div class="p-4 rounded-lg bg-gray-50 border">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-semibold text-gray-800">Tour Khám phá Đà Nẵng - Hội An</h5>
-                                <span class="text-xs text-gray-500">28/09/2025</span>
-                            </div>
-                            <div class="flex items-center mb-2">
-                                <span class="text-yellow-400">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                                </span>
-                                <span class="ml-2 text-sm font-semibold text-gray-600">4/5</span>
-                            </div>
-                            <p class="text-sm text-gray-600">
-                                "Chuyến đi tuyệt vời, hướng dẫn viên nhiệt tình. Tuy nhiên, bữa ăn tối ngày thứ 2 hơi ít món. Sẽ tiếp tục ủng hộ TravelGO."
-                            </p>
-                        </div>
-                        <!-- Feedback Item 2 -->
-                        <div class="p-4 rounded-lg bg-gray-50 border">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-semibold text-gray-800">Tour Về Miền Tây Sông Nước</h5>
-                                <span class="text-xs text-gray-500">12/05/2024</span>
-                            </div>
-                            <div class="flex items-center mb-2">
-                                <span class="text-yellow-400">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </span>
-                                <span class="ml-2 text-sm font-semibold text-gray-600">5/5</span>
-                            </div>
-                            <p class="text-sm text-gray-600">
-                                "Không có gì để chê, mọi thứ đều hoàn hảo từ lịch trình, ăn uống đến khách sạn. Gia đình tôi rất hài lòng."
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-end items-center p-4 border-t bg-gray-50 rounded-b-lg">
-                <button id="done-button" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700">Xong</button>
-            </div>
+    <div
+      id="feedback-modal"
+      class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+    >
+      <div
+        class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+      >
+        <div class="flex justify-between items-center p-5 border-b">
+          <h2 class="text-xl font-bold text-gray-800">
+            Chi Tiết & Phản Hồi Khách Hàng
+          </h2>
+          <button
+            id="close-modal-button"
+            class="text-gray-400 hover:text-gray-700 text-2xl"
+          >
+            &times;
+          </button>
         </div>
-    </div>
-    
-<script>
-  const feedbackModal = document.getElementById('feedback-modal');
-  const closeModalButton = document.getElementById('close-modal-button');
-  const doneButton = document.getElementById('done-button');
-  const feedbackContainer = feedbackModal.querySelector('.space-y-6');
-
-  function openFeedbackModal(customerId) {
-	  const feedbackContainer = document.querySelector('.space-y-6');
-	  feedbackContainer.innerHTML = '<p class="text-gray-500">Đang tải phản hồi...</p>';
-
-	  // --- Lấy thông tin khách hàng ---
-	  fetch(`/manager/guest/info?customerId=${customerId}`)
-	    .then(res => res.json())
-	    .then(cus => {
-	      document.querySelector('#modal-name').innerText = cus.name || 'Không rõ';
-	      document.querySelector('#modal-email').innerText = cus.email || 'Không có email';
-	      document.querySelector('#modal-join-date').innerText = cus.createdAt || '---';
-
-	      // --- Lấy phản hồi ---
-	      fetch(`/manager/guest/feedback?customerId=${customerId}`)
-	        .then(response => response.json())
-	        .then(data => {
-	          feedbackContainer.innerHTML = '';
-	          if (data.length === 0) {
-	            feedbackContainer.innerHTML = '<p class="text-gray-500">Khách hàng này chưa có phản hồi nào.</p>';
-	          } else {
-	            data.forEach(fb => {
-	              const stars = '<i class="fas fa-star"></i>'.repeat(fb.rating) +
-	                            '<i class="far fa-star"></i>'.repeat(5 - fb.rating);
-	              feedbackContainer.innerHTML += `
-	                <div class="p-4 rounded-lg bg-gray-50 border">
-	                  <div class="flex justify-between items-center mb-2">
-	                    <h5 class="font-semibold text-gray-800">${fb.tourName}</h5>
-	                    <span class="text-xs text-gray-500">${fb.date}</span>
-	                  </div>
-	                  <div class="flex items-center mb-2">
-	                    <span class="text-yellow-400">${stars}</span>
-	                    <span class="ml-2 text-sm font-semibold text-gray-600">${fb.rating}/5</span>
-	                  </div>
-	                  <p class="text-sm text-gray-600">"${fb.comment}"</p>
-	                </div>`;
-	            });
-	          }
-	          feedbackModal.classList.remove('hidden');
-	        });
-	    });
-	}
-
-
-  const closeModal = () => feedbackModal.classList.add('hidden');
-  closeModalButton.addEventListener('click', closeModal);
-  doneButton.addEventListener('click', closeModal);
-  feedbackModal.addEventListener('click', (event) => {
-    if (event.target === feedbackModal) closeModal();
-  });
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch('/manager/guest/with-feedback')
-      .then(response => response.json())
-      .then(data => {
-        const tbody = document.querySelector('table tbody');
-        tbody.innerHTML = '';
-
-        if (data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">
-            Chưa có khách hàng nào phản hồi
-          </td></tr>`;
-        } else {
-          data.forEach(cus => {
-            tbody.innerHTML += `
-              <tr class="bg-white border-b hover:bg-gray-50">
-                  <td class="px-6 py-4 font-semibold text-gray-900">
-                      <div class="flex items-center">
-	                      <div class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold mr-3 ${getColorFromName(cus.name)}">
-	                     		 ${getInitials(cus.name)}
-	                  	  </div>
-                          ${cus.name}
-                      </div>
-                  </td>
-                  <td class="px-6 py-4">${cus.email}</td>
-                  <td class="px-6 py-4">${cus.phone}</td>
-                  <td class="px-6 py-4 font-semibold">${cus.totalFeedback} phản hồi</td>
-                  <td class="px-6 py-4 text-center">
-                      <button class="text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
-                              onclick="openFeedbackModal(${cus.customerId})">
-                          <i class="fas fa-eye mr-2"></i>Xem phản hồi
-                      </button>
-                  </td>
-              </tr>`;
-          });
-        }
-      });
-  });
-</script>
-<script>
-function getInitials(name) {
-  if (!name) return '?';
-  const words = name.trim().split(/\s+/);
-  let initials = '';
-  if (words.length === 1) {
-    initials = words[0].charAt(0);
-  } else {
-    initials = words[0].charAt(0) + words[words.length - 1].charAt(0);
-  }
-  return initials.toUpperCase();
-}
-function getColorFromName(name) {
-	  const colors = ['bg-blue-500','bg-green-500','bg-red-500','bg-yellow-500','bg-indigo-500','bg-teal-500','bg-pink-500'];
-	  let hash = 0;
-	  for (let i = 0; i < name.length; i++) {
-	    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-	  }
-	  const index = Math.abs(hash % colors.length);
-	  return colors[index];
-	}
-
-</script>
-<script>
-let currentPage = 0;
-const pageSize = 10;
-
-function loadCustomers(page = 0) {
-  fetch(`/manager/guest/with-feedback?page=${page}&size=${pageSize}`)
-    .then(response => response.json())
-    .then(data => {
-      const tbody = document.querySelector('table tbody');
-      tbody.innerHTML = '';
-
-      data.content.forEach(cus => {
-        tbody.innerHTML += `
-          <tr class="bg-white border-b hover:bg-gray-50">
-            <td class="px-6 py-4 font-semibold text-gray-900">
-                <div class="flex items-center">
-                    <div class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold mr-3 ${getColorFromName(cus.name)}">
-                        ${getInitials(cus.name)}
-                    </div>
-                    ${cus.name}
+        <div class="p-6 overflow-y-auto">
+          <!-- Customer Info -->
+          <div class="flex items-center pb-6 border-b">
+            <img
+              class="h-16 w-16 rounded-full mr-4"
+              src="https://placehold.co/64x64/9CA3AF/FFFFFF?text=VA"
+              alt="Avatar"
+            />
+            <div>
+              <h3 id="modal-name" class="text-lg font-bold text-gray-900"></h3>
+              <p id="modal-email" class="text-sm text-gray-500"></p>
+              <p class="text-sm text-gray-500">
+                Tham gia từ: <span id="modal-join-date"></span>
+              </p>
+            </div>
+          </div>
+          <!-- Feedback List -->
+          <div class="mt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4">
+              Lịch sử phản hồi
+            </h4>
+            <div class="space-y-6">
+              <!-- Feedback Item 1 -->
+              <div class="p-4 rounded-lg bg-gray-50 border">
+                <div class="flex justify-between items-center mb-2">
+                  <h5 class="font-semibold text-gray-800">
+                    Tour Khám phá Đà Nẵng - Hội An
+                  </h5>
+                  <span class="text-xs text-gray-500">28/09/2025</span>
                 </div>
-            </td>
-            <td class="px-6 py-4">${cus.email}</td>
-            <td class="px-6 py-4">${cus.phone || ''}</td>
-            <td class="px-6 py-4 font-semibold">${cus.totalFeedback} phản hồi</td>
+                <div class="flex items-center mb-2">
+                  <span class="text-yellow-400">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i
+                    ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                    ><i class="far fa-star"></i>
+                  </span>
+                  <span class="ml-2 text-sm font-semibold text-gray-600"
+                    >4/5</span
+                  >
+                </div>
+                <p class="text-sm text-gray-600">
+                  "Chuyến đi tuyệt vời, hướng dẫn viên nhiệt tình. Tuy nhiên,
+                  bữa ăn tối ngày thứ 2 hơi ít món. Sẽ tiếp tục ủng hộ
+                  TravelGO."
+                </p>
+              </div>
+              <!-- Feedback Item 2 -->
+              <div class="p-4 rounded-lg bg-gray-50 border">
+                <div class="flex justify-between items-center mb-2">
+                  <h5 class="font-semibold text-gray-800">
+                    Tour Về Miền Tây Sông Nước
+                  </h5>
+                  <span class="text-xs text-gray-500">12/05/2024</span>
+                </div>
+                <div class="flex items-center mb-2">
+                  <span class="text-yellow-400">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i
+                    ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                    ><i class="fas fa-star"></i>
+                  </span>
+                  <span class="ml-2 text-sm font-semibold text-gray-600"
+                    >5/5</span
+                  >
+                </div>
+                <p class="text-sm text-gray-600">
+                  "Không có gì để chê, mọi thứ đều hoàn hảo từ lịch trình, ăn
+                  uống đến khách sạn. Gia đình tôi rất hài lòng."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex justify-end items-center p-4 border-t bg-gray-50 rounded-b-lg"
+        >
+          <button
+            id="done-button"
+            class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Xong
+          </button>
+        </div>
+      </div>
+    </div>
 
-            <td class="px-6 py-4 text-center">
-                <button class="text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
-                        onclick="openFeedbackModal(${cus.customerId})">
-                    <i class="fas fa-eye mr-2"></i>Xem phản hồi
-                </button>
+    <script>
+      const feedbackModal = document.getElementById("feedback-modal");
+      const closeModalButton = document.getElementById("close-modal-button");
+      const doneButton = document.getElementById("done-button");
+      const feedbackContainer = feedbackModal.querySelector(".space-y-6");
+
+      function openFeedbackModal(customerId) {
+        if (!customerId) {
+          console.error("Invalid customer ID");
+          return;
+        }
+
+        const modal = document.getElementById("feedback-modal");
+        const feedbackContainer = modal.querySelector(".space-y-6");
+        const modalName = document.querySelector("#modal-name");
+        const modalEmail = document.querySelector("#modal-email");
+        const modalJoinDate = document.querySelector("#modal-join-date");
+
+        // Show loading state
+        feedbackContainer.innerHTML = `
+    <div class="flex items-center justify-center p-4">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <span class="ml-2 text-gray-500">Đang tải dữ liệu...</span>
+    </div>`;
+
+        modal.classList.remove("hidden");
+
+        // Load customer info and feedback in parallel
+        Promise.all([
+          fetch(`/manager/guest/info?customerId=${customerId}`).then((res) =>
+            res.json()
+          ),
+          fetch(`/manager/guest/feedback?customerId=${customerId}`).then(
+            (res) => res.json()
+          ),
+        ])
+          .then(([customerInfo, feedbackData]) => {
+            // Update customer info
+            modalName.textContent = customerInfo.name || "Không rõ tên";
+            modalEmail.textContent = customerInfo.email || "Không có email";
+            modalJoinDate.textContent = customerInfo.createdAt || "---";
+
+            // Update feedback list
+            feedbackContainer.innerHTML = "";
+
+            if (!feedbackData || feedbackData.length === 0) {
+              feedbackContainer.innerHTML = `
+        <div class="p-4 text-center">
+          <i class="fas fa-comment-slash text-gray-400 text-3xl mb-2"></i>
+          <p class="text-gray-500">Khách hàng này chưa có phản hồi nào.</p>
+        </div>`;
+              return;
+            }
+
+            feedbackData.forEach((fb) => {
+              const stars =
+                '<i class="fas fa-star"></i>'.repeat(fb.rating || 0) +
+                '<i class="far fa-star"></i>'.repeat(5 - (fb.rating || 0));
+
+              const feedbackEl = document.createElement("div");
+              feedbackEl.className =
+                "p-4 rounded-lg bg-gray-50 border hover:bg-gray-100 transition-colors";
+              feedbackEl.innerHTML = `
+        <div class="flex justify-between items-center mb-2">
+          <h5 class="font-semibold text-gray-800">${
+            fb.tourName || "Không có tên tour"
+          }</h5>
+          <span class="text-xs text-gray-500">${
+            formatDate(fb.date) || "---"
+          }</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="text-yellow-400">${stars}</span>
+          <span class="ml-2 text-sm font-semibold text-gray-600">${
+            fb.rating || 0
+          }/5</span>
+        </div>
+        <p class="text-sm text-gray-600">${
+          fb.comment ? `"${fb.comment}"` : "Không có nội dung"
+        }</p>`;
+
+              feedbackContainer.appendChild(feedbackEl);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading feedback:", error);
+            feedbackContainer.innerHTML = `
+      <div class="p-4 text-center text-red-500">
+        <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+        <p>Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.</p>
+      </div>`;
+          });
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return "---";
+        try {
+          const date = new Date(dateStr);
+          return date
+            .toLocaleDateString("vi-VN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+            .replace(",", "");
+        } catch (e) {
+          console.error("Error formatting date:", e);
+          return dateStr;
+        }
+      }
+
+      const closeModal = () => feedbackModal.classList.add("hidden");
+      closeModalButton.addEventListener("click", closeModal);
+      doneButton.addEventListener("click", closeModal);
+      feedbackModal.addEventListener("click", (event) => {
+        if (event.target === feedbackModal) closeModal();
+      });
+    </script>
+
+    <script>
+      // menu button null-safety and active link highlighting
+      (() => {
+        try {
+          const menuButton = document.getElementById("menu-button");
+          const sidebar = document.getElementById("sidebar");
+          if (menuButton && sidebar)
+            menuButton.addEventListener("click", () =>
+              sidebar.classList.toggle("open")
+            );
+
+          const links = Array.from(
+            document.querySelectorAll("aside#sidebar a")
+          );
+          const path = window.location.pathname.replace(/\/$/, "");
+          links.forEach((a) => {
+            const href = (a.getAttribute("href") || "").replace(/\/$/, "");
+            if (href === path) {
+              a.classList.remove("text-gray-300");
+              a.classList.add("bg-gray-700", "text-white");
+            }
+          });
+        } catch (e) {
+          console.warn(e);
+        }
+      })();
+    </script>
+    <!-- Removed duplicate initial load script that expected an array. The paged API returns an object with `content` --- use the paged loader `loadCustomers` below. -->
+    <script>
+      function getInitials(name) {
+        if (!name) return "?";
+        const words = name.trim().split(/\s+/);
+        let initials = "";
+        if (words.length === 1) {
+          initials = words[0].charAt(0);
+        } else {
+          initials = words[0].charAt(0) + words[words.length - 1].charAt(0);
+        }
+        return initials.toUpperCase();
+      }
+      function getColorFromName(name) {
+        const colors = [
+          "bg-blue-500",
+          "bg-green-500",
+          "bg-red-500",
+          "bg-yellow-500",
+          "bg-indigo-500",
+          "bg-teal-500",
+          "bg-pink-500",
+        ];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+          hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash % colors.length);
+        return colors[index];
+      }
+    </script>
+    <script>
+      let currentPage = 0;
+      const pageSize = 10;
+
+      function loadCustomers(page = 0) {
+        fetch(`/manager/guest/with-feedback?page=${page}&size=${pageSize}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const tbody = document.querySelector("table tbody");
+            tbody.innerHTML = "";
+
+            if (!data.content || data.content.length === 0) {
+              tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+              Không tìm thấy dữ liệu phản hồi nào
             </td>
           </tr>`;
+              return;
+            }
+
+            data.content.forEach((cus) => {
+              const tr = document.createElement("tr");
+              tr.className = "bg-white border-b hover:bg-gray-50";
+              tr.innerHTML = `
+          <td class="px-6 py-4 font-semibold text-gray-900">
+              <div class="flex items-center">
+                  <div class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold mr-3 ${getColorFromName(
+                    cus.name
+                  )}">
+                      ${getInitials(cus.name)}
+                  </div>
+                  ${cus.name || "Không có tên"}
+              </div>
+          </td>
+          <td class="px-6 py-4">${cus.email || "Không có email"}</td>
+          <td class="px-6 py-4">${cus.phone || "Không có SĐT"}</td>
+          <td class="px-6 py-4">${cus.address || "Không có địa chỉ"}</td>
+          <td class="px-6 py-4">${cus.joinDate || "---"}</td>
+          <td class="px-6 py-4 text-center">
+              <button class="view-feedback-btn text-blue-600 hover:text-blue-800 text-base py-1 px-3 rounded-lg bg-blue-100 hover:bg-blue-200 transition">
+                  <i class="fas fa-eye mr-2"></i>Xem phản hồi
+              </button>
+          </td>`;
+
+              // Add click event listener to the feedback button
+              const feedbackBtn = tr.querySelector(".view-feedback-btn");
+              feedbackBtn.addEventListener("click", () => {
+                openFeedbackModal(cus.customerId);
+              });
+
+              tbody.appendChild(tr);
+            });
+
+            // Update pagination info
+            const start = page * pageSize + 1;
+            const end = start + data.content.length - 1;
+            document.getElementById(
+              "pagination-info"
+            ).textContent = `Hiển thị ${start} đến ${end} trong tổng số ${data.totalElements} kết quả`;
+
+            const prevBtn = document.getElementById("prev-page");
+            const nextBtn = document.getElementById("next-page");
+            prevBtn.disabled = page === 0;
+            prevBtn.classList.toggle("opacity-50", page === 0);
+            nextBtn.disabled = page >= data.totalPages - 1;
+            nextBtn.classList.toggle("opacity-50", page >= data.totalPages - 1);
+
+            currentPage = page;
+          })
+          .catch((error) => {
+            console.error("Error loading customers:", error);
+            const tbody = document.querySelector("table tbody");
+            tbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="px-6 py-4 text-center text-red-500">
+            Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.
+          </td>
+        </tr>`;
+          });
+      }
+
+      // nút chuyển trang
+      document.getElementById("prev-page").addEventListener("click", () => {
+        if (currentPage > 0) loadCustomers(currentPage - 1);
       });
 
-      // cập nhật phân trang
-      document.getElementById('pagination-info').innerText = 
-        `Hiển thị ${page * pageSize + 1} tới ${page * pageSize + data.content.length} của ${data.totalElements} kết quả`;
+      document.getElementById("next-page").addEventListener("click", () => {
+        loadCustomers(currentPage + 1);
+      });
 
-      document.getElementById('prev-page').disabled = page === 0;
-      document.getElementById('next-page').disabled = page >= data.totalPages - 1;
-
-      currentPage = page;
-    });
-}
-
-// nút chuyển trang
-document.getElementById('prev-page').addEventListener('click', () => {
-  if (currentPage > 0) loadCustomers(currentPage - 1);
-});
-
-document.getElementById('next-page').addEventListener('click', () => {
-  loadCustomers(currentPage + 1);
-});
-
-// tải lần đầu
-document.addEventListener('DOMContentLoaded', () => loadCustomers(0));
-
-</script>
-
-</body>
+      // tải lần đầu
+      document.addEventListener("DOMContentLoaded", () => loadCustomers(0));
+    </script>
+  </body>
 </html>
-

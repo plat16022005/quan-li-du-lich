@@ -7,6 +7,7 @@ import com.example.layout.service.TourService;
 import com.example.layout.service.ChuyenDuLichService;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class ManagerTourController {
 
     private final TourService tourService;
     private final ChuyenDuLichService chuyenDuLichService;
-
+    
     public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
@@ -40,7 +41,8 @@ public class ManagerTourController {
     @GetMapping("/tour")
     public String showTourForm(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        // Cho phép Admin (1) hoặc Quản lý tour (2)
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
             return "redirect:/access-denied";
         }
 
@@ -60,7 +62,43 @@ public class ManagerTourController {
         model.addAttribute("tours", tours);
         model.addAttribute("nearestChuyens", nearestChuyens);
         model.addAttribute("participantCounts", participantCounts);
+        model.addAttribute("currentUser", user);
         return "manager/tour";
+    }
+
+    @Autowired
+    private com.example.layout.repository.DatChoRepository datChoRepository;
+
+    @GetMapping("/tour/{maTour}/bookings")
+    @ResponseBody
+    public ResponseEntity<?> getBookingsByTour(@PathVariable Integer maTour, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return ResponseEntity.status(403).body("Không có quyền");
+        }
+
+        List<com.example.layout.entity.DatCho> bookings = datChoRepository.findByTourMaTour(maTour);
+
+        // Map to lightweight DTO
+        List<java.util.Map<String, Object>> response = bookings.stream().map(dc -> {
+            java.util.Map<String, Object> m = new java.util.HashMap<>();
+            m.put("maDatCho", dc.getMaDatCho());
+            if (dc.getKhachHang() != null && dc.getKhachHang().getTaiKhoan() != null) {
+                m.put("tenKhach", dc.getKhachHang().getTaiKhoan().getHoTen());
+                m.put("email", dc.getKhachHang().getTaiKhoan().getEmail());
+                m.put("phone", dc.getKhachHang().getTaiKhoan().getSoDienThoai());
+            } else {
+                m.put("tenKhach", "Khách ẩn");
+                m.put("email", "");
+                m.put("phone", "");
+            }
+            m.put("ngayDat", dc.getNgayDat());
+            int total = dc.getChiTietDatChos() == null ? 0 : dc.getChiTietDatChos().stream().mapToInt(ct -> ct.getSoLuong() == null ? 0 : ct.getSoLuong()).sum();
+            m.put("soLuong", total);
+            return m;
+        }).toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/tour/upload-image")
@@ -269,7 +307,7 @@ public class ManagerTourController {
     public String showTourDetailForm(@PathVariable("maTour") String maTour,HttpSession session)
     {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
             return "redirect:/access-denied";
         }
     	session.setAttribute("matour", maTour);

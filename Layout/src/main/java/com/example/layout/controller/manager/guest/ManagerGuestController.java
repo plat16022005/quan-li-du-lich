@@ -48,10 +48,10 @@ public class ManagerGuestController {
 	    List<Map<String, Object>> response = new ArrayList<>();
 	    for (PhanHoi ph : phanHois) {
 	        Map<String, Object> item = new HashMap<>();
-	        item.put("tourName", ph.getTour().getTenTour());
+	        item.put("tourName", ph.getTour() != null ? ph.getTour().getTenTour() : "Tour đã xóa");
 	        item.put("comment", ph.getNoiDung());
 	        item.put("rating", ph.getDanhGia());
-	        item.put("date", ph.getNgayTao().toString());
+	        item.put("date", ph.getNgayTao() != null ? ph.getNgayTao().toString() : null);
 	        response.add(item);
 	    }
 
@@ -63,20 +63,26 @@ public class ManagerGuestController {
 	        @RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "10") int size) {
 
-	    // Lấy danh sách phản hồi
+	    // Lấy danh sách phản hồi và thông tin khách hàng
 	    List<PhanHoi> phanHois = phanHoiRepository.findAll();
-
-	    // Map để gom phản hồi theo khách hàng
 	    Map<Integer, Map<String, Object>> customersMap = new HashMap<>();
 
 	    for (PhanHoi ph : phanHois) {
-	        Integer id = ph.getKhachHang().getMaKhachHang();
+	        KhachHang kh = ph.getKhachHang();
+	        if (kh == null) continue;
+	        
+	        Integer id = kh.getMaKhachHang();
+	        User user = kh.getTaiKhoan();
+	        if (user == null) continue;
+
 	        customersMap.computeIfAbsent(id, k -> {
 	            Map<String, Object> item = new HashMap<>();
 	            item.put("customerId", id);
-	            item.put("name", ph.getKhachHang().getTaiKhoan().getHoTen());
-	            item.put("email", ph.getKhachHang().getTaiKhoan().getEmail());
-	            item.put("phone", ph.getKhachHang().getTaiKhoan().getSoDienThoai());
+	            item.put("name", user.getHoTen());
+	            item.put("email", user.getEmail());
+	            item.put("phone", user.getSoDienThoai());
+	            item.put("address", kh.getDiaChi());
+	            item.put("joinDate", kh.getNgayThamGia() != null ? kh.getNgayThamGia().toString() : null);
 	            item.put("totalFeedback", 0);
 	            return item;
 	        });
@@ -85,11 +91,25 @@ public class ManagerGuestController {
 	        customersMap.get(id).put("totalFeedback", count + 1);
 	    }
 
-	    // Chuyển sang list để phân trang
+	    // Sắp xếp khách hàng theo số lượng phản hồi giảm dần
 	    List<Map<String, Object>> customers = new ArrayList<>(customersMap.values());
+	    customers.sort((a, b) -> Integer.compare(
+	        (int) b.get("totalFeedback"),
+	        (int) a.get("totalFeedback")
+	    ));
+
+	    // Phân trang
 	    int totalElements = customers.size();
 	    int start = page * size;
 	    int end = Math.min(start + size, totalElements);
+
+	    // Kiểm tra và điều chỉnh chỉ số trang nếu cần
+	    if (totalElements > 0 && start >= totalElements) {
+	        page = (totalElements - 1) / size;
+	        start = page * size;
+	        end = Math.min(start + size, totalElements);
+	    }
+
 	    List<Map<String, Object>> paged = customers.subList(start, end);
 
 	    // Gói dữ liệu trả về
@@ -99,6 +119,9 @@ public class ManagerGuestController {
 	    response.put("totalPages", (int) Math.ceil((double) totalElements / size));
 	    response.put("page", page);
 	    response.put("size", size);
+	    response.put("empty", totalElements == 0);
+	    response.put("first", page == 0);
+	    response.put("last", (page + 1) * size >= totalElements);
 
 	    return response;
 	}
@@ -114,6 +137,9 @@ public class ManagerGuestController {
 	        User u = kh.getTaiKhoan();
 	        result.put("name", u.getHoTen());
 	        result.put("email", u.getEmail());
+	        result.put("phone", u.getSoDienThoai());
+	        result.put("address", kh.getDiaChi());
+	        result.put("createdAt", kh.getNgayThamGia() != null ? kh.getNgayThamGia().toString() : null);
 	    }
 
 	    return result;

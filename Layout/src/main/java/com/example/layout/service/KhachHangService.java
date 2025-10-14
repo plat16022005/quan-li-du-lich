@@ -23,7 +23,7 @@ public class KhachHangService {
         return khachHangRepository.findAll();
     }
     public Page<KhachHang> findAll(Pageable pageable){
-    	return khachHangRepository.findAll(pageable);
+        return khachHangRepository.findAll(pageable);
     }
 
     public Optional<KhachHang> findById(Integer id) {
@@ -50,4 +50,44 @@ public class KhachHangService {
         return khachHangRepository.search(keyword, pageable);
     }
 
+    public List<KhachHang> getAllKhachHang() {
+        return khachHangRepository.findAll();
+    }
+
+    public KhachHang getKhachHangById(Integer id) {
+        return khachHangRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+    }
+
+    public KhachHang getKhachHangByTaiKhoan(Integer maTaiKhoan) {
+        return khachHangRepository.findByTaiKhoan_MaTaiKhoan(maTaiKhoan);
+    }
+
+    public void deleteKhachHang(Integer id) {
+        khachHangRepository.deleteById(id);
+    }
+
+    public KhachHang updateKhachHang(Integer id, KhachHang khachHangDetails) {
+        KhachHang khachHang = getKhachHangById(id);
+        
+        khachHang.setDiaChi(khachHangDetails.getDiaChi());
+        khachHang.setNgaySinh(khachHangDetails.getNgaySinh());
+        khachHang.setGioiTinh(khachHangDetails.getGioiTinh());
+        khachHang.setBietDen(khachHangDetails.getBietDen());
+        
+        return khachHangRepository.save(khachHang);
+    }
+
+    public Map<String, Long> getMarketingStats() {
+        List<Object[]> stats = khachHangRepository.thongKeNguonKhachHang();
+        return stats.stream()
+                .collect(Collectors.toMap(
+                        stat -> (String) stat[0],
+                        stat -> (Long) stat[1]
+                ));
+    }
+
+    public long getNewCustomersCount() {
+        return khachHangRepository.countKhachHangMoi(LocalDate.now());
+    }
 }

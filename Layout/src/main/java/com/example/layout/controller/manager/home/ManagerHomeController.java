@@ -50,6 +50,9 @@ public class ManagerHomeController {
         response.put("chuyenDangDienRa", dashboardService.getSoChuyenDangDienRa());
         response.put("khachHangMoi", dashboardService.getSoKhachHangMoi());
         response.put("tongNhanVien", dashboardService.getSoNhanVien());
+        // totalRevenue in VND (BigDecimal) -> return as number
+        java.math.BigDecimal revenue = dashboardService.getDoanhThuThang();
+        response.put("totalRevenue", revenue != null ? revenue : java.math.BigDecimal.ZERO);
         return response;
     }
     @GetMapping("/home/upcoming-tours")

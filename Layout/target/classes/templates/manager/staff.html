@@ -428,13 +428,25 @@
   }
 </script>
     
-    <script>
-        const menuButton = document.getElementById('menu-button');
-        const sidebar = document.getElementById('sidebar');
-        menuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-    </script>
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const sidebar = document.getElementById('sidebar');
+    if (menuButton && sidebar) menuButton.addEventListener('click', () => sidebar.classList.toggle('open'));
+  </script>
+  <script>
+  (function(){
+    try{
+      const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+      const path = window.location.pathname.replace(/\/$/, '');
+      links.forEach(a=>{
+        const href = (a.getAttribute('href')||'').replace(/\/$/, '');
+        if (href === path) {
+          a.classList.remove('text-gray-300'); a.classList.add('bg-gray-700','text-white');
+        }
+      });
+    }catch(e){console.warn(e)}
+  })();
+  </script>
 <script>
   function openAddStaffModal() {
     document.getElementById('add-staff-modal').classList.remove('hidden');
