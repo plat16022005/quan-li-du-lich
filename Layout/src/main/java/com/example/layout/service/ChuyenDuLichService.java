@@ -20,11 +20,11 @@ import java.util.Optional;
 //@RequiredArgsConstructor
 public class ChuyenDuLichService {
     private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final NhanVienService nhanVienService;
 
-    NhanVienService nhanVienService = new NhanVienService();
-
-    public ChuyenDuLichService(ChuyenDuLichRepository chuyenDuLichRepository) {
+    public ChuyenDuLichService(ChuyenDuLichRepository chuyenDuLichRepository, NhanVienService nhanVienService) {
         this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.nhanVienService = nhanVienService;
     }
 
     public Optional<ChuyenDuLich> getNearestChuyen(Integer maTour) {
@@ -42,7 +42,6 @@ public class ChuyenDuLichService {
         return chuyenDuLichRepository.findById(maChuyen).orElse(null);
     }
 
-    // lấy hết chuyến du lịch có phân trang
     public Page<ChuyenDuLich> findAll(Pageable pageable) {
         return chuyenDuLichRepository.findAll(pageable);
     }
