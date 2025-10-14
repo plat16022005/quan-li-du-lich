@@ -29,5 +29,5 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
               "ORDER BY c.ngayBatDau ASC")
        List<ChuyenDuLich> findChuyenSapKhoiHanh();
        List<ChuyenDuLich> findByTrangThai(String trangThai);
-
+       long countByTrangThai(String trangThai);
 }

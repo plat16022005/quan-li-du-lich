@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.layout.entity.ChiTietDatCho;
@@ -36,6 +38,14 @@ public class DatChoService {
 
     public Optional<DatCho> findById(Integer id) {
         return datChoRepository.findById(id);
+    }
+    
+    public Page<DatCho> findall(Pageable pageable){
+    	return datChoRepository.findAll(pageable);
+    }
+    
+    public Page<DatCho> searchAndFilter(String keyword, String status, Pageable pageable) {
+        return datChoRepository.searchAndFilter(keyword, status, pageable);
     }
 
     public List<DatCho> findByKhachHangId(Integer maKhachHang) {
@@ -87,4 +97,17 @@ public class DatChoService {
             throw new RuntimeException("Không thể hủy đơn đặt chỗ ở trạng thái " + datCho.getTrangThai());
         }
     }
+    
+    public DatCho confirmBooking(Integer maDatCho) {
+        DatCho datCho = datChoRepository.findById(maDatCho)
+                .orElseThrow(() -> new RuntimeException("Đơn đặt chỗ không tồn tại"));
+
+        if ("Chờ xác nhận".equals(datCho.getTrangThai())) {
+            datCho.setTrangThai("Đã xác nhận");
+            return datChoRepository.save(datCho);
+        } else {
+            throw new RuntimeException("Chỉ có thể xác nhận các đơn ở trạng thái 'Chờ xác nhận'.");
+        }
+    }
+    
 }

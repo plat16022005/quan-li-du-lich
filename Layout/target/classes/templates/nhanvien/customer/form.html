@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chỉnh sửa Khách hàng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside th:replace="~{nhanvien/layout :: sidebar}"></aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <div>
+            <a
+              th:href="@{/nhanvien/customers/{id}(id=${customer.maKhachHang})}"
+              class="text-blue-600 hover:underline"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>Quay lại trang chi tiết
+            </a>
+            <h1 class="text-2xl font-semibold text-gray-800 mt-2">
+              Chỉnh sửa thông tin:
+              <span th:text="${customer.taiKhoan.hoTen}"></span>
+            </h1>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
+            <form
+              th:action="@{/nhanvien/customers/update}"
+              th:object="${customer}"
+              method="post"
+            >
+              <input type="hidden" th:field="*{maKhachHang}" />
+              <input type="hidden" th:field="*{taiKhoan}" />
+              <input type="hidden" th:field="*{ngayThamGia}" />
+
+              <div class="border-b pb-4 mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">
+                  Thông tin tài khoản
+                </h3>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <label class="block font-medium text-gray-500"
+                      >Họ Tên</label
+                    >
+                    <p
+                      class="mt-1 text-gray-900"
+                      th:text="*{taiKhoan.hoTen}"
+                    ></p>
+                  </div>
+                  <div>
+                    <label class="block font-medium text-gray-500">Email</label>
+                    <p
+                      class="mt-1 text-gray-900"
+                      th:text="*{taiKhoan.email}"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Thông tin chi tiết
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                  <label
+                    for="diaChi"
+                    class="block text-sm font-medium text-gray-700"
+                    >Địa chỉ</label
+                  >
+                  <input
+                    type="text"
+                    id="diaChi"
+                    th:field="*{diaChi}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="ngaySinh"
+                    class="block text-sm font-medium text-gray-700"
+                    >Ngày sinh</label
+                  >
+                  <input
+                    type="date"
+                    id="ngaySinh"
+                    th:field="*{ngaySinh}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="gioiTinh"
+                    class="block text-sm font-medium text-gray-700"
+                    >Giới tính</label
+                  >
+                  <select
+                    id="gioiTinh"
+                    th:field="*{gioiTinh}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md"
+                  >
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mt-8 flex items-center justify-end gap-4">
+                <a
+                  th:href="@{/nhanvien/customers/{id}(id=${customer.maKhachHang})}"
+                  class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg"
+                  >Hủy</a
+                >
+                <button
+                  type="submit"
+                  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                >
+                  <i class="fas fa-save mr-2"></i>Lưu thay đổi
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

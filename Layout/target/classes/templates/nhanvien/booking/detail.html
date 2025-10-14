@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết Đặt chỗ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <div>
+            <a
+              th:href="@{/nhanvien/bookings}"
+              class="text-blue-600 hover:underline"
+              ><i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách</a
+            >
+            <h1 class="text-2xl font-semibold text-gray-800 mt-2">
+              Chi tiết Đơn đặt chỗ #<span th:text="${bookingId}"></span>
+            </h1>
+          </div>
+          <div id="action-buttons" class="flex gap-2"></div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div id="notification-area"></div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Thông tin chung
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <strong>Tour:</strong>
+                    <span id="tour-name">Đang tải...</span>
+                  </div>
+                  <div>
+                    <strong>Khách hàng:</strong>
+                    <span id="customer-name">Đang tải...</span>
+                  </div>
+                  <div>
+                    <strong>Ngày đặt:</strong> <span id="booking-date"></span>
+                  </div>
+                  <div>
+                    <strong>Số lượng:</strong> <span id="quantity"></span>
+                  </div>
+                  <div>
+                    <strong>Trạng thái:</strong>
+                    <span
+                      id="status-badge"
+                      class="px-2 py-1 text-xs font-semibold rounded-full"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Tóm tắt thanh toán
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <strong>Tổng tiền:</strong>
+                    <span
+                      id="total-amount"
+                      class="font-bold text-gray-800"
+                    ></span>
+                  </div>
+                  <div>
+                    <strong>Đã thanh toán:</strong>
+                    <span
+                      id="paid-amount"
+                      class="font-bold text-green-600"
+                    ></span>
+                  </div>
+                  <div>
+                    <strong>Còn lại:</strong>
+                    <span
+                      id="remaining-amount"
+                      class="font-bold text-red-600"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Lịch sử thanh toán
+                </h3>
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="py-2 text-left">Ngày</th>
+                      <th class="py-2 text-left">Số tiền</th>
+                      <th class="py-2 text-left">Hình thức</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payment-history-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div>
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Ghi nhận Thanh toán
+                </h3>
+                <form id="payment-form">
+                  <div class="mb-4">
+                    <label
+                      for="soTien"
+                      class="block text-sm font-medium text-gray-700"
+                      >Số tiền</label
+                    >
+                    <input
+                      type="number"
+                      id="soTien"
+                      name="soTien"
+                      class="mt-1 block w-full px-3 py-2 border rounded-md"
+                      required
+                    />
+                  </div>
+                  <div class="mb-4">
+                    <label
+                      for="hinhThuc"
+                      class="block text-sm font-medium text-gray-700"
+                      >Hình thức</label
+                    >
+                    <select
+                      id="hinhThuc"
+                      name="hinhThuc"
+                      class="mt-1 block w-full px-3 py-2 border rounded-md"
+                    >
+                      <option>Chuyển khoản</option>
+                      <option>Tiền mặt</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                  >
+                    <i class="fas fa-check-circle mr-2"></i>Xác nhận
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      const bookingId = /*[[${bookingId}]]*/ "default";
+      const currencyFormatter = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      });
+
+      function showNotification(message, type = "success") {
+        const bgColor = type === "success" ? "bg-green-500" : "bg-red-500";
+        const notification = `
+            <div class="p-4 mb-4 text-white ${bgColor} rounded-lg" role="alert">
+                ${message}
+            </div>
+        `;
+        document.getElementById("notification-area").innerHTML = notification;
+        setTimeout(() => {
+          document.getElementById("notification-area").innerHTML = "";
+        }, 3000);
+      }
+
+      async function loadBookingDetails() {
+        try {
+          const response = await fetch(`/nhanvien/bookings/api/${bookingId}`);
+          const data = await response.json();
+
+          const booking = data.booking;
+          const paymentHistory = data.paymentHistory;
+          const totalAmountDue =
+            booking.chiTietDatCho.length > 0
+              ? booking.chiTietDatCho[0].thanhTien
+              : 0;
+          const totalAmountPaid = paymentHistory.reduce(
+            (sum, p) => sum + p.soTien,
+            0
+          );
+
+          // Render thông tin chung
+          document.getElementById("tour-name").textContent =
+            booking.chuyenDuLich.tour.tenTour;
+          document.getElementById("customer-name").textContent =
+            booking.khachHang.taiKhoan.hoTen;
+          document.getElementById("booking-date").textContent = new Date(
+            booking.ngayDat
+          ).toLocaleDateString("vi-VN");
+          document.getElementById("quantity").textContent =
+            booking.chiTietDatCho[0].soLuong;
+
+          // Render tóm tắt thanh toán
+          document.getElementById("total-amount").textContent =
+            currencyFormatter.format(totalAmountDue);
+          document.getElementById("paid-amount").textContent =
+            currencyFormatter.format(totalAmountPaid);
+          document.getElementById("remaining-amount").textContent =
+            currencyFormatter.format(totalAmountDue - totalAmountPaid);
+
+          // Render badge trạng thái
+          const statusBadge = document.getElementById("status-badge");
+          statusBadge.textContent = booking.trangThai;
+          statusBadge.className =
+            "px-2 py-1 text-xs font-semibold rounded-full ";
+          if (booking.trangThai === "Đã thanh toán")
+            statusBadge.className += "bg-green-100 text-green-800";
+          else if (booking.trangThai === "Đã hủy")
+            statusBadge.className += "bg-red-100 text-red-800";
+          else if (booking.trangThai === "Đã xác nhận")
+            statusBadge.className += "bg-blue-100 text-blue-800";
+          else statusBadge.className += "bg-yellow-100 text-yellow-800";
+
+          // Render lịch sử thanh toán
+          const paymentBody = document.getElementById("payment-history-body");
+          paymentBody.innerHTML = "";
+          if (paymentHistory.length === 0) {
+            paymentBody.innerHTML =
+              '<tr><td colspan="3" class="py-2 text-gray-500">Chưa có thanh toán nào.</td></tr>';
+          } else {
+            paymentHistory.forEach(
+              (p) =>
+                (paymentBody.innerHTML += `<tr class="border-b"><td class="py-2">${new Date(
+                  p.ngayThanhToan
+                ).toLocaleString(
+                  "vi-VN"
+                )}</td><td class="py-2">${currencyFormatter.format(
+                  p.soTien
+                )}</td><td class="py-2">${p.hinhThuc}</td></tr>`)
+            );
+          }
+
+          // Render nút hành động
+          const actionButtons = document.getElementById("action-buttons");
+          actionButtons.innerHTML = "";
+          if (booking.trangThai === "Chờ xác nhận") {
+            actionButtons.innerHTML += `<a href="/nhanvien/bookings/confirm/${bookingId}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-check mr-2"></i>Xác nhận Đơn</a>`;
+          }
+          if (
+            booking.trangThai !== "Đã hủy" &&
+            booking.trangThai !== "Đã thanh toán"
+          ) {
+            actionButtons.innerHTML += `<a href="/nhanvien/bookings/cancel/${bookingId}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-times mr-2"></i>Hủy Đơn</a>`;
+          }
+        } catch (error) {
+          console.error("Lỗi tải chi tiết đặt chỗ:", error);
+        }
+      }
+
+      document
+        .getElementById("payment-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const paymentData = {
+            maDatCho: bookingId,
+            soTien: document.getElementById("soTien").value,
+            hinhThuc: document.getElementById("hinhThuc").value,
+          };
+
+          try {
+            const response = await fetch(
+              "/nhanvien/bookings/api/payment/record",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paymentData),
+              }
+            );
+
+            if (response.ok) {
+              showNotification("Ghi nhận thanh toán thành công!");
+              loadBookingDetails(); // Tải lại dữ liệu
+              this.reset();
+            } else {
+              const errorData = await response.json();
+              showNotification(
+                "Lỗi: " + (errorData.error || "Không thể xử lý yêu cầu."),
+                "error"
+              );
+            }
+          } catch (error) {
+            showNotification("Đã xảy ra lỗi kết nối.", "error");
+          }
+        });
+
+      // Kiểm tra và hiển thị thông báo từ server (nếu có)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("successMessage")) {
+        showNotification(urlParams.get("successMessage"));
+      } else if (urlParams.has("errorMessage")) {
+        showNotification(urlParams.get("errorMessage"), "error");
+      }
+
+      document.addEventListener("DOMContentLoaded", loadBookingDetails);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Khách hàng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style></style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <h1 class="text-2xl font-semibold text-gray-800">
+            Quản lý Khách hàng
+          </h1>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div class="w-1/3">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Tìm kiếm theo tên, email..."
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              <i class="fas fa-plus mr-2"></i>Thêm Khách hàng
+            </button>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">ID</th>
+                    <th scope="col" class="px-6 py-3">Họ Tên</th>
+                    <th scope="col" class="px-6 py-3">Email</th>
+                    <th scope="col" class="px-6 py-3">Số điện thoại</th>
+                    <th scope="col" class="px-6 py-3">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="customer-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="pagination-container" class="mt-4 flex justify-center"></div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const tableBody = document.getElementById("customer-table-body");
+      const paginationContainer = document.getElementById(
+        "pagination-container"
+      );
+      let currentKeyword = "";
+
+      // Hàm chính để tải dữ liệu
+      async function loadCustomers(page = 0, keyword = "") {
+        currentKeyword = keyword;
+        try {
+          const response = await fetch(
+            `/nhanvien/customers/api?page=${page}&size=10&keyword=${keyword}`
+          );
+          if (!response.ok) throw new Error("Network response was not ok");
+          const data = await response.json();
+
+          renderTable(data.content);
+          renderPagination(data);
+        } catch (error) {
+          console.error("Fetch error:", error);
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Lỗi tải dữ liệu.</td></tr>`;
+        }
+      }
+
+      // Hàm vẽ lại bảng
+      function renderTable(customers) {
+        tableBody.innerHTML = "";
+        if (customers.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Không tìm thấy khách hàng nào.</td></tr>`;
+          return;
+        }
+        customers.forEach((customer) => {
+          const row = `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${customer.maKhachHang}</td>
+                    <td class="px-6 py-4">${customer.taiKhoan.hoTen}</td>
+                    <td class="px-6 py-4">${customer.taiKhoan.email}</td>
+                    <td class="px-6 py-4">${customer.taiKhoan.soDienThoai}</td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-600 hover:underline">Xem</a>
+                    </td>
+                </tr>
+            `;
+          tableBody.innerHTML += row;
+        });
+      }
+
+      // Hàm vẽ lại thanh phân trang
+      function renderPagination(pageData) {
+        paginationContainer.innerHTML = "";
+        if (pageData.totalPages <= 1) return;
+
+        let paginationHtml =
+          '<nav><ul class="inline-flex items-center -space-x-px">';
+
+        // Previous button
+        paginationHtml += `<li><a href="#" onclick="loadCustomers(${
+          pageData.number - 1
+        }, '${currentKeyword}')" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${
+          pageData.first ? "cursor-not-allowed opacity-50" : ""
+        }">Prev</a></li>`;
+
+        // Page numbers
+        for (let i = 0; i < pageData.totalPages; i++) {
+          paginationHtml += `<li><a href="#" onclick="loadCustomers(${i}, '${currentKeyword}')" class="px-3 py-2 leading-tight ${
+            i === pageData.number
+              ? "text-blue-600 bg-blue-50 border-blue-300"
+              : "text-gray-500 bg-white border-gray-300"
+          } hover:bg-gray-100">${i + 1}</a></li>`;
+        }
+
+        // Next button
+        paginationHtml += `<li><a href="#" onclick="loadCustomers(${
+          pageData.number + 1
+        }, '${currentKeyword}')" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${
+          pageData.last ? "cursor-not-allowed opacity-50" : ""
+        }">Next</a></li>`;
+
+        paginationHtml += "</ul></nav>";
+        paginationContainer.innerHTML = paginationHtml;
+      }
+
+      // Event listener cho ô tìm kiếm
+      let debounceTimer;
+      searchInput.addEventListener("keyup", () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          loadCustomers(0, searchInput.value);
+        }, 500); // Chờ 500ms sau khi người dùng gõ xong mới tìm
+      });
+
+      // Tải dữ liệu lần đầu khi trang được mở
+      document.addEventListener("DOMContentLoaded", () => {
+        loadCustomers();
+      });
+    </script>
+  </body>
+</html>

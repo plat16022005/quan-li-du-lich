@@ -3,6 +3,8 @@ package com.example.layout.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,13 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer> {
         OR LOWER(kh.taiKhoan.email) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     List<KhachHang> search(@Param("keyword") String keyword);
+	
+	@Query("""
+	        SELECT kh FROM KhachHang kh
+	        WHERE :keyword IS NULL OR (
+	            LOWER(kh.taiKhoan.hoTen) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+	            LOWER(kh.taiKhoan.email) LIKE LOWER(CONCAT('%', :keyword, '%'))
+	        )
+	    """)
+	Page<KhachHang> search(@Param("keyword") String keyword, Pageable pageable);
 }

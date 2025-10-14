@@ -4,6 +4,8 @@ package com.example.layout.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.layout.entity.KhachHang;
@@ -19,6 +21,9 @@ public class KhachHangService {
 
     public List<KhachHang> findAll() {
         return khachHangRepository.findAll();
+    }
+    public Page<KhachHang> findAll(Pageable pageable){
+    	return khachHangRepository.findAll(pageable);
     }
 
     public Optional<KhachHang> findById(Integer id) {
@@ -39,6 +44,10 @@ public class KhachHangService {
 
     public Optional<KhachHang> findByTaiKhoanId(Integer maTaiKhoan) {
         return Optional.ofNullable(khachHangRepository.findByTaiKhoan_MaTaiKhoan(maTaiKhoan));
+    }
+    
+    public Page<KhachHang> search(String keyword, Pageable pageable) {
+        return khachHangRepository.search(keyword, pageable);
     }
 
 }

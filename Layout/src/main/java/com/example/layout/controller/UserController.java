@@ -45,6 +45,8 @@ public class UserController {
         	session.setAttribute("user", user);
         	if (user.getMaVaiTro() == 1)
         		return "redirect:/manager/home";
+        	else if (user.getMaVaiTro() == 2)
+        		return "redirect:/nhanvien/dashboard.html";
         	else
         	{
         		KhachHang kh = khachHangRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
