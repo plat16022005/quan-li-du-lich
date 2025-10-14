@@ -1,0 +1,12 @@
+{
+  "name": "layout",
+  "version": "1.0.0",
+  "description": "Learn how to create a fully responsive Tour &amp; Travel website design from scratch using HTML, CSS, and JavaScript!",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
