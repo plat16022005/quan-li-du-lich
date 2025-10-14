@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link
+	href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+	rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="styles.css" />
+<title>Web Design Mastery | SKYWINGS</title>
+</head>
+<body>
+	<nav>
+		<div class="nav__header">
+			<div class="nav__logo">
+				<a href="#" class="logo">TravelGO</a>
+			</div>
+			<div class="nav__menu__btn" id="menu-btn">
+				<i class="ri-menu-line"></i>
+			</div>
+		</div>
+		<ul class="nav__links" id="nav-links">
+			<li><a href="#home">HOME</a></li>
+			<li><a href="#about">ABOUT</a></li>
+			<li><a href="#tour">TOUR</a></li>
+			<li><a href="#package">PACKAGE</a></li>
+			<li><a href="#contact">CONTACT</a></li>
+			<li><a href="#">BOOK TRIP</a></li>
+		</ul>
+		<div class="nav__btns">
+			<a href="/login" class="btn">Đăng nhập</a>
+		</div>
+	</nav>
+
+	<header id="home">
+		<div class="header__container">
+			<div class="header__content">
+				<p>Chuyến đi an toàn</p>
+				<h1>Hành trình đáng nhớ!</h1>
+				<div class="header__btns">
+					<button class="btn">Đặt vé ngay!</button>
+					<a href="#"> <span><i class="ri-play-circle-fill"></i></span>
+					</a>
+				</div>
+			</div>
+			<div class="header__image">
+				<img src="/assets/header.png" alt="header" />
+			</div>
+		</div>
+	</header>
+
+	<section class="section__container destination__container" id="about">
+		<h2 class="section__header">Địa điểm du lịch phổ biến</h2>
+		<p class="section__description">Khám phá muôn nơi</p>
+		<div class="destination__grid">
+			<div class="destination__card">
+				<img src="assets/vinh-ha-long.jpg" alt="destination" />
+				<div class="destination__card__details">
+					<div>
+						<h4>Vịnh Hạ Long</h4>
+						<p>tỉnh Quảng Ninh, Việt Nam</p>
+					</div>
+					<div class="destination__rating">
+						<span><i class="ri-star-fill"></i></span> 4.7
+					</div>
+				</div>
+			</div>
+			<div class="destination__card">
+				<img src="assets/da-lat.jpg" alt="destination" />
+				<div class="destination__card__details">
+					<div>
+						<h4>Đà Lạt</h4>
+						<p>tỉnh Lâm Đồng, Việt Nam</p>
+					</div>
+					<div class="destination__rating">
+						<span><i class="ri-star-fill"></i></span> 4.5
+					</div>
+				</div>
+			</div>
+			<div class="destination__card">
+				<img src="assets/dong-phong-nha.jpg" alt="destination" />
+				<div class="destination__card__details">
+					<div>
+						<h4>Động Phong Nha - Kẻ Bàng</h4>
+						<p>tỉnh Quảng Trị, Việt Nam</p>
+					</div>
+					<div class="destination__rating">
+						<span><i class="ri-star-fill"></i></span> 4.8
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section__container journey__container" id="tour">
+		<h2 class="section__header">Xách Balo lên và đi!</h2>
+		<p class="section__description">Mỗi chuyến đi là một câu chuyện</p>
+		<div class="journey__grid">
+			<div class="journey__card">
+				<div class="journey__card__bg">
+					<span><i class="ri-bookmark-3-line"></i></span>
+					<h4>Quy trình đặt vé dễ dàng</h4>
+				</div>
+				<div class="journey__card__content">
+					<span><i class="ri-bookmark-3-line"></i></span>
+					<h4>Đặt vé dễ dàng, chỉ với một cú click</h4>
+					<p>Mọi thứ đều nằm trong tầm tay bạn, từ phương tiện, chỗ ở, ăn
+						uống. Giúp cho kế hoạch du lịch trở nên thuận tiện, dễ dàng.</p>
+				</div>
+			</div>
+			<div class="journey__card">
+				<div class="journey__card__bg">
+					<span><i class="ri-landscape-fill"></i></span>
+					<h4>Thiết kế hành trình</h4>
+				</div>
+				<div class="journey__card__content">
+					<span><i class="ri-landscape-fill"></i></span>
+					<h4>Tự thiết kế kế hoạch cho bạn</h4>
+					<p>Tận hưởng chuyến du lịch được cá nhân hóa, được thiết kế phù
+						hợp với sở thích của bạn. Dù bạn tìm kiếm trải nghiệm phiêu lưu
+						hay khám phá văn hóa, hành trình được thiết kế riêng của chúng tôi
+						sẽ đảm bảo chuyến đi của bạn là tuyệt nhất.</p>
+				</div>
+			</div>
+			<div class="journey__card">
+				<div class="journey__card__bg">
+					<span><i class="ri-map-2-line"></i></span>
+					<h4>Khám phá văn hóa địa phương</h4>
+				</div>
+				<div class="journey__card__content">
+					<span><i class="ri-map-2-line"></i></span>
+					<h4>Nâng tầm hiểu biết bản thân</h4>
+					<p>Chúng tôi cung cấp những đề xuất được tuyển chọn về ẩm thực,
+						tham quan và những địa điểm ẩn giấu, để bạn có thể trải nghiệm
+						từng điểm đến như người dân địa phương.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section__container showcase__container" id="package">
+		<div class="showcase__image">
+			<img src="assets/showcase.jpg" alt="showcase" />
+		</div>
+		<div class="showcase__content">
+			<h4>THỎA SỨC KHÁM PHÁ CÙNG CHÚNG TÔI</h4>
+			<p>Khởi hành một hành trình khác biệt cùng TravelGo, nơi những
+				giấc mơ du lịch của bạn trở thành hiện thực. Sứ mệnh của chúng tôi
+				là truyền cảm hứng và hỗ trợ mọi chuyến phiêu lưu của bạn—dù bạn tìm
+				kiếm nhịp sống sôi động của những đô thị nhộn nhịp, vẻ yên bình của
+				những bãi biển nguyên sơ, hay sức hút của lịch sử ở các di tích cổ
+				xưa. Tại TravelGo, chúng tôi cung cấp các điểm đến được tuyển chọn
+				kỹ lưỡng và lịch trình cá nhân hóa, bảo đảm mỗi chuyến đi đều phù
+				hợp với sở thích riêng của bạn. Hãy khám phá những “viên ngọc ẩn”,
+				đắm mình trong các nền văn hóa đa dạng và tạo nên những kỷ niệm khó
+				quên sẽ theo bạn suốt đời.</p>
+			<p>Với TravelGo là người bạn đồng hành du lịch lý tưởng, việc
+				khám phá những kỳ quan thế giới chưa bao giờ dễ dàng đến thế. Những
+				bí kíp nội bộ và hiểu biết địa phương của chúng tôi giúp bạn chinh
+				phục những điểm đến mới với sự tự tin và háo hức. Từ lúc bạn bắt đầu
+				lên kế hoạch cho đến ngày trở về nhà, chúng tôi luôn tận tâm để hành
+				trình của bạn diễn ra trơn tru và giàu trải nghiệm.</p>
+			<div class="showcase__btn">
+				<button class="btn">
+					Đặt chuyến ngay! <span><i class="ri-arrow-right-line"></i></span>
+				</button>
+			</div>
+		</div>
+	</section>
+
+	<section class="section__container banner__container">
+		<div class="banner__card">
+			<h4>10+</h4>
+			<p>Năm kinh nghiệm</p>
+		</div>
+		<div class="banner__card">
+			<h4>12K</h4>
+			<p>Khách hàng hài lòng</p>
+		</div>
+		<div class="banner__card">
+			<h4>4.8</h4>
+			<p>Số điểm đánh giá</p>
+		</div>
+	</section>
+
+	<section class="section__container discover__container">
+		<h2 class="section__header">Khám phá thế giới phía trước</h2>
+		<p class="section__description">Trải nghiệm những góc nhìn ngoạn
+			mục và độc đáo</p>
+		<div class="discover__grid">
+			<div class="discover__card">
+				<span><i class="ri-camera-lens-line"></i></span>
+				<h4>Thành phố nhộn nhịp</h4>
+				<p>Đắm mình trong kỳ quan kiến trúc và nhịp sống sôi động giữa
+					lòng thành phố.</p>
+			</div>
+			<div class="discover__card">
+				<span><i class="ri-ship-line"></i></span>
+				<h4>Kỳ quan ven biển</h4>
+				<p>Khám phá bờ biển nguyên sơ và làn nước ngọc lam, nơi ẩn giấu
+					những vịnh nhỏ bí ẩn và rạn san hô rực rỡ.</p>
+			</div>
+			<div class="discover__card">
+				<span><i class="ri-landscape-line"></i></span>
+				<h4>Di tích lịch sử</h4>
+				<p>Khám phá vẻ tráng lệ của những lâu đài cổ và di tích lịch sử
+					qua trải nghiệm chân thực ngay tại điểm đến.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section__container client__container">
+		<h2 class="section__header">Được yêu thích bởi các khách hàng</h2>
+		<p class="section__description">Lắng nghe hành trình khám phá và
+			những kỷ niệm đáng nhớ qua góc nhìn của khách hàng thân thiết.</p>
+		<!-- Slider main container -->
+		<div class="swiper">
+			<!-- Additional required wrapper -->
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+				<div class="swiper-slide">
+					<div class="client__card">
+						<div class="client__content">
+							<div class="client__rating">
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span> <span><i class="ri-star-fill"></i></span>
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span>
+							</div>
+							<p>"TravelGO đã hoàn toàn thay đổi trải nghiệm du lịch của
+								tôi. Từ việc khám phá những viên ngọc ẩn giấu giữa lòng thành
+								phố nhộn nhịp cho đến tìm thấy những chốn nghỉ dưỡng yên bình xa
+								lánh sự ồn ào, mọi chi tiết trong chuyến đi đều được sắp xếp chu
+								đáo. Tôi không thể giới thiệu TravelGO đủ nhiều cho những ai
+								đang tìm kiếm một hành trình du lịch đẳng cấp và trọn vẹn hơn!"</p>
+						</div>
+						<div class="client__details">
+							<img src="assets/client-1.jpg" alt="client" />
+							<div>
+								<h4>Phạm Lê Anh Tuấn</h4>
+								<h5>Lập trình viên</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="client__card">
+						<div class="client__content">
+							<div class="client__rating">
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span> <span><i class="ri-star-fill"></i></span>
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span>
+							</div>
+							<p>"Chuyến phiêu lưu gần đây của tôi cùng TravelGO thật sự
+								tuyệt vời. Những lịch trình và gợi ý cá nhân hóa mà họ mang đến
+								đã dẫn tôi tới những địa điểm tuyệt đẹp mà có lẽ tôi sẽ chẳng
+								bao giờ tự mình khám phá được. Tôi đã bắt đầu lên kế hoạch cho
+								hành trình tiếp theo cùng TravelGO rồi!"</p>
+						</div>
+						<div class="client__details">
+							<img src="/assets/client-2.jpg" alt="client" />
+							<div>
+								<h4>Sơn Tùng MTP</h4>
+								<h5>Ca sĩ nổi tiếng</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="client__card">
+						<div class="client__content">
+							<div class="client__rating">
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span> <span><i class="ri-star-fill"></i></span>
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span>
+							</div>
+							<p>"TravelGO đã mang đến cho tôi và con một trải nghiệm du
+								lịch thật đáng nhớ. Nhờ lịch trình được sắp xếp chu đáo và những
+								điểm đến giàu giá trị văn hóa – lịch sử, chúng tôi không chỉ có
+								những khoảnh khắc gắn kết ý nghĩa mà còn cùng nhau khám phá và
+								học hỏi thêm nhiều điều thú vị. Tôi rất muốn giới thiệu TravelGO
+								cho các gia đình đang tìm kiếm những chuyến đi vừa bổ ích vừa
+								tràn ngập niềm vui."</p>
+						</div>
+						<div class="client__details">
+							<img src="/assets/client-3.jpg" alt="client" />
+							<div>
+								<h4>Trịnh Trần Phương Tuấn</h4>
+								<h5>Người cha của năm</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="client__card">
+						<div class="client__content">
+							<div class="client__rating">
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span> <span><i class="ri-star-fill"></i></span>
+								<span><i class="ri-star-fill"></i></span> <span><i
+									class="ri-star-fill"></i></span>
+							</div>
+							<p>"Việc cân bằng giữa công việc và những chuyến đi thường
+								không hề dễ dàng, nhưng TravelGO đã khiến mọi thứ trở nên nhẹ
+								nhàng hơn bao giờ hết. Nhờ kế hoạch chu đáo và những gợi ý tuyệt
+								vời của họ, tôi đã có thể tận hưởng trọn vẹn từng khoảnh khắc
+								bên vợ. Có những phút giây hạnh phúc đến mức chúng tôi không kìm
+								được nước mắt – những giọt nước mắt của niềm vui và yêu thương
+								trong từng hành trình. Tôi rất mong sẽ lại được đồng hành cùng
+								TravelGO trong những chuyến đi tiếp theo."</p>
+						</div>
+						<div class="client__details">
+							<img src="assets/client-4.jpg" alt="client" />
+							<div>
+								<h4>Trấn Thành</h4>
+								<h5>MC/Diễn viên</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer id="contact">
+		<div class="section__container footer__container">
+			<div class="footer__col">
+				<div class="footer__logo">
+					<a href="#" class="logo">TravelGO</a>
+				</div>
+				<p>Khám phá thế giới thật dễ dàng và đầy hứng khởi với nền tảng
+					du lịch toàn diện của chúng tôi. Hành trình của bạn bắt đầu từ đây
+					– nơi việc lên kế hoạch trở nên đơn giản và mọi trải nghiệm đều
+					đáng nhớ</p>
+				<ul class="footer__socials">
+					<li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+					<li><a href="#"><i class="ri-instagram-line"></i></a></li>
+					<li><a href="#"><i class="ri-youtube-line"></i></a></li>
+				</ul>
+			</div>
+			<div class="footer__col">
+				<h4>Quick Links</h4>
+				<ul class="footer__links">
+					<li><a href="#">Home</a></li>
+					<li><a href="#">Flights</a></li>
+					<li><a href="#">Hotels</a></li>
+					<li><a href="#">Cruise</a></li>
+				</ul>
+			</div>
+			<div class="footer__col">
+				<h4>Contact Us</h4>
+				<ul class="footer__links">
+					<li><a href="#"> <span><i class="ri-phone-fill"></i></span>
+							+81 933577076
+					</a></li>
+					<li><a href="#"> <span><i
+								class="ri-record-mail-line"></i></span> info@travelgo
+					</a></li>
+					<li><a href="#"> <span><i class="ri-map-pin-2-fill"></i></span>
+							Ho Chi Minh City, Viet Nam
+					</a></li>
+				</ul>
+			</div>
+			<div class="footer__col">
+				<h4>Subscribe</h4>
+				<form action="/">
+					<input type="text" placeholder="Enter your email" />
+					<button class="btn">Subscribe</button>
+				</form>
+			</div>
+		</div>
+
+	</footer>
+
+	<script src="https://unpkg.com/scrollreveal"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>

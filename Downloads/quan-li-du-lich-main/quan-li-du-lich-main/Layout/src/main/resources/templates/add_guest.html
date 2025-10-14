@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Thông Tin - TravelGO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        /* Custom focus styles for form elements */
+        input:focus, select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen bg-black bg-opacity-50">
+        <!-- Registration Form Card -->
+        <div class="bg-white p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-2xl m-4">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <i class="fas fa-route text-4xl text-blue-600"></i>
+                    <span class="ml-3 text-4xl font-bold text-gray-800">TravelGO</span>
+                </div>
+                <h1 class="text-2xl font-semibold text-gray-700">Đăng ký thông tin của bạn</h1>
+                <p class="text-gray-500 mt-1">Để chúng tôi có thể phục vụ bạn tốt nhất!</p>
+            </div>
+            
+            <!-- Form -->
+            <form action="#" method="POST">
+                <div class="space-y-5">
+                    <!-- Địa chỉ -->
+                     <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+                        <input type="text" name="address" id="address" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg transition" placeholder="Tỉnh/Thành phố của bạn">
+                    </div>
+                    <!-- Ngày sinh -->
+                    <div>
+                        <label for="birth-date" class="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
+                        <input type="date" name="birth-date" id="birth-date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg transition text-gray-500">
+                    </div>
+                    <!-- Giới tính -->
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                        <select id="gender" name="gender" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg transition text-gray-500">
+                            <option>Chọn giới tính</option>
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                    <!-- Nguồn biết đến -->
+                    <div>
+                        <label for="source" class="block text-sm font-medium text-gray-700 mb-1">Bạn biết đến TravelGO qua đâu?</label>
+                        <select id="source" name="source" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg transition text-gray-500">
+                            <option selected disabled>-- Vui lòng chọn --</option>
+                            <option value="friend">Người quen giới thiệu</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="tiktok">Tiktok</option>
+                            <option value="google">Tìm kiếm trên Google</option>
+                            <option value="youtube">Quảng cáo Youtube</option>
+                            <option value="website">Website/Blog khác</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="mt-8 pt-6 border-t">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold text-lg px-6 py-3 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 duration-300">
+                        Hoàn Tất
+                    </button>
+                    <p class="text-xs text-gray-500 text-center mt-4">Bằng việc nhấn Hoàn Tất, bạn đồng ý với <a href="#" class="text-blue-600 hover:underline">Điều khoản Dịch vụ</a> của chúng tôi.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
