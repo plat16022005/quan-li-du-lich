@@ -3,6 +3,7 @@ package com.example.layout.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import com.example.layout.repository.ChiTietDatChoRepository;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.KhachHangRepository;
+import com.example.layout.dto.BookingDTO;
 import com.example.layout.dto.DatChoDTO;
 import jakarta.transaction.Transactional;
 
@@ -108,6 +110,21 @@ public class DatChoService {
         } else {
             throw new RuntimeException("Chỉ có thể xác nhận các đơn ở trạng thái 'Chờ xác nhận'.");
         }
+    }
+    
+    public List<BookingDTO> getBookingsByTourId(Integer tourId) {
+        List<DatCho> bookings = datChoRepository.findByTourMaTour(tourId);
+        
+        return bookings.stream().map(booking -> {
+            KhachHang khachHang = booking.getKhachHang();
+            return new BookingDTO(
+                booking.getMaDatCho(),
+                khachHang.getTaiKhoan().getHoTen(),
+                khachHang.getTaiKhoan().getSoDienThoai(),
+                booking.getNgayDat(),
+                booking.getTrangThai()
+            );
+        }).collect(Collectors.toList());
     }
     
 }

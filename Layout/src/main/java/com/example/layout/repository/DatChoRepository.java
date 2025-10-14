@@ -21,5 +21,7 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
             WHERE (:keyword IS NULL OR LOWER(d.khachHang.taiKhoan.hoTen) LIKE LOWER(CONCAT('%', :keyword, '%')))
             AND (:status IS NULL OR d.trangThai = :status)
         """)
-        Page<DatCho> searchAndFilter(@Param("keyword") String keyword, @Param("status") String status, Pageable pageable);
+    Page<DatCho> searchAndFilter(@Param("keyword") String keyword, @Param("status") String status, Pageable pageable);
+    @Query("SELECT dc FROM DatCho dc JOIN dc.chuyenDuLich c WHERE c.tour.maTour = :maTour")
+    List<DatCho> findByTourMaTour(@Param("maTour") Integer maTour);
 }

@@ -22,13 +22,13 @@ public class TourBookingController {
 
     @PutMapping("/bookings/{bookingId}/approve")
     public ResponseEntity<?> approveBooking(@PathVariable Integer bookingId) {
-        datChoService.approveBooking(bookingId);
+        datChoService.confirmBooking(bookingId);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/bookings/{bookingId}/reject")
     public ResponseEntity<?> rejectBooking(@PathVariable Integer bookingId) {
-        datChoService.rejectBooking(bookingId);
+        datChoService.cancelBooking(bookingId);
         return ResponseEntity.ok().build();
     }
 }
