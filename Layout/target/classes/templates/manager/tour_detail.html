@@ -21,7 +21,7 @@
 
 <!-- 🔹 Layout Sidebar -->
 <div class="flex h-screen overflow-hidden">
-  <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
+  <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
     <div class="flex items-center justify-center h-20 border-b border-gray-700">
       <i class="fas fa-route text-3xl text-blue-400"></i>
       <span class="ml-3 text-2xl font-bold">TravelGO</span>
@@ -348,6 +348,19 @@
     await loadHotels();
     await loadVehicles();
     restoreLichTrinhFromLocalStorage();
+    // menu button safety and active link
+    try {
+        const menuButton = document.getElementById('menu-button');
+        const sidebar = document.getElementById('sidebar');
+        if (menuButton && sidebar) menuButton.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+        const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+        const path = window.location.pathname.replace(/\/$/, '');
+        links.forEach(a=>{
+            const href = (a.getAttribute('href')||'').replace(/\/$/, '');
+            if (href === path) { a.classList.remove('text-gray-300'); a.classList.add('bg-gray-700','text-white'); }
+        });
+    } catch(e){console.warn(e)}
   });
   function saveNewDiaDiem() {
 	  const ten = document.getElementById('new-dia-diem-ten').value.trim();

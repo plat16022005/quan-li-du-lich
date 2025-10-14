@@ -235,12 +235,34 @@
 fetch('/manager/home/stats')
   .then(res => res.json())
   .then(data => {
-      document.getElementById('active-tours').textContent = data.chuyenDangDienRa;
-      document.getElementById('new-customers').textContent = data.khachHangMoi;
-      document.getElementById('total-staff').textContent = data.tongNhanVien;
+          document.getElementById('active-tours').textContent = data.chuyenDangDienRa;
+          document.getElementById('new-customers').textContent = data.khachHangMoi;
+          document.getElementById('total-staff').textContent = data.tongNhanVien;
+          // set total revenue, format as VND
+          const totalRevenueEl = document.getElementById('total-revenue');
+          if (totalRevenueEl && data.totalRevenue != null) {
+              const value = Number(data.totalRevenue);
+              totalRevenueEl.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+          }
   })
   .catch(err => console.error(err));
 </script>
+    <script>
+    // Small script to mark active sidebar link based on current path
+    (() => {
+        try {
+            const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+            const path = window.location.pathname.replace(/\/$/, '');
+            links.forEach(a => {
+                const href = (a.getAttribute('href') || '').replace(/\/$/, '');
+                if (href === path) {
+                    a.classList.remove('text-gray-300');
+                    a.classList.add('bg-gray-700', 'text-white');
+                }
+            });
+        } catch (e) { console.warn('Active link script error', e); }
+    })();
+    </script>
 <script>
 fetch('/manager/home/upcoming-tours')
   .then(res => res.json())

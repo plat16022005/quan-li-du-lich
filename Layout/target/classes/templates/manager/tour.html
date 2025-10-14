@@ -46,30 +46,45 @@
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
-      <!-- Sidebar (simplified for Quản lý tour) -->
-    <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
-      <div class="flex items-center justify-center h-20 border-b border-gray-700">
-        <i class="fas fa-route text-3xl text-blue-400"></i>
-        <span class="ml-3 text-2xl font-bold">TravelGO</span>
-      </div>
-      <nav class="mt-8 px-4">
-        <!-- Only show relevant links for Tour Manager -->
-        <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
-          <i class="fas fa-map-marked-alt w-6 text-center"></i>
-          <span class="ml-4">Quản lý Tour</span>
-        </a>
-        <a href="/manager/tour/detail/0" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-          <i class="fas fa-info-circle w-6 text-center"></i>
-          <span class="ml-4">Chi tiết Tour</span>
-        </a>
-      </nav>
-      <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
-         <a href="/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-          <i class="fas fa-sign-out-alt w-6 text-center"></i>
-          <span class="ml-4">Đăng xuất</span>
-        </a>
-      </div>
-    </aside>
+      <!-- Standard manager Sidebar -->
+      <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
+        <div class="flex items-center justify-center h-20 border-b border-gray-700">
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a href="/manager/home" class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md">
+              <i class="fas fa-tachometer-alt w-6 text-center"></i>
+              <span class="ml-4">Tổng quan</span>
+          </a>
+          <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-map-marked-alt w-6 text-center"></i>
+              <span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a href="/manager/guest" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-users w-6 text-center"></i>
+              <span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a href="/manager/staff" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-user-tie w-6 text-center"></i>
+              <span class="ml-4">Quản lý Nhân viên</span>
+          </a>
+          <a href="/manager/promotion" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-tags w-6 text-center"></i>
+              <span class="ml-4">Quản lý Khuyến mãi</span>
+          </a>
+          <a href="/manager/report" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-chart-pie w-6 text-center"></i>
+              <span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+           <a href="/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+              <i class="fas fa-sign-out-alt w-6 text-center"></i>
+              <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
 
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-y-auto">
@@ -167,6 +182,7 @@
               <div class="mt-4 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                   <button class="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" th:onclick="|openEditModal(${tour.maTour});|">Chỉnh sửa</button>
+                  <button class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" th:onclick="|openBookingsModal(${tour.maTour})|">Đặt chỗ</button>
                   <button class="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" th:onclick="|deleteTour(${tour.maTour});|">Xóa</button>
                 </div>
                 <div>
@@ -366,12 +382,10 @@
   }
 </style>
 
-	<script>
-        const menuButton = document.getElementById('menu-button');
-        const sidebar = document.getElementById('sidebar');
-        menuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const sidebar = document.getElementById('sidebar');
+    if (menuButton && sidebar) menuButton.addEventListener('click', () => sidebar.classList.toggle('open'));
 
         const tourModal = document.getElementById('tour-modal');
         const addTourButton = document.getElementById('add-tour-button');
@@ -505,6 +519,20 @@
   }
 </script>
 <script>
+  (function(){
+    try{
+      const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+      const path = window.location.pathname.replace(/\/$/, '');
+      links.forEach(a=>{
+        const href = (a.getAttribute('href')||'').replace(/\/$/, '');
+        if (href === path) {
+          a.classList.remove('text-gray-300'); a.classList.add('bg-gray-700','text-white');
+        }
+      });
+    }catch(e){console.warn(e)}
+  })();
+</script>
+<script>
 async function updateTourAndChuyen() {
   const maTour = document.getElementById('editMaTour').value;
   const maChuyen = document.getElementById('editMaChuyen').value;
@@ -579,6 +607,7 @@ async function updateTourAndChuyen() {
               <div class="mt-4 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                   <button class="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" onclick="openEditModal(${tour.maTour});">Chỉnh sửa</button>
+                  <button class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" onclick="openBookingsModal(${tour.maTour})">Đặt chỗ</button>
                   <button class="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" onclick="deleteTour(${tour.maTour});">Xóa</button>
                 </div>
                 <div>
@@ -629,6 +658,143 @@ async function updateTourAndChuyen() {
     // Gọi lần đầu để load dữ liệu ban đầu
     loadTours();
 </script>
+
+<!-- Bookings Modal -->
+<div id="bookings-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+  <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h3 class="text-lg font-semibold">Danh sách khách đăng ký</h3>
+      <button onclick="closeBookingsModal()" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+    <div class="p-4" id="bookings-container">
+      <p class="text-sm text-gray-500">Đang tải...</p>
+    </div>
+    <div class="flex justify-end p-4 border-t bg-gray-50">
+      <button onclick="closeBookingsModal()" class="px-4 py-2 bg-blue-600 text-white rounded">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bookings Functions -->
+<script>
+  let currentTourId = null;
+
+  async function openBookingsModal(tourId) {
+    currentTourId = tourId;
+    document.getElementById('bookings-modal').classList.remove('hidden');
+    
+    // Show loading state
+    document.getElementById('bookings-container').innerHTML = '<p class="text-sm text-gray-500">Đang tải...</p>';
+    
+    try {
+      // Fetch bookings data for this tour
+      const response = await fetch(`/manager/tour/${tourId}/bookings`);
+      const bookings = await response.json();
+      
+      // Update modal content
+      const container = document.getElementById('bookings-container');
+      
+      if (bookings.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500">Chưa có khách đăng ký cho tour này</p>';
+        return;
+      }
+
+      // Create table with bookings data
+      container.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên khách</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số điện thoại</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đăng ký</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              ${bookings.map(booking => `
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.hoTen}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${booking.soDienThoai}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(booking.ngayDangKy).toLocaleDateString('vi-VN')}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      ${booking.trangThai === 'Đã duyệt' ? 'bg-green-100 text-green-800' : 
+                        booking.trangThai === 'Chờ duyệt' ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-red-100 text-red-800'}">
+                      ${booking.trangThai}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button onclick="approveBooking(${booking.maDangKy})" 
+                      class="text-blue-600 hover:text-blue-900 mr-3">
+                      Duyệt
+                    </button>
+                    <button onclick="rejectBooking(${booking.maDangKy})" 
+                      class="text-red-600 hover:text-red-900">
+                      Từ chối
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      document.getElementById('bookings-container').innerHTML = 
+        '<p class="text-sm text-red-500">Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.</p>';
+    }
+  }
+
+  function closeBookingsModal() {
+    document.getElementById('bookings-modal').classList.add('hidden');
+    currentTourId = null;
+  }
+
+  async function approveBooking(bookingId) {
+    try {
+      const response = await fetch(`/manager/tour/bookings/${bookingId}/approve`, {
+        method: 'PUT'
+      });
+      
+      if (response.ok) {
+        // Reload bookings list
+        openBookingsModal(currentTourId);
+      } else {
+        throw new Error('Failed to approve booking');
+      }
+    } catch (error) {
+      console.error('Error approving booking:', error);
+      alert('Không thể duyệt đăng ký. Vui lòng thử lại.');
+    }
+  }
+
+  async function rejectBooking(bookingId) {
+    if (!confirm('Bạn có chắc chắn muốn từ chối đăng ký này?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/manager/tour/bookings/${bookingId}/reject`, {
+        method: 'PUT'
+      });
+      
+      if (response.ok) {
+        // Reload bookings list
+        openBookingsModal(currentTourId);
+      } else {
+        throw new Error('Failed to reject booking');
+      }
+    } catch (error) {
+      console.error('Error rejecting booking:', error);
+      alert('Không thể từ chối đăng ký. Vui lòng thử lại.');
+    }
+  }
+</script>
+
 <script>
 	function showSelectedTourId(id) {
 		  const label = document.getElementById('selected-tour-label');

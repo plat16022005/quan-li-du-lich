@@ -103,19 +103,19 @@
                                 <option value="marketing">Hiệu quả marketing</option>
                                 <option value="expense">Tổng chi phí</option>
                             </select>
-                            <input type="date" id="date-range" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                            <button class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md">
+                            <input type="month" id="date-range" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                            <button id="create-report" class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md">
                                 <i class="fas fa-cogs mr-2"></i>
                                 <span>Tạo</span>
                             </button>
                         </div>
                         <!-- Right side: Export Buttons -->
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                             <button class="w-full text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors">
+                             <button id="export-excel" class="w-full text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors">
                                 <i class="fas fa-file-excel mr-2"></i>
                                 <span>Xuất Excel</span>
                             </button>
-                             <button class="w-full text-sm bg-red-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors">
+                             <button id="export-pdf" class="w-full text-sm bg-red-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors">
                                 <i class="fas fa-file-pdf mr-2"></i>
                                 <span>Xuất PDF</span>
                             </button>
@@ -139,9 +139,11 @@
 <script>
     const menuButton = document.getElementById('menu-button');
     const sidebar = document.getElementById('sidebar');
-    menuButton.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-    });
+    if (menuButton && sidebar) {
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    }
 
     const ctx = document.getElementById('reportChart').getContext('2d');
     let reportChart;
@@ -157,19 +159,26 @@
         other: 'Khác'
     };
 
-    // 🧮 Dữ liệu giả cho thống kê chi phí
-    const expenseData = {
-        month: {
-            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-            values: [12000000, 15000000, 11000000, 18000000, 20000000, 22000000]
-        },
-        quarter: {
-            labels: ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'],
-            values: [45000000, 50000000, 60000000, 55000000]
-        },
-        year: {
-            labels: ['2021', '2022', '2023', '2024', '2025'],
-            values: [120000000, 135000000, 150000000, 170000000, 200000000]
+    // Format số tiền
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
+    };
+
+    // Format ngày tháng
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }).format(date);
+        } catch (error) {
+            console.error('Error formatting date:', dateString, error);
+            return dateString;
         }
     };
 
@@ -229,18 +238,47 @@
     }
 
     // Hàm vẽ biểu đồ chi phí (bar chart)
-    function loadExpenseData(type = 'month') {
-        const data = expenseData[type];
+    async function loadExpenseData() {
+        try {
+            const dateRange = document.getElementById('date-range').value;
+            let year, month;
 
-        if (reportChart) reportChart.destroy();
+            if (dateRange) {
+                [year, month] = dateRange.split('-').map(Number);
+            } else {
+                const now = new Date();
+                year = now.getFullYear();
+                month = now.getMonth() + 1;
+            }
 
-        reportChart = new Chart(ctx, {
+            console.log(`Loading expense data for ${year}-${month}`);
+
+            const response = await fetch(`/manager/report/api/expense?year=${year}&month=${month}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Received data:', data);
+
+            // Sắp xếp dữ liệu theo ngày
+            const sortedEntries = Object.entries(data).sort((a, b) => a[0].localeCompare(b[0]));
+            const labels = sortedEntries.map(([date]) => formatDate(date));
+            const values = sortedEntries.map(([_, amount]) => amount);
+
+            console.log('Processed data:', { labels, values });
+
+            if (reportChart) {
+                console.log('Destroying old chart');
+                reportChart.destroy();
+            }
+
+            reportChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: data.labels,
+                labels: labels,
                 datasets: [{
                     label: 'Tổng chi phí (VNĐ)',
-                    data: data.values,
+                    data: values,
                     backgroundColor: 'rgba(59, 130, 246, 0.7)',
                     borderColor: 'rgba(59, 130, 246, 1)',
                     borderWidth: 1
@@ -254,9 +292,11 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                // format số tiền có dấu phẩy
-                                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-                                    .format(context.parsed.y);
+                                return new Intl.NumberFormat('vi-VN', { 
+                                    style: 'currency', 
+                                    currency: 'VND',
+                                    maximumFractionDigits: 0 
+                                }).format(context.parsed.y);
                             }
                         }
                     }
@@ -266,36 +306,114 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return value.toLocaleString('vi-VN') + ' ₫';
+                                return new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                    notation: 'compact',
+                                    maximumFractionDigits: 0
+                                }).format(value);
                             }
                         }
                     }
                 }
             }
         });
+
+        console.log('New chart created');
+        } catch (error) {
+            console.error('Error loading expense data:', error);
+            alert('Có lỗi khi tải dữ liệu chi phí: ' + error.message);
+        }
     }
+
+    // Khởi tạo giá trị mặc định cho date-range là tháng hiện tại
+    const today = new Date();
+    const defaultMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+    document.getElementById('date-range').value = defaultMonth;
 
     // Bắt sự kiện đổi loại report
     const reportTypeSelect = document.getElementById('report-type');
+    const createReportBtn = document.getElementById('create-report');
+
     reportTypeSelect.addEventListener('change', (e) => {
         const type = e.target.value;
         const chartTitle = document.getElementById('chart-title');
+        const dateRangeInput = document.getElementById('date-range');
 
         if (type === 'marketing') {
             chartTitle.textContent = "Biểu đồ thống kê hiệu quả marketing theo nguồn khách hàng";
+            dateRangeInput.disabled = true;
             loadMarketingData();
         } else if (type === 'expense') {
-            chartTitle.textContent = "Biểu đồ thống kê tổng chi phí theo tháng (dữ liệu giả lập)";
-            loadExpenseData('month'); // mặc định theo tháng
+            chartTitle.textContent = "Biểu đồ thống kê tổng chi phí theo tháng";
+            dateRangeInput.disabled = false;
         }
     });
 
     // Load mặc định khi vào trang
-    window.addEventListener('DOMContentLoaded', loadMarketingData);
+    window.addEventListener('DOMContentLoaded', () => {
+        const type = reportTypeSelect.value;
+        if (type === 'marketing') {
+            loadMarketingData();
+        } else if (type === 'expense') {
+            loadExpenseData();
+        }
+    });
+
+    // Xử lý sự kiện nút Tạo
+    createReportBtn.addEventListener('click', () => {
+        const type = reportTypeSelect.value;
+        if (type === 'marketing') {
+            loadMarketingData();
+        } else if (type === 'expense') {
+            loadExpenseData();
+        }
+    });
+
+    // Handle export buttons
+    document.getElementById('export-excel').addEventListener('click', () => {
+        const reportType = document.getElementById('report-type').value;
+        const dateRange = document.getElementById('date-range').value;
+        
+        let url = `/manager/report/export/excel?reportType=${reportType}`;
+        if (dateRange) {
+            url += `&fromDate=${dateRange}`;
+        }
+        
+        window.location.href = url;
+    });
+
+    document.getElementById('export-pdf').addEventListener('click', () => {
+        const reportType = document.getElementById('report-type').value;
+        const dateRange = document.getElementById('date-range').value;
+        
+        let url = `/manager/report/export/pdf?reportType=${reportType}`;
+        if (dateRange) {
+            url += `&fromDate=${dateRange}`;
+        }
+        
+        window.location.href = url;
+    });
 </script>
 
 
 </body>
+<script>
+// Mark active sidebar link based on current URL
+(function(){
+    try {
+        const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+        const path = window.location.pathname.replace(/\/$/, '');
+        links.forEach(a => {
+            const href = (a.getAttribute('href') || '').replace(/\/$/, '');
+            if (href === path) {
+                a.classList.remove('text-gray-300');
+                a.classList.add('bg-gray-700', 'text-white');
+            }
+        });
+    } catch(e) { console.warn(e); }
+})();
+</script>
 </html>
 
 

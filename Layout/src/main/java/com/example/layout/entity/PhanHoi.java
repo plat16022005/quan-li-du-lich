@@ -2,8 +2,7 @@ package com.example.layout.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-//import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PhanHoi")
@@ -28,7 +27,7 @@ public class PhanHoi {
     private Integer danhGia;
 
     @Column(name = "NgayTao")
-    private LocalDate ngayTao;
+    private LocalDateTime ngayTao;
 
 	public Integer getMaPhanHoi() {
 		return maPhanHoi;
@@ -70,15 +69,13 @@ public class PhanHoi {
 		this.danhGia = danhGia;
 	}
 
-	public LocalDate getNgayTao() {
+	public LocalDateTime getNgayTao() {
 		return ngayTao;
 	}
 
-	public void setNgayTao(LocalDate ngayTao) {
+	public void setNgayTao(LocalDateTime ngayTao) {
 		this.ngayTao = ngayTao;
 	}
-
-    // Getters and setters
     
     
 }
