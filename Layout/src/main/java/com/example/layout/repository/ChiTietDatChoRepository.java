@@ -12,5 +12,5 @@ import com.example.layout.entity.ChiTietDatCho;
 @Repository
 public interface ChiTietDatChoRepository extends JpaRepository<ChiTietDatCho, Integer> {
     @Query("SELECT SUM(ct.thanhTien) FROM ChiTietDatCho ct WHERE ct.datCho.maDatCho = :maDatCho")
-    BigDecimal findTotalAmountByDatChoId(@Param("maDatCho") Integer maDatCho);
+    BigDecimal findTotalAmountByDatCho_MaDatCho(@Param("maDatCho") Integer maDatCho);
 }

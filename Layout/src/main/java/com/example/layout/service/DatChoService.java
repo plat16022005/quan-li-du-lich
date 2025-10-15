@@ -113,7 +113,7 @@ public class DatChoService {
     }
     
     public List<BookingDTO> getBookingsByTourId(Integer tourId) {
-        List<DatCho> bookings = datChoRepository.findByTourMaTour(tourId);
+        List<DatCho> bookings = datChoRepository.findByChuyenDuLich_Tour_MaTour(tourId);
         
         return bookings.stream().map(booking -> {
             KhachHang khachHang = booking.getKhachHang();

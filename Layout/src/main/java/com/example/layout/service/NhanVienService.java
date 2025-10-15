@@ -44,13 +44,13 @@ public class NhanVienService {
     public List<Nhanvien> getallHuongDanVien() {
         Vaitro vaiTro = vaiTroRepository.findByTenVaiTro("Hướng dẫn viên")
                         .orElseThrow(() -> new RuntimeException("Hướng dẫn viên không tồn tại"));
-        return nhanvienRepository.findByTaiKhoan_VaiTro(vaiTro);
+        return nhanvienRepository.findByTaiKhoan_MaVaiTro(vaiTro.getMaVaiTro());
     }
 
     public List<Nhanvien> getallTaiXe() {
         Vaitro vaiTro = vaiTroRepository.findByTenVaiTro("Tài xế")
                         .orElseThrow(() -> new RuntimeException("Tài xế không tồn tại"));
-        return nhanvienRepository.findByTaiKhoan_VaiTro(vaiTro);
+        return nhanvienRepository.findByTaiKhoan_MaVaiTro(vaiTro.getMaVaiTro());
     }
 
     public List<Nhanvien> getAvailableStaff(Vaitro role, LocalDate startDate, LocalDate endDate) {

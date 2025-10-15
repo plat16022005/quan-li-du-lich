@@ -77,7 +77,7 @@ public class ManagerTourController {
             return ResponseEntity.status(403).body("Không có quyền");
         }
 
-        List<com.example.layout.entity.DatCho> bookings = datChoRepository.findByTourMaTour(maTour);
+        List<com.example.layout.entity.DatCho> bookings = datChoRepository.findByChuyenDuLich_Tour_MaTour(maTour);
 
         // Map to lightweight DTO
         List<java.util.Map<String, Object>> response = bookings.stream().map(dc -> {

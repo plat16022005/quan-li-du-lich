@@ -60,7 +60,7 @@ public class ThanhToanService {
     private void updateBookingStatusAfterPayment(Integer maDatCho) {
         DatCho datCho = datChoRepository.findById(maDatCho).get();
 
-        BigDecimal totalAmountDue = chiTietDatChoRepository.findTotalAmountByDatChoId(maDatCho);
+        BigDecimal totalAmountDue = chiTietDatChoRepository.findTotalAmountByDatCho_MaDatCho(maDatCho);
         BigDecimal totalAmountPaid = thanhToanRepository.findTotalPaidByDatChoId(maDatCho);
 
         if (totalAmountPaid != null && totalAmountPaid.compareTo(totalAmountDue) >= 0) {

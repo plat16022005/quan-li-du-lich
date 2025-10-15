@@ -28,11 +28,11 @@ public interface NhanvienRepository extends JpaRepository<Nhanvien, Integer> {
                 Pageable pageable
         );
 
-        List<Nhanvien> findByTaiKhoan_VaiTro(Vaitro maVaiTro);
+        List<Nhanvien> findByTaiKhoan_MaVaiTro(Integer maVaiTro);
 
         @Query("""
         SELECT nv FROM Nhanvien nv
-        WHERE nv.taiKhoan.vaiTro = :role
+        WHERE nv.taiKhoan.maVaiTro = :role
         AND nv.id NOT IN (
                 SELECT c.huongDanVien.id FROM ChuyenDuLich c
                 WHERE c.huongDanVien IS NOT NULL

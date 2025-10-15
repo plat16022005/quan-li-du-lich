@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface KhachSanRepository extends JpaRepository<KhachSan, Integer> {
     List<KhachSan> findByTenKhachSan(String tenKhachSan);
     List<KhachSan> findByTenKhachSanContainingIgnoreCase(String keyword);
-    List<KhachSan> findByDiaDiem(Integer maDiaDiem);
+    List<KhachSan> findByDiaChiContainingIgnoreCase(String keyword);
     List<KhachSan> findByGiaTheoNgayBetween(double minPrice, double maxPrice);
 }
