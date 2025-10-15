@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +37,7 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/nhanvien/bookings")
 public class NhanvienBookingController {
+    private static final Logger logger = LoggerFactory.getLogger(NhanvienBookingController.class);
 	private final DatChoService datChoService;
     private final ThanhToanService thanhToanService;
     private final KhachHangService khachHangService;
@@ -55,11 +58,11 @@ public class NhanvienBookingController {
 
     @GetMapping("/api")
     @ResponseBody
-    public ResponseEntity<Page<DatCho>> getBookingsApi(
+    public ResponseEntity<Page<com.example.layout.dto.BookingApiDTO>> getBookingsApi(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             @PageableDefault(size = 10, sort = "ngayDat") Pageable pageable) {
-        Page<DatCho> bookingPage = datChoService.searchAndFilter(keyword, status, pageable);
+        Page<com.example.layout.dto.BookingApiDTO> bookingPage = datChoService.searchAndFilterDto(keyword, status, pageable);
         return ResponseEntity.ok(bookingPage);
     }
     
@@ -72,12 +75,12 @@ public class NhanvienBookingController {
     @GetMapping("/api/{id}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getBookingDetailsApi(@PathVariable("id") Integer bookingId) {
-        DatCho booking = datChoService.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-        List<ThanhToan> paymentHistory = thanhToanService.findByDatChoId(bookingId);
+        // Return DTO to avoid lazy-loading exceptions during JSON serialization
+    com.example.layout.dto.BookingApiDTO bookingDto = datChoService.getBookingApiDtoById(bookingId);
+    List<com.example.layout.dto.ThanhToanDTO> paymentHistory = thanhToanService.findDtoByDatChoId(bookingId);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("booking", booking);
+        response.put("booking", bookingDto);
         response.put("paymentHistory", paymentHistory);
 
         return ResponseEntity.ok(response);
@@ -154,8 +157,10 @@ public class NhanvienBookingController {
             // Bạn cần thêm phương thức confirmBooking vào DatChoService
             datChoService.confirmBooking(bookingId);
             redirectAttributes.addFlashAttribute("successMessage", "Xác nhận đơn đặt chỗ thành công!");
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            // Log full stacktrace for diagnostics and surface a user-friendly flash message
+            logger.error("Lỗi khi xác nhận đơn đặt chỗ id={}", bookingId, e);
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "Đã xảy ra lỗi khi xác nhận đơn đặt chỗ.");
         }
         // Sau khi xác nhận, quay lại trang chi tiết
         return "redirect:/nhanvien/bookings/" + bookingId;

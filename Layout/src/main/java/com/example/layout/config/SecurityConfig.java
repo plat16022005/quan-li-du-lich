@@ -29,6 +29,9 @@ public class SecurityConfig {
             .permitAll()
         );
 
+        // Allow pages to be displayed in an iframe from the same origin (used by nhanvien manager-tour iframe)
+        http.headers(headers -> headers.frameOptions().sameOrigin());
+
         return http.build();
     }
 }

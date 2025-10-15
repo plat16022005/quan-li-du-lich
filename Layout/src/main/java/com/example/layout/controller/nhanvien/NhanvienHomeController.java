@@ -56,4 +56,13 @@ public class NhanvienHomeController {
         
         return ResponseEntity.ok(stats);
     }
+
+    @GetMapping("/manager-tour")
+    public String showManagerTour(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != 2) {
+            return "redirect:/access-denied";
+        }
+        return "nhanvien/manager-tour";
+    }
 }

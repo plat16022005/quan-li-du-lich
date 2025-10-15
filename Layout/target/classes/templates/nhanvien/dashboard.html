@@ -51,7 +51,17 @@
             <i class="fas fa-users w-6 text-center"></i
             ><span class="ml-4">Quản lý Khách hàng</span>
           </a>
+          <a th:href="@{/nhanvien/manager-tour}" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
+            <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          </a>
         </nav>
+        <!-- Logout link (bottom-left) -->
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
+          <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
       </aside>
 
       <div class="flex-1 flex flex-col overflow-y-auto">
@@ -95,7 +105,7 @@
             </a>
 
             <a
-              href="#"
+              th:href="@{/nhanvien/bookings(status='Sắp diễn ra')}"
               class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300"
             >
               <div>

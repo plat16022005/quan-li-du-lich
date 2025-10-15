@@ -1,4 +1,3 @@
-com\example\layout\LayoutApplication.class
 com\example\layout\controller\manager\tour\ManagerTourController.class
 com\example\layout\controller\manager\home\ManagerHomeController.class
 com\example\layout\config\NoCacheConfig.class

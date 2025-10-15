@@ -50,6 +50,25 @@ public class DatChoService {
         return datChoRepository.searchAndFilter(keyword, status, pageable);
     }
 
+    @Transactional
+    public Page<com.example.layout.dto.BookingApiDTO> searchAndFilterDto(String keyword, String status, Pageable pageable) {
+        Page<DatCho> page = datChoRepository.searchAndFilter(keyword, status, pageable);
+        return page.map(dc -> {
+            // eager access inside transaction
+            com.example.layout.dto.BookingApiDTO.KhachHangSummary kh = new com.example.layout.dto.BookingApiDTO.KhachHangSummary(
+                    dc.getKhachHang().getMaKhachHang(), dc.getKhachHang().getTaiKhoan().getHoTen());
+
+            com.example.layout.dto.BookingApiDTO.ChuyenSummary ch = new com.example.layout.dto.BookingApiDTO.ChuyenSummary(
+                    dc.getChuyenDuLich().getMaChuyen(), dc.getChuyenDuLich().getTour().getTenTour());
+
+            java.util.List<com.example.layout.dto.ChiTietDatChoDTO> chiTiet = dc.getChiTietDatChos().stream().map(ct ->
+                    new com.example.layout.dto.ChiTietDatChoDTO(ct.getMaChiTiet(), ct.getSoLuong(), ct.getDonGia(), ct.getThanhTien(), ct.getLoaiVe())
+            ).toList();
+
+            return new com.example.layout.dto.BookingApiDTO(dc.getMaDatCho(), dc.getNgayDat(), dc.getTrangThai(), kh, ch, chiTiet);
+        });
+    }
+
     public List<DatCho> findByKhachHangId(Integer maKhachHang) {
         return datChoRepository.findByKhachHang_MaKhachHang(maKhachHang);
     }
@@ -86,6 +105,27 @@ public class DatChoService {
         chiTietDatChoRepository.save(chiTiet);
         
         return savedDatCho;
+    }
+
+    @Transactional
+    public com.example.layout.dto.BookingApiDTO getBookingApiDtoById(Integer bookingId) {
+    DatCho dc = datChoRepository.findById(bookingId)
+        .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+    // Build KhachHang summary
+    com.example.layout.dto.BookingApiDTO.KhachHangSummary kh = new com.example.layout.dto.BookingApiDTO.KhachHangSummary(
+        dc.getKhachHang().getMaKhachHang(), dc.getKhachHang().getTaiKhoan().getHoTen());
+
+    // Build Chuyen summary
+    com.example.layout.dto.BookingApiDTO.ChuyenSummary ch = new com.example.layout.dto.BookingApiDTO.ChuyenSummary(
+        dc.getChuyenDuLich().getMaChuyen(), dc.getChuyenDuLich().getTour().getTenTour());
+
+    java.util.List<com.example.layout.dto.ChiTietDatChoDTO> chiTiet = dc.getChiTietDatChos() == null ? java.util.List.of() :
+        dc.getChiTietDatChos().stream().map(ct ->
+            new com.example.layout.dto.ChiTietDatChoDTO(ct.getMaChiTiet(), ct.getSoLuong(), ct.getDonGia(), ct.getThanhTien(), ct.getLoaiVe())
+        ).toList();
+
+    return new com.example.layout.dto.BookingApiDTO(dc.getMaDatCho(), dc.getNgayDat(), dc.getTrangThai(), kh, ch, chiTiet);
     }
 
     public DatCho cancelBooking(Integer maDatCho) {

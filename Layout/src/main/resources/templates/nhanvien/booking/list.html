@@ -12,23 +12,32 @@
 </head>
 <body class="bg-gray-100">
 <div class="flex h-screen overflow-hidden">
-    <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
-        <div class="flex items-center justify-center h-20 border-b border-gray-700">
-            <i class="fas fa-route text-3xl text-blue-400"></i>
-            <span class="ml-3 text-2xl font-bold">TravelGO</span>
-        </div>
-        <nav class="mt-8 px-4">
-            <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
-                <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
-            </a>
-            <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md">
-                <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
-            </a>
-            <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
-                <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
-            </a>
-        </nav>
-    </aside>
+        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col" id="sidebar">
+                <div class="flex items-center justify-center h-20 border-b border-gray-700">
+                    <i class="fas fa-route text-3xl text-blue-400"></i>
+                    <span class="ml-3 text-2xl font-bold">TravelGO</span>
+                </div>
+                <nav class="mt-8 px-4">
+                    <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+                        <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
+                    </a>
+                    <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+                        <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
+                    </a>
+                    <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+                        <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
+                    </a>
+                    <a th:href="@{/nhanvien/manager-tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager-tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+                        <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+                    </a>
+                </nav>
+                <div class="mt-auto w-full p-4 border-t border-gray-800">
+                    <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                        <span class="ml-4">Đăng xuất</span>
+                    </a>
+                </div>
+            </aside>
 
     <div class="flex-1 flex flex-col overflow-y-auto">
         <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
@@ -47,9 +56,7 @@
                         <option value="Đã hủy">Đã hủy</option>
                     </select>
                 </div>
-                <a th:href="@{/nhanvien/bookings/add}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg whitespace-nowrap">
-                    <i class="fas fa-plus mr-2"></i>Tạo Đơn Mới
-                </a>
+                <!-- 'Tạo Đơn Mới' button removed as requested -->
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -63,7 +70,7 @@
                                 <th scope="col" class="px-6 py-3">Ngày Đặt</th>
                                 <th scope="col" class="px-6 py-3">Tổng Tiền</th>
                                 <th scope="col" class="px-6 py-3">Trạng thái</th>
-                                <th scope="col" class="px-6 py-3">Hành động</th>
+                                            <th scope="col" class="px-6 py-3">Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="booking-table-body">
@@ -88,10 +95,27 @@
 
     async function loadBookings(page = 0, keyword = '', status = '') {
         try {
-            const url = `/nhanvien/bookings/api?page=${page}&size=10&keyword=${keyword}&status=${status}`;
+            // Build query params and omit empty values so the server receives null for unused filters
+            const params = new URLSearchParams();
+            params.set('page', page);
+            params.set('size', 10);
+            if (keyword && keyword.trim() !== '') params.set('keyword', keyword.trim());
+            if (status && status.trim() !== '') params.set('status', status.trim());
+
+            const url = `/nhanvien/bookings/api?${params.toString()}`;
             const response = await fetch(url);
+
+            if (!response.ok) {
+                // show a helpful message when server denies access
+                if (response.status === 403) {
+                    tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Bạn không có quyền xem dữ liệu. Vui lòng đăng nhập bằng tài khoản nhân viên.</td></tr>`;
+                    return;
+                }
+                throw new Error(`HTTP ${response.status}`);
+            }
+
             const data = await response.json();
-            
+
             renderTable(data.content);
             renderPagination(data, keyword, status);
 
@@ -109,18 +133,28 @@
         }
         bookings.forEach(booking => {
             const statusBadge = getStatusBadge(booking.trangThai);
-            const totalAmount = booking.chiTietDatCho.length > 0 ? booking.chiTietDatCho[0].thanhTien : 0;
-            
+
+            // Compute total amount safely. API returns thanhTien which may be a number or string.
+            const totalAmount = (booking.chiTietDatCho && booking.chiTietDatCho.length > 0)
+                ? booking.chiTietDatCho.reduce((sum, item) => sum + (Number(item.thanhTien) || 0), 0)
+                : 0;
+
+            // Use the DTO field names returned by the API (khachHang.hoTen and chuyenDuLich.tenTour)
+            const customerName = booking.khachHang ? (booking.khachHang.hoTen || '') : '';
+            const tourName = booking.chuyenDuLich ? (booking.chuyenDuLich.tenTour || '') : '';
+
             const row = `
                 <tr class="bg-white border-b hover:bg-gray-50">
                     <td class="px-6 py-4 font-bold text-gray-900">#${booking.maDatCho}</td>
-                    <td class="px-6 py-4">${booking.khachHang.taiKhoan.hoTen}</td>
-                    <td class="px-6 py-4">${booking.chuyenDuLich.tour.tenTour}</td>
+                    <td class="px-6 py-4">${customerName}</td>
+                    <td class="px-6 py-4">${tourName}</td>
                     <td class="px-6 py-4">${new Date(booking.ngayDat).toLocaleDateString('vi-VN')}</td>
                     <td class="px-6 py-4 font-semibold">${currencyFormatter.format(totalAmount)}</td>
                     <td class="px-6 py-4">${statusBadge}</td>
                     <td class="px-6 py-4">
-                        <a href="/nhanvien/bookings/${booking.maDatCho}" class="font-medium text-blue-600 hover:underline">Xem</a>
+                        <a href="/nhanvien/bookings/${booking.maDatCho}" class="inline-block mr-2 font-medium text-blue-600 hover:underline">Xem</a>
+                        ${booking.trangThai === 'Chờ xác nhận' ? `<a href="/nhanvien/bookings/confirm/${booking.maDatCho}" class="inline-block mr-2 bg-green-500 text-white px-2 py-1 rounded">Xác nhận</a>` : ''}
+                        ${booking.trangThai !== 'Đã hủy' && booking.trangThai !== 'Đã thanh toán' ? `<a href="/nhanvien/bookings/cancel/${booking.maDatCho}" class="inline-block bg-red-500 text-white px-2 py-1 rounded">Hủy</a>` : ''}
                     </td>
                 </tr>
             `;
