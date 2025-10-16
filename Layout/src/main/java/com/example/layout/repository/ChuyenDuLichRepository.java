@@ -30,4 +30,17 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findChuyenSapKhoiHanh();
        List<ChuyenDuLich> findByTrangThai(String trangThai);
        long countByTrangThai(String trangThai);
+       
+    // SỬA LẠI TÊN PHƯƠNG THỨC NÀY
+       List<ChuyenDuLich> findByHuongDanVienIsNullAndTrangThai(String trangThai);
+
+       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY
+       List<ChuyenDuLich> findByTaiXeIsNullAndTrangThai(String trangThai);
+
+       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY: findBy + HuongDanVien (tên thuộc tính) + _ (dấu nối) + MaNhanVien (tên thuộc tính trong Nhanvien)
+       List<ChuyenDuLich> findByHuongDanVien_MaNhanVien(Integer maNhanVien);
+
+       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY: findBy + TaiXe (tên thuộc tính) + _ (dấu nối) + MaNhanVien (tên thuộc tính trong Nhanvien)
+       List<ChuyenDuLich> findByTaiXe_MaNhanVien(Integer maNhanVien);
+
 }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng Điều Khiển - HDV/Tài Xế</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+
+        <aside th:fragment="aside" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
+            <div class="flex items-center justify-center h-20 border-b border-gray-700">
+                <i class="fas fa-route text-3xl text-blue-400"></i>
+                <span class="ml-3 text-2xl font-bold">TravelGO</span>
+            </div>
+
+            <nav class="mt-8 px-4 space-y-2">
+                <div x-data="{ open: true }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-briefcase w-6 text-center"></i>
+                            <span class="ml-4">Quản Lý Chuyến Đi</span>
+                        </div>
+                        <i class="fas" :class="{'fa-chevron-down': open, 'fa-chevron-right': !open}"></i>
+                    </button>
+                    
+                    <div x-show="open" class="mt-2 pl-8 space-y-2">
+                        <a th:href="@{/hdvtx/assigned-trips}" class="block py-2 text-gray-400 hover:text-white"
+                           th:classappend="${currentUri != null && currentUri.startsWith('/hdvtx/assigned-trips')} ? 'text-white font-bold' : ''">
+                           Chuyến Đã Nhận
+                        </a>
+                        <a th:href="@{/hdvtx/available-trips}" class="block py-2 text-gray-400 hover:text-white"
+                           th:classappend="${currentUri != null && currentUri.startsWith('/hdvtx/available-trips')} ? 'text-white font-bold' : ''">
+                           Chuyến Cần Bạn
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+                <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg">
+                    <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                    <span class="ml-4">Đăng xuất</span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <header th:fragment="header" class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
+                <h1 class="text-2xl font-semibold text-gray-800">Bảng Điều Khiển</h1>
+                <div class="flex items-center" th:if="${currentUser != null}">
+                    <div class="ml-3">
+                        <p class="text-sm font-semibold text-gray-800" th:text="${currentUser.hoTen}"></p>
+                        <p class="text-xs text-gray-500" th:text="${currentUser.chucVu}"></p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 p-6">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Chào mừng trở lại, <span th:text="${currentUser.hoTen}"></span>!
+                    </h2>
+                    <p class="text-gray-600">Đây là khu vực tổng quan về công việc của bạn.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
+                        <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                            <i class="fas fa-briefcase fa-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Chuyến đi của bạn</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                <span th:text="${#lists.size(assignedTrips)}"></span> chuyến đi sắp tới
+                            </p>
+                            <a th:href="@{/hdvtx/assigned-trips}" class="text-blue-500 hover:underline mt-2 inline-block">Xem chi tiết &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
+                        <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                            <i class="fas fa-route fa-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Chuyến đi có sẵn</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                <span th:text="${#lists.size(availableTrips)}"></span> chuyến đang cần bạn
+                            </p>
+                            <a th:href="@{/hdvtx/available-trips}" class="text-blue-500 hover:underline mt-2 inline-block">Nhận chuyến ngay &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</body>
+</html>

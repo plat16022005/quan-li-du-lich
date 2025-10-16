@@ -45,6 +45,8 @@ public class ChuyenDuLich {
     private BigDecimal giaThueHDV;
 	@Column(name = "GiaThueTX", precision = 18, scale = 2)
     private BigDecimal giaThueTX;
+	@Transient // Báo cho JPA biết không cần map cột này trong DB
+    private int soLuongHienTai;
 //    @ManyToMany
 //    @JoinTable(
 //        name = "Chuyen_KhachSan",
@@ -158,4 +160,6 @@ public class ChuyenDuLich {
 //    public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
 //        this.phuongTiens = phuongTiens;
 //    }
+	public int getSoLuongHienTai() { return soLuongHienTai; }
+    public void setSoLuongHienTai(int soLuongHienTai) { this.soLuongHienTai = soLuongHienTai; }
 }
