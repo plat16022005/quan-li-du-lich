@@ -56,4 +56,13 @@ public class NhanVienService {
     public List<Nhanvien> getAvailableStaff(Vaitro role, LocalDate startDate, LocalDate endDate) {
         return nhanvienRepository.findAvailableStaff(role, startDate, endDate);
         }
+
+	public User findTaiKhoanByUsername(String name) {
+		return null;
+	}
+
+	public Nhanvien findByMaTaiKhoan(Integer maTaiKhoan) {
+
+		return null;
+	}
 }

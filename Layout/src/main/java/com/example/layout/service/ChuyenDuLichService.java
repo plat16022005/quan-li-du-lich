@@ -12,8 +12,13 @@ import com.example.layout.service.NhanVienService;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -121,5 +126,181 @@ public class ChuyenDuLichService {
             chuyen.setTaiXe(nhanVien);
         }
         chuyenDuLichRepository.save(chuyen);
+    }
+    
+    public Map<String, Object> getYearlyStats(int year, Integer staffId) {
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, Object>> details = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+
+        int totalTrips = 0;
+        double totalBaseSalary = 0;
+        int totalHours = 0;
+        double totalBonus = 0;
+
+        for (int m = 1; m <= 12; m++) {
+            List<ChuyenDuLich> trips = chuyenDuLichRepository.findByMonthYearAndStaff(m, year, staffId);
+
+            int monthTrips = 0;
+            double monthBase = 0;
+            int monthHours = 0;
+            double monthBonus = 0;
+
+            for (ChuyenDuLich t : trips) {
+                if (t.getTrangThai() != null && t.getTrangThai().toLowerCase().contains("hoàn") ||
+                    t.getTrangThai() != null && t.getTrangThai().toLowerCase().contains("finished")) {
+                    monthTrips++;
+                    // tính giờ giả định: số ngày * 8 (có thể điều chỉnh)
+                    if (t.getNgayBatDau() != null && t.getNgayKetThuc() != null) {
+                        long days = ChronoUnit.DAYS.between(t.getNgayBatDau(), t.getNgayKetThuc()) + 1;
+                        monthHours += (int)(days * 8);
+                    }
+                    if (t.getHuongDanVien() != null && t.getHuongDanVien().equals(staffId) && t.getGiaThueHDV() != null) {
+                        monthBase += t.getGiaThueHDV().doubleValue();
+                    }
+                    if (t.getTaiXe() != null && t.getTaiXe().equals(staffId) && t.getGiaThueTX() != null) {
+                        monthBase += t.getGiaThueTX().doubleValue();
+                    }
+                    // bonus tạm: bạn có thể điều chỉnh logic tính thưởng riêng
+                    monthBonus += calculateBonus(t);
+                }
+            }
+
+            Map<String, Object> mdata = new HashMap<>();
+            mdata.put("month", m);
+            mdata.put("completedTrips", monthTrips);
+            mdata.put("totalHours", monthHours);
+            mdata.put("baseSalary", monthBase);
+            mdata.put("bonus", monthBonus);
+            mdata.put("totalSalary", monthBase + monthBonus);
+
+            details.add(mdata);
+
+            labels.add("T" + m);
+            values.add(monthBase + monthBonus);
+
+            totalTrips += monthTrips;
+            totalBaseSalary += monthBase;
+            totalHours += monthHours;
+            totalBonus += monthBonus;
+        }
+
+        Map<String, Object> chartData = new HashMap<>();
+        chartData.put("labels", labels);
+        chartData.put("values", values);
+
+        result.put("details", details);
+        result.put("chartData", chartData);
+        result.put("totalTrips", totalTrips);
+        result.put("totalHours", totalHours);
+        result.put("totalBaseSalary", totalBaseSalary);
+        result.put("totalBonus", totalBonus);
+        result.put("totalSalary", totalBaseSalary + totalBonus);
+
+        return result;
+    }
+
+    public Map<String, Object> getMonthlyStats(int year, int month, Integer staffId) {
+        // Tương tự: trả về danh sách ngày trong tháng, và các chuyến ứng với ngày đó
+        Map<String, Object> result = new HashMap<>();
+        List<ChuyenDuLich> trips = chuyenDuLichRepository.findByMonthYearAndStaff(month, year, staffId);
+
+        List<Map<String, Object>> details = new ArrayList<>();
+        int totalTrips = 0;
+        double totalBase = 0;
+        double totalBonus = 0;
+        int totalHours = 0;
+
+        for (ChuyenDuLich t : trips) {
+            if (t.getTrangThai() != null && (t.getTrangThai().toLowerCase().contains("hoàn") ||
+                t.getTrangThai().toLowerCase().contains("finished"))) {
+
+                Map<String, Object> r = new HashMap<>();
+                r.put("maChuyen", t.getMaChuyen());
+                r.put("period", t.getNgayBatDau() + " -> " + t.getNgayKetThuc());
+                long days = 0;
+                if (t.getNgayBatDau() != null && t.getNgayKetThuc() != null) {
+                    days = ChronoUnit.DAYS.between(t.getNgayBatDau(), t.getNgayKetThuc()) + 1;
+                }
+                int hours = (int) (days * 8);
+                r.put("hours", hours);
+                double base = 0;
+                if (t.getHuongDanVien() != null && t.getHuongDanVien().equals(staffId) && t.getGiaThueHDV() != null) {
+                    base += t.getGiaThueHDV().doubleValue();
+                }
+                if (t.getTaiXe() != null && t.getTaiXe().equals(staffId) && t.getGiaThueTX() != null) {
+                    base += t.getGiaThueTX().doubleValue();
+                }
+                double bonus = calculateBonus(t);
+                r.put("baseSalary", base);
+                r.put("bonus", bonus);
+                r.put("totalSalary", base + bonus);
+
+                details.add(r);
+
+                totalTrips++;
+                totalHours += hours;
+                totalBase += base;
+                totalBonus += bonus;
+            }
+        }
+
+        result.put("details", details);
+        result.put("totalTrips", totalTrips);
+        result.put("totalHours", totalHours);
+        result.put("totalBaseSalary", totalBase);
+        result.put("totalBonus", totalBonus);
+        result.put("totalSalary", totalBase + totalBonus);
+        return result;
+    }
+
+    public Map<String, Object> getPeriodStats(LocalDate from, LocalDate to, Integer staffId) {
+        Map<String, Object> result = new HashMap<>();
+        List<ChuyenDuLich> trips = chuyenDuLichRepository.findByPeriodAndStaff(from, to, staffId);
+
+        // Tương tự getMonthlyStats, gom theo ngày hoặc theo tháng tùy bạn muốn
+        // Ở đây trả về chi tiết từng chuyến
+        List<Map<String, Object>> details = new ArrayList<>();
+        for (ChuyenDuLich t : trips) {
+            if (t.getTrangThai() != null && (t.getTrangThai().toLowerCase().contains("hoàn") ||
+                t.getTrangThai().toLowerCase().contains("finished"))) {
+
+                Map<String, Object> r = new HashMap<>();
+                r.put("maChuyen", t.getMaChuyen());
+                r.put("period", t.getNgayBatDau() + " -> " + t.getNgayKetThuc());
+                // compute hours, base, bonus similar as above
+                long days = 0;
+                if (t.getNgayBatDau() != null && t.getNgayKetThuc() != null) {
+                    days = ChronoUnit.DAYS.between(t.getNgayBatDau(), t.getNgayKetThuc()) + 1;
+                }
+                int hours = (int) (days * 8);
+                r.put("hours", hours);
+
+                double base = 0;
+                if (t.getHuongDanVien() != null && t.getHuongDanVien().equals(staffId) && t.getGiaThueHDV() != null) {
+                    base += t.getGiaThueHDV().doubleValue();
+                }
+                if (t.getTaiXe() != null && t.getTaiXe().equals(staffId) && t.getGiaThueTX() != null) {
+                    base += t.getGiaThueTX().doubleValue();
+                }
+
+                double bonus = calculateBonus(t);
+                r.put("baseSalary", base);
+                r.put("bonus", bonus);
+                r.put("totalSalary", base + bonus);
+
+                details.add(r);
+            }
+        }
+
+        result.put("details", details);
+        return result;
+    }
+
+    private double calculateBonus(ChuyenDuLich trip) {
+        // Placeholder: logic tính thưởng theo tiêu chí thực tế (đánh giá, số khách, KPI,...)
+        // Hiện tạm return 0
+        return 0;
     }
 }

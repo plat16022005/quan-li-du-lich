@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 //import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -43,4 +44,24 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        // SỬA LẠI TÊN PHƯƠNG THỨC NÀY: findBy + TaiXe (tên thuộc tính) + _ (dấu nối) + MaNhanVien (tên thuộc tính trong Nhanvien)
        List<ChuyenDuLich> findByTaiXe_MaNhanVien(Integer maNhanVien);
 
+       
+       @Query("SELECT c FROM ChuyenDuLich c " +
+               "WHERE MONTH(c.ngayBatDau) = :month AND YEAR(c.ngayBatDau) = :year " +
+               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+        List<ChuyenDuLich> findByMonthYearAndStaff(@Param("month") int month,
+                                                  @Param("year") int year,
+                                                  @Param("staffId") Integer staffId);
+
+        @Query("SELECT c FROM ChuyenDuLich c " +
+               "WHERE c.ngayBatDau BETWEEN :fromDate AND :toDate " +
+               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+        List<ChuyenDuLich> findByPeriodAndStaff(@Param("fromDate") LocalDate fromDate,
+                                                @Param("toDate") LocalDate toDate,
+                                                @Param("staffId") Integer staffId);
+
+        @Query("SELECT c FROM ChuyenDuLich c " +
+               "WHERE YEAR(c.ngayBatDau) = :year " +
+               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+        List<ChuyenDuLich> findByYearAndStaff(@Param("year") int year,
+                                              @Param("staffId") Integer staffId);
 }

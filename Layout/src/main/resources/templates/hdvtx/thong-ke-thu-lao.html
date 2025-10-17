@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{hdvtx/hdvtx-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê thù lao</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h4>Thống kê thù lao của bạn</h4>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-end">
+                    <div class="mr-4">
+                        <label>Năm</label>
+                        <select id="yearSelect" class="form-control" style="width:120px;">
+                            <option th:value="${#dates.format(#dates.createNow(),'yyyy')}" th:text="${#dates.format(#dates.createNow(),'yyyy')}" selected>2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    <div class="mr-4">
+                        <label>Tháng</label>
+                        <select id="monthSelect" class="form-control" style="width:140px;">
+                            <option value="">Cả năm</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="align-self-end">
+                        <button id="filterBtn" class="btn btn-primary">Xem thống kê</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div>Tổng chuyến</div>
+                    <div id="totalTrips" class="h4">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div>Tổng giờ</div>
+                    <div id="totalHours" class="h4">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div>Thù lao cơ bản</div>
+                    <div id="totalBaseSalary" class="h4">0₫</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <div>Tổng thù lao</div>
+                    <div id="totalSalary" class="h4">0₫</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <canvas id="salaryChart" height="120"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5>Chi tiết</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Chuyến</th>
+                            <th>Giờ</th>
+                            <th>Thù lao cơ bản</th>
+                            <th>Thưởng</th>
+                            <th>Tổng</th>
+                        </tr>
+                        </thead>
+                        <tbody id="salaryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(function () {
+        $('#yearSelect').val(new Date().getFullYear());
+        loadStats();
+
+        $('#filterBtn').on('click', loadStats);
+
+        let salaryChart;
+        function loadStats() {
+            const year = $('#yearSelect').val();
+            const month = $('#monthSelect').val();
+
+            let url = '/hdvtx/api/salary/year?year=' + encodeURIComponent(year);
+            if (month) {
+                url = '/hdvtx/api/salary/month?year=' + encodeURIComponent(year) + '&month=' + encodeURIComponent(month);
+            }
+
+            $.getJSON(url)
+                .done(function (data) {
+                    // cập nhật tổng quan
+                    $('#totalTrips').text(data.totalTrips || data.totalTrips === 0 ? data.totalTrips : 0);
+                    $('#totalHours').text(data.totalHours || 0);
+                    $('#totalBaseSalary').text(formatCurrency(data.totalBaseSalary || data.totalSalary || 0));
+                    $('#totalSalary').text(formatCurrency(data.totalSalary || 0));
+
+                    // cập nhật bảng chi tiết
+                    const details = data.details || [];
+                    let html = '';
+                    details.forEach(item => {
+                        html += `<tr>
+                            <td>${item.period || ('Tháng ' + (item.month || item.month))}</td>
+                            <td>${item.maChuyen || ''}</td>
+                            <td>${item.totalHours || item.hours || 0}</td>
+                            <td>${formatCurrency(item.baseSalary || 0)}</td>
+                            <td>${formatCurrency(item.bonus || 0)}</td>
+                            <td>${formatCurrency(item.totalSalary || 0)}</td>
+                        </tr>`;
+                    });
+                    $('#salaryTableBody').html(html);
+
+                    // cập nhật biểu đồ nếu có chartData
+                    const chartData = data.chartData || null;
+                    if (chartData) {
+                        if (salaryChart) salaryChart.destroy();
+                        const ctx = document.getElementById('salaryChart').getContext('2d');
+                        salaryChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: chartData.labels,
+                                datasets: [{
+                                    label: 'Thù lao',
+                                    data: chartData.values,
+                                    backgroundColor: 'rgba(54,162,235,0.5)',
+                                    borderColor: 'rgba(54,162,235,1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        ticks: {
+                                            callback: function (v) { return v ? formatCurrency(v) : v; }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                })
+                .fail(function () {
+                    alert('Lỗi khi tải dữ liệu thống kê');
+                });
+        }
+
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return '0₫';
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+    });
+</script>
+</body>
+</html>

@@ -18,6 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Controller
@@ -29,6 +32,7 @@ public class HdvTxDashboardController {
     @Autowired private ChuyenDuLichRepository chuyenDuLichRepository;
     @Autowired private KhachHangRepository khachHangRepository;
     @Autowired private LichTrinhService lichTrinhService;
+    private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
 
     // Lớp DTO không thay đổi
     public static class CurrentUserDTO {
@@ -100,40 +104,95 @@ public class HdvTxDashboardController {
         return "hdvtx/available-trips";
     }
 
- // ... (các import và các phương thức khác giữ nguyên)
-
     @GetMapping("/trip-details/{id}")
-    public String showTripDetails(@PathVariable("id") Integer tripId, Model model, HttpSession session, HttpServletRequest request) {
-        CurrentUserDTO currentUser = getCurrentUser(session);
-        if (currentUser == null) return "redirect:/login";
+    public String showTripDetails(@PathVariable("id") Integer tripId, 
+                                   Model model, 
+                                   HttpSession session, 
+                                   HttpServletRequest request) {
+        logger.info("=== BẮT ĐẦU XEM CHI TIẾT CHUYẾN ĐI {} ===", tripId);
+        
+        try {
+            // Kiểm tra đăng nhập
+            CurrentUserDTO currentUser = getCurrentUser(session);
+            if (currentUser == null) {
+                logger.warn("User chưa đăng nhập, redirect về /login");
+                return "redirect:/login";
+            }
+            logger.info("User đăng nhập: {} - Vai trò: {}", currentUser.getHoTen(), currentUser.getMaVaiTro());
 
-        ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId).orElse(null);
-        if (chuyen == null) return "redirect:/hdvtx/assigned-trips";
+            // Lấy thông tin chuyến đi
+            logger.info("Đang tìm chuyến đi với ID: {}", tripId);
+            ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId).orElse(null);
+            if (chuyen == null) {
+                logger.error("KHÔNG TÌM THẤY chuyến đi với ID: {}", tripId);
+                return "redirect:/hdvtx/available-trips";
+            }
+            logger.info("Tìm thấy chuyến: {} - Tour: {}", 
+                        chuyen.getMaChuyen(), 
+                        chuyen.getTour() != null ? chuyen.getTour().getTenTour() : "NULL");
 
-        // --- ĐOẠN CODE SỬA LỖI QUAN TRỌNG ---
-        int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
-        List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
+            // Lấy số lượng hành khách
+            int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
+            logger.info("Số lượng hành khách: {}", soLuongHanhKhach);
+            
+            // Lấy danh sách hành khách
+            List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
+            logger.info("Số lượng records hành khách: {}", danhSachHanhKhach.size());
 
-        List<LichTrinh> lichTrinh;
-        if (chuyen.getTour() != null) {
-            // Chỉ lấy lịch trình nếu chuyến đi có tour
-            lichTrinh = lichTrinhService.getLichTrinhByTour(chuyen.getTour().getMaTour());
-        } else {
-            // Nếu không có tour, tạo một danh sách rỗng để tránh lỗi null
-            lichTrinh = java.util.Collections.emptyList();
+            // Xử lý lịch trình
+         // Trong phương thức showTripDetails
+            List<LichTrinh> lichTrinh;
+            if (chuyen.getTour() != null && chuyen.getTour().getMaTour() != null) {
+                Integer maTour = chuyen.getTour().getMaTour();
+                logger.info("Đang lấy lịch trình cho tour ID: {}", maTour);
+                try {
+                    lichTrinh = lichTrinhService.getLichTrinhByTour(maTour);
+                    logger.info("Tìm thấy {} lịch trình", lichTrinh.size());
+                    for (LichTrinh lt : lichTrinh) {
+                        logger.debug("LichTrinh {}: Ngày {} - {} - DiaDiem: {} - KhachSan: {} - PhuongTien: {}", 
+                                    lt.getMaLichTrinh(),
+                                    lt.getThuTuNgay(),
+                                    lt.getHoatDong(),
+                                    lt.getDiaDiem() != null ? lt.getDiaDiem().getTenDiaDiem() : "NULL",
+                                    lt.getKhachSan() != null ? lt.getKhachSan().getTenKhachSan() : "NULL",
+                                    lt.getPhuongTien() != null ? lt.getPhuongTien().getLoaiPhuongTien() : "NULL");
+                    }
+                } catch (Exception e) {
+                    logger.error("LỖI khi lấy lịch trình: ", e);
+                    lichTrinh = java.util.Collections.emptyList();
+                }
+            } else {
+                logger.warn("Chuyến đi không có tour, không lấy lịch trình");
+                lichTrinh = java.util.Collections.emptyList();
+            }
+
+            // Kiểm tra null và log
+            logger.info("lichTrinh is null: {}", lichTrinh == null);
+            if (lichTrinh == null) {
+                lichTrinh = java.util.Collections.emptyList();
+                logger.warn("lichTrinh was null, setting to empty list");
+            }
+
+            // Thêm vào model
+
+            logger.info("Đang thêm dữ liệu vào model...");
+            model.addAttribute("chuyen", chuyen);
+            model.addAttribute("soLuongHanhKhach", soLuongHanhKhach);
+            model.addAttribute("danhSachHanhKhach", danhSachHanhKhach);
+            model.addAttribute("lichTrinh", lichTrinh);
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("currentUri", request.getRequestURI());
+
+            logger.info("=== HOÀN THÀNH XỬ LÝ, RENDER VIEW trip-details ===");
+            return "trip-details";
+            
+        } catch (Exception e) {
+            logger.error("LỖI NGHIÊM TRỌNG khi xử lý trip-details: ", e);
+            // In ra stack trace để debug
+            e.printStackTrace();
+            return "redirect:/hdvtx/dashboard";
         }
-        // --- KẾT THÚC ĐOẠN SỬA LỖI ---
-
-        model.addAttribute("chuyen", chuyen);
-        model.addAttribute("soLuongHanhKhach", soLuongHanhKhach);
-        model.addAttribute("danhSachHanhKhach", danhSachHanhKhach);
-        model.addAttribute("lichTrinh", lichTrinh); // Đảm bảo biến này không bao giờ null
-        model.addAttribute("currentUser", currentUser);
-        model.addAttribute("currentUri", request.getRequestURI());
-
-        return "/trip-details";
     }
-
     // ... (các phương thức còn lại)
     
     @PostMapping("/trips/assign/{tripId}")

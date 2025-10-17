@@ -15,7 +15,7 @@ public class ChuyenDuLich {
     @Column(name = "MaChuyen")
     private Integer maChuyen;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTour")
     private Tour tour;
 
@@ -33,11 +33,11 @@ public class ChuyenDuLich {
     @Column(name = "SoLuongToiDa")
     private int soLuongToiDa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaHuongDanVien")
     private Nhanvien huongDanVien;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTaiXe")
     private Nhanvien taiXe;
 
