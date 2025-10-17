@@ -39,12 +39,15 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer> {
 	    """)
 	Page<KhachHang> search(@Param("keyword") String keyword, Pageable pageable);
 	
-	@Query("SELECT new com.example.layout.dto.HanhKhachDTO(tk.hoTen, tk.soDienThoai, tk.email, kh.gioiTinh) " +
-	           "FROM DatCho dc " +
-	           "JOIN dc.khachHang kh " +
-	           "JOIN kh.taiKhoan tk " +
-	           "WHERE dc.chuyenDuLich.maChuyen = :maChuyen " +
-	           "AND (dc.trangThai = 'Đã thanh toán' OR dc.trangThai = 'Đã xác nhận')")
-	    List<HanhKhachDTO> findHanhKhachByMaChuyen(@Param("maChuyen") Integer maChuyen);
+	@Query("SELECT new com.example.layout.dto.HanhKhachDTO(" +
+		       "tk.hoTen, tk.soDienThoai, tk.email, kh.gioiTinh, " +
+		       "COALESCE(SUM(ctdc.soLuong), 1L)) " +
+		       "FROM DatCho dc " +
+		       "JOIN dc.khachHang kh " +
+		       "JOIN kh.taiKhoan tk " +
+		       "LEFT JOIN dc.chiTietDatChos ctdc " +
+		       "WHERE dc.chuyenDuLich.maChuyen = :maChuyen " +
+		       "GROUP BY tk.hoTen, tk.soDienThoai, tk.email, kh.gioiTinh")
+		List<HanhKhachDTO> findHanhKhachByMaChuyen(@Param("maChuyen") Integer maChuyen);
 	
 }
