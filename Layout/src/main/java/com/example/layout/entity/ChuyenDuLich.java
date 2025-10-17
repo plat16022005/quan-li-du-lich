@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 //import java.util.Set;
 
 @Entity
@@ -45,7 +46,7 @@ public class ChuyenDuLich {
     private BigDecimal giaThueHDV;
 	@Column(name = "GiaThueTX", precision = 18, scale = 2)
     private BigDecimal giaThueTX;
-	@Transient // Báo cho JPA biết không cần map cột này trong DB
+	@Transient 
     private int soLuongHienTai;
 //    @ManyToMany
 //    @JoinTable(
@@ -95,6 +96,14 @@ public class ChuyenDuLich {
         return ngayKetThuc;
     }
 
+    @Transient // Báo cho JPA không lưu trường này vào CSDL
+    public Long getSoNgay() {
+        if (ngayBatDau == null || ngayKetThuc == null) {
+            return 0L; 
+        }
+        return ChronoUnit.DAYS.between(ngayBatDau, ngayKetThuc) + 1;
+    }
+    
     public void setNgayKetThuc(LocalDate ngayKetThuc) {
         this.ngayKetThuc = ngayKetThuc;
     }

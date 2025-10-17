@@ -32,19 +32,16 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findByTrangThai(String trangThai);
        long countByTrangThai(String trangThai);
        
-    // SỬA LẠI TÊN PHƯƠNG THỨC NÀY
+
        List<ChuyenDuLich> findByHuongDanVienIsNullAndTrangThai(String trangThai);
 
-       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY
        List<ChuyenDuLich> findByTaiXeIsNullAndTrangThai(String trangThai);
 
-       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY: findBy + HuongDanVien (tên thuộc tính) + _ (dấu nối) + MaNhanVien (tên thuộc tính trong Nhanvien)
        List<ChuyenDuLich> findByHuongDanVien_MaNhanVien(Integer maNhanVien);
 
-       // SỬA LẠI TÊN PHƯƠNG THỨC NÀY: findBy + TaiXe (tên thuộc tính) + _ (dấu nối) + MaNhanVien (tên thuộc tính trong Nhanvien)
        List<ChuyenDuLich> findByTaiXe_MaNhanVien(Integer maNhanVien);
 
-       
+      
        @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE MONTH(c.ngayBatDau) = :month AND YEAR(c.ngayBatDau) = :year " +
                "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
@@ -52,7 +49,7 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
                                                    @Param("year") int year,
                                                    @Param("staffId") Integer staffId);
 
-        // ✅ FIX: Query cho thống kê theo khoảng thời gian
+
         @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE c.ngayBatDau BETWEEN :fromDate AND :toDate " +
                "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
@@ -60,10 +57,22 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
                                                @Param("toDate") LocalDate toDate,
                                                @Param("staffId") Integer staffId);
 
-        // ✅ FIX: Query cho thống kê theo năm
+
         @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE YEAR(c.ngayBatDau) = :year " +
                "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
         List<ChuyenDuLich> findByYearAndStaff(@Param("year") int year,
                                              @Param("staffId") Integer staffId);
+        
+        @Query("""
+                SELECT c FROM ChuyenDuLich c
+                WHERE c.trangThai = 'Đã kết thúc'
+                AND (c.huongDanVien.maNhanVien = :maNhanVien OR c.taiXe.maNhanVien = :maNhanVien)
+                AND c.ngayKetThuc BETWEEN :startDate AND :endDate
+            """)
+            List<ChuyenDuLich> findCompletedTripsByEmployeeAndDateRange(
+                @Param("maNhanVien") Integer maNhanVien,
+                @Param("startDate") LocalDate startDate,
+                @Param("endDate") LocalDate endDate
+            );
 }

@@ -41,10 +41,11 @@
                                 <td colspan="6" class="text-center py-4 text-gray-500">Bạn chưa nhận chuyến đi nào.</td>
                             </tr>
                             <tr th:each="chuyen : ${assignedTrips}" class="bg-white border-b hover:bg-gray-50">
-                                <td class="px-6 py-4 font-medium text-gray-900" th:text="${chuyen.maChuyen}"></td>
+								<td class="px-6 py-4 font-medium text-gray-900" th:text="${chuyen.maChuyen}"></td>
                                 <td class="px-6 py-4" th:text="${chuyen.tour?.tenTour}"></td>
+
                                 <td class="px-6 py-4" th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></td>
-                                <td class="px-6 py-4 text-center" th:text="${chuyen.tour?.soNgay}"></td>
+                                <td class="px-6 py-4" th:text="${chuyen.getSoNgay()}"></td>
                                 <td class="px-6 py-4" th:text="${chuyen.soLuongHienTai + ' / ' + chuyen.soLuongToiDa}"></td>
                                 <td class="px-6 py-4 text-center space-x-4">
                                     <a th:href="@{/hdvtx/trip-details/{id}(id=${chuyen.maChuyen})}" class="font-medium text-blue-600 hover:underline">Chi tiết</a>

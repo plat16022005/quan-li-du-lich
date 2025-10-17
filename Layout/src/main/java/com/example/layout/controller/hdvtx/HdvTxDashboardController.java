@@ -21,7 +21,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/hdvtx")
@@ -78,6 +80,10 @@ public class HdvTxDashboardController {
         if (currentUser == null) return "redirect:/login";
 
         List<ChuyenDuLich> assignedTrips = hdvTxService.getAssignedTrips(currentUser);
+        List<ChuyenDuLich> assignedTrips1 = hdvTxService.getAssignedTrips(currentUser)
+        	    .stream()
+        	    .filter(chuyen -> chuyen.getNgayKetThuc() != null && chuyen.getNgayKetThuc().isAfter(LocalDate.now()))
+        	    .collect(Collectors.toList());
         assignedTrips.forEach(chuyen ->
             chuyen.setSoLuongHienTai(chuyenDuLichRepository.getTotalParticipants(chuyen.getMaChuyen()))
         );

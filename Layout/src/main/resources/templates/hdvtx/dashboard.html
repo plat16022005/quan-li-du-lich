@@ -2,22 +2,25 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Điều Khiển - HDV/Tài Xế</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
-
-        <aside th:fragment="aside" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none">
+        <!-- Sidebar -->
+        <aside th:fragment="aside" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none overflow-y-auto">
             <div class="flex items-center justify-center h-20 border-b border-gray-700">
                 <i class="fas fa-route text-3xl text-blue-400"></i>
                 <span class="ml-3 text-2xl font-bold">TravelGO</span>
             </div>
 
             <nav class="mt-8 px-4 space-y-2">
+                <!-- Quản Lý Chuyến Đi -->
                 <div x-data="{ open: true }">
-                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200">
                         <div class="flex items-center">
                             <i class="fas fa-briefcase w-6 text-center"></i>
                             <span class="ml-4">Quản Lý Chuyến Đi</span>
@@ -26,69 +29,185 @@
                     </button>
                     
                     <div x-show="open" class="mt-2 pl-8 space-y-2">
-                        <a th:href="@{/hdvtx/assigned-trips}" class="block py-2 text-gray-400 hover:text-white"
-                           th:classappend="${currentUri != null && currentUri.startsWith('/hdvtx/assigned-trips')} ? 'text-white font-bold' : ''">
-                           Chuyến Đã Nhận
+                        <a th:href="@{/hdvtx/assigned-trips}" class="block py-2 px-4 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition duration-200"
+                           th:classappend="${currentUri != null && currentUri.contains('/assigned-trips')} ? 'text-white font-bold bg-gray-700' : ''">
+                           <i class="fas fa-check-circle mr-2"></i>Chuyến Đã Nhận
                         </a>
-                        <a th:href="@{/hdvtx/available-trips}" class="block py-2 text-gray-400 hover:text-white"
-                           th:classappend="${currentUri != null && currentUri.startsWith('/hdvtx/available-trips')} ? 'text-white font-bold' : ''">
-                           Chuyến Cần Bạn
+                        <a th:href="@{/hdvtx/available-trips}" class="block py-2 px-4 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition duration-200"
+                           th:classappend="${currentUri != null && currentUri.contains('/available-trips')} ? 'text-white font-bold bg-gray-700' : ''">
+                           <i class="fas fa-list mr-2"></i>Chuyến Cần Bạn
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Thống kê thù lao -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200">
+                        <div class="flex items-center">
+                            <i class="fas fa-chart-bar w-6 text-center"></i>
+                            <span class="ml-4">Thống Kê</span>
+                        </div>
+                        <i class="fas" :class="{'fa-chevron-down': open, 'fa-chevron-right': !open}"></i>
+                    </button>
+                    
+                    <div x-show="open" class="mt-2 pl-8 space-y-2">
+                        <a th:href="@{/hdvtx/thong-ke-thu-lao}" class="block py-2 px-4 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition duration-200"
+                           th:classappend="${currentUri != null && currentUri.contains('/thong-ke-thu-lao')} ? 'text-white font-bold bg-gray-700' : ''">
+                           <i class="fas fa-money-bill-wave mr-2"></i>Thù lao
                         </a>
                     </div>
                 </div>
             </nav>
 
             <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
-                <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg">
+                <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200">
                     <i class="fas fa-sign-out-alt w-6 text-center"></i>
                     <span class="ml-4">Đăng xuất</span>
                 </a>
             </div>
         </aside>
 
+        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-y-auto">
-            <header th:fragment="header" class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
-                <h1 class="text-2xl font-semibold text-gray-800">Bảng Điều Khiển</h1>
+            <!-- Header -->
+            <header th:fragment="header" class="flex items-center justify-between p-6 bg-white border-b border-gray-200 shadow-sm">
+                <h1 class="text-2xl font-semibold text-gray-800">
+                    <i class="fas fa-home mr-2 text-blue-600"></i>Bảng Điều Khiển
+                </h1>
                 <div class="flex items-center" th:if="${currentUser != null}">
-                    <div class="ml-3">
+                    <div class="text-right ml-3">
                         <p class="text-sm font-semibold text-gray-800" th:text="${currentUser.hoTen}"></p>
                         <p class="text-xs text-gray-500" th:text="${currentUser.chucVu}"></p>
+                    </div>
+                    <div class="ml-4 w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                        <i class="fas fa-user"></i>
                     </div>
                 </div>
             </header>
 
+            <!-- Main Content -->
             <main class="flex-1 p-6">
+                <!-- Greeting Section -->
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Chào mừng trở lại, <span th:text="${currentUser.hoTen}"></span>!
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-hand-wave text-yellow-400 mr-2"></i>
+                        Chào mừng, <span th:text="${currentUser.hoTen}"></span>!
                     </h2>
-                    <p class="text-gray-600">Đây là khu vực tổng quan về công việc của bạn.</p>
+                    <p class="text-gray-600 mt-2">Đây là khu vực tổng quan về công việc của bạn hôm nay.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
-                        <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
-                            <i class="fas fa-briefcase fa-lg"></i>
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- Assigned Trips -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg shadow-md border-l-4 border-blue-500 hover:shadow-lg transition duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-semibold">Chuyến đã nhận</p>
+                                <p class="text-3xl font-bold text-blue-600 mt-2">
+                                    <span th:text="${#lists.size(assignedTrips)}"></span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">chuyến đi sắp tới</p>
+                            </div>
+                            <i class="fas fa-briefcase text-5xl text-blue-300 opacity-50"></i>
                         </div>
-                        <div>
-                            <p class="text-gray-500 text-sm">Chuyến đi của bạn</p>
-                            <p class="text-2xl font-bold text-gray-800">
-                                <span th:text="${#lists.size(assignedTrips)}"></span> chuyến đi sắp tới
-                            </p>
-                            <a th:href="@{/hdvtx/assigned-trips}" class="text-blue-500 hover:underline mt-2 inline-block">Xem chi tiết &rarr;</a>
+                        <a th:href="@{/hdvtx/assigned-trips}" class="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4 inline-block">
+                            Xem chi tiết <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Available Trips -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg shadow-md border-l-4 border-green-500 hover:shadow-lg transition duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-semibold">Chuyến cần bạn</p>
+                                <p class="text-3xl font-bold text-green-600 mt-2">
+                                    <span th:text="${#lists.size(availableTrips)}"></span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">chuyến đang trống</p>
+                            </div>
+                            <i class="fas fa-route text-5xl text-green-300 opacity-50"></i>
+                        </div>
+                        <a th:href="@{/hdvtx/available-trips}" class="text-green-600 hover:text-green-700 text-sm font-semibold mt-4 inline-block">
+                            Nhận chuyến ngay <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Salary Stats -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg shadow-md border-l-4 border-purple-500 hover:shadow-lg transition duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-semibold">Thù lao</p>
+                                <p class="text-2xl font-bold text-purple-600 mt-2">Xem Chi Tiết</p>
+                                <p class="text-xs text-gray-500 mt-1">thống kê thù lao</p>
+                            </div>
+                            <i class="fas fa-wallet text-5xl text-purple-300 opacity-50"></i>
+                        </div>
+                        <a th:href="@{/hdvtx/thong-ke-thu-lao}" class="text-purple-600 hover:text-purple-700 text-sm font-semibold mt-4 inline-block">
+                            Xem thống kê <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Today's Status -->
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg shadow-md border-l-4 border-orange-500 hover:shadow-lg transition duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-semibold">Trạng thái</p>
+                                <p class="text-2xl font-bold text-orange-600 mt-2">Sẵn sàng</p>
+                                <p class="text-xs text-gray-500 mt-1">hôm nay</p>
+                            </div>
+                            <i class="fas fa-clock text-5xl text-orange-300 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Trips Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Latest Assigned Trips -->
+                    <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-list mr-2 text-blue-600"></i>Các chuyến gần đây
+                        </h3>
+                        <div class="space-y-3">
+                            <div th:if="${#lists.isEmpty(assignedTrips)}" class="text-center py-8 text-gray-500">
+                                <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
+                                <p>Bạn chưa nhận chuyến đi nào</p>
+                            </div>
+                            <div th:each="trip, stat : ${#lists.size(assignedTrips) > 0 ? assignedTrips.subList(0, T(java.lang.Math).min(3, #lists.size(assignedTrips))) : assignedTrips}" 
+                                 class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-200">
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-800" th:text="${trip.tour != null ? trip.tour.tenTour : 'Chuyến ' + trip.maChuyen}"></p>
+                                    <p class="text-sm text-gray-500">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        <span th:text="${#temporals.format(trip.ngayBatDau, 'dd/MM/yyyy')}"></span>
+                                    </p>
+                                </div>
+                                <a th:href="@{/hdvtx/trip-details/{id}(id=${trip.maChuyen})}" 
+                                   class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Chi tiết</a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
-                        <div class="bg-green-100 text-green-600 p-3 rounded-full">
-                            <i class="fas fa-route fa-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-sm">Chuyến đi có sẵn</p>
-                            <p class="text-2xl font-bold text-gray-800">
-                                <span th:text="${#lists.size(availableTrips)}"></span> chuyến đang cần bạn
-                            </p>
-                            <a th:href="@{/hdvtx/available-trips}" class="text-blue-500 hover:underline mt-2 inline-block">Nhận chuyến ngay &rarr;</a>
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-lightning-bolt mr-2 text-yellow-500"></i>Hành động nhanh
+                        </h3>
+                        <div class="space-y-3">
+                            <a th:href="@{/hdvtx/available-trips}" 
+                               class="block w-full p-4 bg-green-50 border-l-4 border-green-500 rounded hover:bg-green-100 transition">
+                                <p class="font-semibold text-green-700">Tìm chuyến mới</p>
+                                <p class="text-xs text-gray-600 mt-1">Xem các chuyến đi cần bạn</p>
+                            </a>
+                            <a th:href="@{/hdvtx/thong-ke-thu-lao}" 
+                               class="block w-full p-4 bg-purple-50 border-l-4 border-purple-500 rounded hover:bg-purple-100 transition">
+                                <p class="font-semibold text-purple-700">Xem thù lao</p>
+                                <p class="text-xs text-gray-600 mt-1">Thống kê thu nhập của bạn</p>
+                            </a>
+                            <a href="javascript:history.back()" 
+                               class="block w-full p-4 bg-blue-50 border-l-4 border-blue-500 rounded hover:bg-blue-100 transition">
+                                <p class="font-semibold text-blue-700">Quay lại</p>
+                                <p class="text-xs text-gray-600 mt-1">Trang trước đó</p>
+                            </a>
                         </div>
                     </div>
                 </div>
