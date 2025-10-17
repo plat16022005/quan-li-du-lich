@@ -47,21 +47,23 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        
        @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE MONTH(c.ngayBatDau) = :month AND YEAR(c.ngayBatDau) = :year " +
-               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+               "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
         List<ChuyenDuLich> findByMonthYearAndStaff(@Param("month") int month,
-                                                  @Param("year") int year,
-                                                  @Param("staffId") Integer staffId);
+                                                   @Param("year") int year,
+                                                   @Param("staffId") Integer staffId);
 
+        // ✅ FIX: Query cho thống kê theo khoảng thời gian
         @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE c.ngayBatDau BETWEEN :fromDate AND :toDate " +
-               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+               "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
         List<ChuyenDuLich> findByPeriodAndStaff(@Param("fromDate") LocalDate fromDate,
-                                                @Param("toDate") LocalDate toDate,
-                                                @Param("staffId") Integer staffId);
+                                               @Param("toDate") LocalDate toDate,
+                                               @Param("staffId") Integer staffId);
 
+        // ✅ FIX: Query cho thống kê theo năm
         @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE YEAR(c.ngayBatDau) = :year " +
-               "AND (c.maHuongDanVien = :staffId OR c.maTaiXe = :staffId)")
+               "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
         List<ChuyenDuLich> findByYearAndStaff(@Param("year") int year,
-                                              @Param("staffId") Integer staffId);
+                                             @Param("staffId") Integer staffId);
 }

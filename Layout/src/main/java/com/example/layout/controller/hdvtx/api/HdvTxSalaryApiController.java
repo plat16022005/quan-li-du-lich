@@ -1,6 +1,5 @@
 package com.example.layout.controller.hdvtx.api;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -17,6 +16,8 @@ import com.example.layout.entity.User;
 import com.example.layout.service.ChuyenDuLichService;
 import com.example.layout.service.NhanVienService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/hdvtx/api/salary")
 public class HdvTxSalaryApiController {
@@ -27,42 +28,61 @@ public class HdvTxSalaryApiController {
     @Autowired
     private ChuyenDuLichService chuyenDuLichService;
 
-
     @GetMapping("/year")
     public ResponseEntity<Map<String, Object>> getSalaryByYear(
             @RequestParam int year,
-            Principal principal) {
-
-        User user = nhanVienService.findTaiKhoanByUsername(principal.getName());
+            HttpSession session) {
+        
+        // ✅ FIX: Lấy user từ session
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
         Nhanvien nhanVien = nhanVienService.findByMaTaiKhoan(user.getMaTaiKhoan());
+        if (nhanVien == null) {
+            return ResponseEntity.status(404).build();
+        }
 
         Map<String, Object> result = chuyenDuLichService.getYearlyStats(year, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
     }
 
-    // Thống kê theo tháng cụ thể (trả về chi tiết ngày trong tháng)
     @GetMapping("/month")
     public ResponseEntity<Map<String, Object>> getSalaryByMonth(
             @RequestParam int year,
             @RequestParam int month,
-            Principal principal) {
+            HttpSession session) {
 
-        User user = nhanVienService.findTaiKhoanByUsername(principal.getName());
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
         Nhanvien nhanVien = nhanVienService.findByMaTaiKhoan(user.getMaTaiKhoan());
+        if (nhanVien == null) {
+            return ResponseEntity.status(404).build();
+        }
 
         Map<String, Object> result = chuyenDuLichService.getMonthlyStats(year, month, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
     }
 
-    // Thống kê theo khoảng thời gian (từ - đến)
     @GetMapping("/period")
     public ResponseEntity<Map<String, Object>> getSalaryByPeriod(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-            Principal principal) {
+            HttpSession session) {
 
-        User user = nhanVienService.findTaiKhoanByUsername(principal.getName());
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
         Nhanvien nhanVien = nhanVienService.findByMaTaiKhoan(user.getMaTaiKhoan());
+        if (nhanVien == null) {
+            return ResponseEntity.status(404).build();
+        }
 
         Map<String, Object> result = chuyenDuLichService.getPeriodStats(from, to, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
