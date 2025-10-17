@@ -33,6 +33,14 @@
 				<div class="bg-white p-6 rounded-lg shadow-md mb-6">
 					<div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
 						<div>
+							<label class="block text-sm font-semibold text-gray-700 mb-2">Loại thống kê</label>
+							<select id="typeSelect"
+								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+								<option value="yearly">Theo năm</option>
+								<option value="monthly">Theo tháng</option>
+							</select>
+						</div>
+						<div>
 							<label class="block text-sm font-semibold text-gray-700 mb-2">Năm</label>
 							<select id="yearSelect"
 								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -43,11 +51,10 @@
 								<option value="2022">2022</option>
 							</select>
 						</div>
-						<div>
+						<div id="monthSelectWrapper">
 							<label class="block text-sm font-semibold text-gray-700 mb-2">Tháng</label>
 							<select id="monthSelect"
 								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-								<option value="">Cả năm</option>
 								<option value="1">Tháng 1</option>
 								<option value="2">Tháng 2</option>
 								<option value="3">Tháng 3</option>
@@ -60,15 +67,6 @@
 								<option value="10">Tháng 10</option>
 								<option value="11">Tháng 11</option>
 								<option value="12">Tháng 12</option>
-							</select>
-						</div>
-						<div>
-							<label class="block text-sm font-semibold text-gray-700 mb-2">Loại dữ liệu</label> 
-							<select id="typeSelect"
-								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-								<option value="period">Theo kỳ</option>
-								<option value="monthly">Theo tháng</option>
-								<option value="yearly">Theo năm</option>
 							</select>
 						</div>
 						<div>
@@ -140,18 +138,20 @@
 						<i class="fas fa-table mr-2 text-blue-600"></i>Chi tiết chuyến đi
 					</h3>
 					<div class="overflow-x-auto">
-						<table class="w-full text-sm">
+						<table class="w-full text-sm text-left">
 							<thead class="bg-gray-50 border-b">
 								<tr>
-									<th class="px-6 py-3 text-left font-semibold text-gray-700">Thời gian</th>
-									<th class="px-6 py-3 text-right font-semibold text-gray-700">Tiền chuyến đi</th>
-									<th class="px-6 py-3 text-right font-semibold text-gray-700">Thưởng</th>
-									<th class="px-6 py-3 text-right font-semibold text-gray-700">Tổng</th>
+									<th class="px-6 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Thời gian</th>
+									<th class="px-6 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Mã chuyến</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Lương cơ bản</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Tiền thuê</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Thưởng</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Tổng</th>
 								</tr>
 							</thead>
 							<tbody id="salaryTableBody">
 								<tr>
-									<td colspan="5" class="text-center py-6 text-gray-500">Đang tải dữ liệu...</td>
+									<td colspan="6" class="text-center py-6 text-gray-500">Đang tải dữ liệu...</td>
 								</tr>
 							</tbody>
 						</table>
@@ -164,7 +164,24 @@
 	<script>
         $(function () {
             const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+            
             $('#yearSelect').val(currentYear);
+            $('#monthSelect').val(currentMonth);
+            
+            // Hiển thị/ẩn dropdown tháng theo loại thống kê
+            function toggleMonthSelector() {
+                const type = $('#typeSelect').val();
+                if (type === 'monthly') {
+                    $('#monthSelectWrapper').show();
+                } else {
+                    $('#monthSelectWrapper').hide();
+                }
+            }
+            
+            $('#typeSelect').on('change', toggleMonthSelector);
+            toggleMonthSelector(); // Init
+
             loadStats();
 
             $('#filterBtn').on('click', loadStats);
@@ -176,17 +193,20 @@
                 const month = $('#monthSelect').val();
                 const type = $('#typeSelect').val();
 
-                let url = `/hdvtx/api/salary/year?year=${encodeURIComponent(year)}`;
+                let url = '';
                 
-                if (month && type === 'period') {
-                    url = `/hdvtx/api/salary/month?year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`;
-                } else if (type === 'yearly') {
-                    url = `/hdvtx/api/salary/year?year=${encodeURIComponent(year)}`;
+                if (type === 'yearly') {
+                    url = `/hdvtx/api/salary/year?year=${year}`;
+                } else if (type === 'monthly') {
+                    url = `/hdvtx/api/salary/month?year=${year}&month=${month}`;
+                } else {
+                    // Tạm thời dùng yearly cho period
+                    url = `/hdvtx/api/salary/year?year=${year}`;
                 }
 
                 $.getJSON(url)
                     .done(function (data) {
-                        updateStats(data, salaryChart);
+                        updateStats(data, type);
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
                         console.error('Lỗi:', textStatus, errorThrown);
@@ -194,7 +214,7 @@
                     });
             }
 
-            function updateStats(data, chart) {
+            function updateStats(data, type) {
                 // Cập nhật các số liệu tổng quan
                 $('#totalTrips').text(data.totalTrips || 0);
                 $('#totalBaseSalary').text(formatCurrency(data.totalBaseSalary || 0));
@@ -206,23 +226,46 @@
                 let html = '';
                 
                 if (details.length === 0) {
-                    html = '<tr><td colspan="5" class="text-center py-6 text-gray-500">Không có dữ liệu</td></tr>';
+                    html = '<tr><td colspan="6" class="text-center py-6 text-gray-500">Không có dữ liệu</td></tr>';
                 } else {
-                    details.forEach((item, index) => {
-                        const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-                        const tripSalary = item.tripSalary || 0;
-                        const bonus = item.bonus || 0;
-                        const total = item.totalSalary || 0;
-                        
-                        html += `
-                            <tr class="${rowClass} border-b hover:bg-blue-50 transition">
-                                <td class="px-6 py-3 text-gray-800">${item.period || '-'}</td>
-                                <td class="px-6 py-3 font-medium text-blue-600">${item.maChuyen || item.month ? 'Tháng ' + item.month : '-'}</td>
-                                <td class="px-6 py-3 text-right text-gray-800">${formatCurrency(tripSalary)}</td>
-                                <td class="px-6 py-3 text-right text-green-600 font-semibold">${formatCurrency(bonus)}</td>
-                                <td class="px-6 py-3 text-right font-bold text-blue-700">${formatCurrency(total)}</td>
-                            </tr>`;
-                    });
+                    if (type === 'yearly') {
+                        // Hiển thị theo tháng
+                        details.forEach((item, index) => {
+                            const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                            const baseSalary = item.baseSalary || 0;
+                            const tripSalary = item.tripSalary || 0;
+                            const bonus = item.bonus || 0;
+                            const total = item.totalSalary || 0;
+                            
+                            html += `
+                                <tr class="${rowClass} border-b hover:bg-blue-50 transition">
+                                    <td class="px-6 py-3 text-gray-800 whitespace-nowrap">Tháng ${item.month}</td>
+                                    <td class="px-6 py-3 text-gray-600 whitespace-nowrap">${item.completedTrips} chuyến</td>
+                                    <td class="px-6 py-3 text-right text-yellow-600 font-medium whitespace-nowrap">${formatCurrency(baseSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-blue-600 font-medium whitespace-nowrap">${formatCurrency(tripSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-green-600 font-semibold whitespace-nowrap">${formatCurrency(bonus)}</td>
+                                    <td class="px-6 py-3 text-right font-bold text-blue-700 whitespace-nowrap">${formatCurrency(total)}</td>
+                                </tr>`;
+                        });
+                    } else {
+                        // Hiển thị chi tiết từng chuyến
+                        details.forEach((item, index) => {
+                            const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                            const tripSalary = item.tripSalary || 0;
+                            const bonus = item.bonus || 0;
+                            const total = item.totalSalary || 0;
+                            
+                            html += `
+                                <tr class="${rowClass} border-b hover:bg-blue-50 transition">
+                                    <td class="px-6 py-3 text-gray-800 whitespace-nowrap">${item.period || '-'}</td>
+                                    <td class="px-6 py-3 text-blue-600 font-medium whitespace-nowrap">#${item.maChuyen || '-'}</td>
+                                    <td class="px-6 py-3 text-right text-gray-400 whitespace-nowrap">-</td>
+                                    <td class="px-6 py-3 text-right text-blue-600 font-medium whitespace-nowrap">${formatCurrency(tripSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-green-600 font-semibold whitespace-nowrap">${formatCurrency(bonus)}</td>
+                                    <td class="px-6 py-3 text-right font-bold text-blue-700 whitespace-nowrap">${formatCurrency(total)}</td>
+                                </tr>`;
+                        });
+                    }
                 }
                 $('#salaryTableBody').html(html);
 
@@ -288,7 +331,7 @@
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                         <i class="fas fa-exclamation-circle mr-2"></i>${message}
                     </div>`;
-                $('#salaryTableBody').html(`<tr><td colspan="5">${errorHtml}</td></tr>`);
+                $('#salaryTableBody').html(`<tr><td colspan="6">${errorHtml}</td></tr>`);
             }
         });
     </script>

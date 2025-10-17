@@ -32,7 +32,7 @@ public class ManagerReportController {
     public String showReportForm(HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
         return "manager/report";
     }

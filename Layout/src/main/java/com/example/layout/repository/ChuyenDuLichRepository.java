@@ -1,6 +1,7 @@
 package com.example.layout.repository;
 
 import com.example.layout.entity.ChuyenDuLich;
+import com.example.layout.entity.Tour;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,6 +32,7 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findChuyenSapKhoiHanh();
        List<ChuyenDuLich> findByTrangThai(String trangThai);
        long countByTrangThai(String trangThai);
+
        
 
        List<ChuyenDuLich> findByHuongDanVienIsNullAndTrangThai(String trangThai);
@@ -80,4 +82,13 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
             );
         
         
+       List<ChuyenDuLich> findByTourAndTrangThai(Tour tour, String trangThai);
+
+       // Ví dụ nếu muốn chỉ lấy chuyến còn mở đặt
+       List<ChuyenDuLich> findByTourAndNgayBatDauAfter(Tour tour, LocalDate date);
+       
+       @Query("SELECT COUNT(c) FROM ChuyenDuLich c WHERE c.ngayBatDau BETWEEN :startDate AND :endDate AND c.trangThai = :trangThai")
+       Long countByNgayBatDauBetweenAndTrangThai(@Param("startDate") java.time.LocalDate startDate, 
+                                                 @Param("endDate") java.time.LocalDate endDate, 
+                                                 @Param("trangThai") String trangThai);
 }

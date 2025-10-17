@@ -47,7 +47,10 @@
                                 <td class="px-6 py-4 text-center" th:text="${chuyen.tour?.soNgay}"></td>
                                 <td class="px-6 py-4" th:text="${chuyen.soLuongHienTai + ' / ' + chuyen.soLuongToiDa}"></td>
                                 <td class="px-6 py-4 text-center space-x-4">
-                                    <a th:href="@{/hdvtx/trip-details/{id}(id=${chuyen.maChuyen})}" class="font-medium text-blue-600 hover:underline">Chi tiết</a>
+                                    <a th:href="@{/hdvtx/trip-details/{id}/download(id=${chuyen.maChuyen})}" 
+   class="font-medium text-blue-600 hover:underline inline-flex items-center">
+   <i class="fas fa-download mr-1"></i>Chi tiết
+</a>
                                     <form th:action="@{/hdvtx/trips/assign/{tripId}(tripId=${chuyen.maChuyen})}" method="post" class="inline">
                                         <button type="submit" class="font-medium text-green-600 hover:underline">Phụ trách</button>
                                     </form>

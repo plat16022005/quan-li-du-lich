@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <title>Chi Tiết Chuyến Đi</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script defer
+	src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-100">
 	<div class="flex h-screen overflow-hidden">
@@ -17,66 +19,87 @@
 			<main class="flex-1 p-6">
 				<!-- Nút quay lại -->
 				<div class="mb-6">
-					<a href="javascript:history.back()" class="text-blue-600 hover:underline text-sm inline-flex items-center">
+					<a href="javascript:history.back()"
+						class="text-blue-600 hover:underline text-sm inline-flex items-center">
 						<i class="fas fa-arrow-left mr-2"></i>Quay Lại
+					</a>
+					<!-- NÚT DOWNLOAD PDF -->
+					<a
+						th:href="@{/hdvtx/trip-details/{id}/download(id=${chuyen.maChuyen})}"
+						class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg inline-flex items-center transition">
+						<i class="fas fa-file-pdf mr-2"></i>Tải xuống PDF
 					</a>
 				</div>
 
 				<!-- Thông tin chuyến đi -->
 				<div class="bg-white p-6 rounded-lg shadow-md mb-6">
 					<!-- ✅ Trường hợp CÓ TOUR -->
-					<div th:if="${chuyen.tour != null}" class="flex flex-col md:flex-row gap-6">
+					<div th:if="${chuyen != null and chuyen.tour != null}"
+						class="flex flex-col md:flex-row gap-6">
 						<div class="md:w-1/4 flex-shrink-0">
-							<img 
-								th:src="${chuyen.tour.hinhAnh != null && !#strings.isEmpty(chuyen.tour.hinhAnh) ? chuyen.tour.hinhAnh : '/images/default-tour.jpg'}" 
+							<img
+								th:src="${chuyen.tour.hinhAnh != null && !#strings.isEmpty(chuyen.tour.hinhAnh) ? chuyen.tour.hinhAnh : '/images/default-tour.jpg'}"
 								alt="Hình ảnh tour"
 								onerror="this.src='/images/default-tour.jpg'"
 								class="rounded-lg w-full h-48 object-cover shadow-lg">
 						</div>
 						<div class="md:w-3/4">
-							<h2 class="text-2xl font-bold text-gray-800" th:text="${chuyen.tour.tenTour}"></h2>
+							<h2 class="text-2xl font-bold text-gray-800"
+								th:text="${chuyen.tour.tenTour}"></h2>
 							<p class="text-sm text-gray-500 mt-1">
-								Mã Tour: <span class="font-semibold" th:text="${chuyen.tour.maTour}"></span> | 
-								Mã Chuyến: <span class="font-semibold" th:text="${chuyen.maChuyen}"></span>
+								Mã Tour: <span class="font-semibold"
+									th:text="${chuyen.tour.maTour}"></span> | Mã Chuyến: <span
+									class="font-semibold" th:text="${chuyen.maChuyen}"></span>
 							</p>
-							<p class="text-gray-600 mt-4 leading-relaxed" th:text="${chuyen.tour.moTa ?: 'Không có mô tả'}"></p>
+							<p class="text-gray-600 mt-4 leading-relaxed"
+								th:text="${chuyen.tour.moTa ?: 'Không có mô tả'}"></p>
 
 							<div class="mt-4 flex flex-wrap items-center gap-4 text-gray-700">
-								<div class="flex items-center bg-blue-50 px-3 py-2 rounded-lg" title="Số ngày">
-									<i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
-									<span class="font-semibold" th:text="${chuyen.tour.soNgay} + ' ngày'"></span>
+								<div class="flex items-center bg-blue-50 px-3 py-2 rounded-lg"
+									title="Số ngày">
+									<i class="fas fa-calendar-alt mr-2 text-blue-500"></i> <span
+										class="font-semibold"
+										th:text="${chuyen.tour.soNgay} + ' ngày'"></span>
 								</div>
-								<div class="flex items-center bg-green-50 px-3 py-2 rounded-lg" title="Giá cơ bản">
-									<i class="fas fa-money-bill-wave mr-2 text-green-500"></i>
-									<span class="font-semibold" th:text="${#numbers.formatDecimal(chuyen.tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+								<div class="flex items-center bg-green-50 px-3 py-2 rounded-lg"
+									title="Giá cơ bản">
+									<i class="fas fa-money-bill-wave mr-2 text-green-500"></i> <span
+										class="font-semibold"
+										th:text="${#numbers.formatDecimal(chuyen.tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
 								</div>
 							</div>
 
 							<!-- Thông tin ngày khởi hành -->
-							<div class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+							<div
+								class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
 								<h3 class="font-semibold text-gray-800 mb-3 flex items-center">
-									<i class="fas fa-info-circle mr-2 text-blue-600"></i>Thông tin chuyến đi
+									<i class="fas fa-info-circle mr-2 text-blue-600"></i>Thông tin
+									chuyến đi
 								</h3>
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
 									<div class="flex items-start">
 										<i class="fas fa-calendar-check text-blue-500 mt-1 mr-2"></i>
 										<div>
 											<span class="text-gray-600 block">Ngày khởi hành:</span>
-											<p class="font-semibold text-gray-800" th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></p>
+											<p class="font-semibold text-gray-800"
+												th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></p>
 										</div>
 									</div>
 									<div class="flex items-start">
 										<i class="fas fa-calendar-times text-red-500 mt-1 mr-2"></i>
 										<div>
 											<span class="text-gray-600 block">Ngày kết thúc:</span>
-											<p class="font-semibold text-gray-800" th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></p>
+											<p class="font-semibold text-gray-800"
+												th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></p>
 										</div>
 									</div>
 									<div class="flex items-start">
 										<i class="fas fa-spinner text-yellow-500 mt-1 mr-2"></i>
 										<div>
 											<span class="text-gray-600 block">Trạng thái:</span>
-											<p class="font-semibold" th:classappend="${chuyen.trangThai == 'Đang diễn ra' ? 'text-green-600' : (chuyen.trangThai == 'Sắp diễn ra' ? 'text-blue-600' : 'text-gray-600')}" th:text="${chuyen.trangThai}"></p>
+											<p class="font-semibold"
+												th:classappend="${chuyen.trangThai == 'Đang diễn ra' ? 'text-green-600' : (chuyen.trangThai == 'Sắp diễn ra' ? 'text-blue-600' : 'text-gray-600')}"
+												th:text="${chuyen.trangThai}"></p>
 										</div>
 									</div>
 									<div class="flex items-start">
@@ -84,8 +107,8 @@
 										<div>
 											<span class="text-gray-600 block">Số lượng:</span>
 											<p class="font-semibold text-gray-800">
-												<span th:text="${soLuongHanhKhach}"></span> / 
-												<span th:text="${chuyen.soLuongToiDa}"></span> người
+												<span th:text="${soLuongHanhKhach}"></span> / <span
+													th:text="${chuyen.soLuongToiDa}"></span> người
 											</p>
 										</div>
 									</div>
@@ -95,27 +118,31 @@
 					</div>
 
 					<!-- ✅ Trường hợp KHÔNG CÓ TOUR -->
-					<div th:if="${chuyen.tour == null}">
+					<div th:if="${chuyen == null or chuyen.tour == null}">
 						<div class="text-center mb-4">
 							<div class="inline-block bg-yellow-100 p-4 rounded-full mb-4">
 								<i class="fas fa-route text-4xl text-yellow-600"></i>
 							</div>
 						</div>
-						
-						<h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Chuyến Đi Riêng Lẻ</h2>
+
+						<h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Chuyến
+							Đi Riêng Lẻ</h2>
 						<p class="text-sm text-gray-500 text-center mb-6">
-							Mã Chuyến: <span class="font-semibold text-blue-600" th:text="${chuyen.maChuyen}"></span>
+							Mã Chuyến: <span class="font-semibold text-blue-600"
+								th:text="${chuyen != null ? chuyen.maChuyen : 'N/A'}"></span>
 						</p>
 
-						<div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200 mb-6">
+						<div
+							class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200 mb-6">
 							<div class="flex items-start">
 								<i class="fas fa-info-circle text-2xl text-yellow-600 mr-3 mt-1"></i>
 								<div>
-									<p class="font-semibold text-gray-800 mb-1">Thông tin chuyến đi</p>
-									<p class="text-gray-600 text-sm">
-										Chuyến đi này là một hành trình riêng lẻ, không thuộc một tour du lịch cụ thể. 
-										Đây có thể là chuyến đi đặc biệt hoặc chuyến đi tùy chỉnh theo yêu cầu khách hàng.
-									</p>
+									<p class="font-semibold text-gray-800 mb-1">Thông tin
+										chuyến đi</p>
+									<p class="text-gray-600 text-sm">Chuyến đi này là một hành
+										trình riêng lẻ, không thuộc một tour du lịch cụ thể. Đây có
+										thể là chuyến đi đặc biệt hoặc chuyến đi tùy chỉnh theo yêu
+										cầu khách hàng.</p>
 								</div>
 							</div>
 						</div>
@@ -123,42 +150,51 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
 								<div class="flex items-start">
-									<i class="fas fa-calendar-check text-blue-500 text-xl mr-3 mt-1"></i>
+									<i
+										class="fas fa-calendar-check text-blue-500 text-xl mr-3 mt-1"></i>
 									<div>
-										<span class="text-gray-600 text-sm block mb-1">Ngày khởi hành</span>
-										<p class="font-semibold text-gray-800 text-lg" th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></p>
+										<span class="text-gray-600 text-sm block mb-1">Ngày
+											khởi hành</span>
+										<p class="font-semibold text-gray-800 text-lg"
+											th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></p>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="bg-red-50 p-4 rounded-lg border border-red-100">
 								<div class="flex items-start">
 									<i class="fas fa-calendar-times text-red-500 text-xl mr-3 mt-1"></i>
 									<div>
-										<span class="text-gray-600 text-sm block mb-1">Ngày kết thúc</span>
-										<p class="font-semibold text-gray-800 text-lg" th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></p>
+										<span class="text-gray-600 text-sm block mb-1">Ngày kết
+											thúc</span>
+										<p class="font-semibold text-gray-800 text-lg"
+											th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></p>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
 								<div class="flex items-start">
 									<i class="fas fa-spinner text-yellow-500 text-xl mr-3 mt-1"></i>
 									<div>
-										<span class="text-gray-600 text-sm block mb-1">Trạng thái</span>
-										<p class="font-semibold text-lg" th:classappend="${chuyen.trangThai == 'Đang diễn ra' ? 'text-green-600' : (chuyen.trangThai == 'Sắp diễn ra' ? 'text-blue-600' : 'text-gray-600')}" th:text="${chuyen.trangThai}"></p>
+										<span class="text-gray-600 text-sm block mb-1">Trạng
+											thái</span>
+										<p class="font-semibold text-lg"
+											th:classappend="${chuyen.trangThai == 'Đang diễn ra' ? 'text-green-600' : (chuyen.trangThai == 'Sắp diễn ra' ? 'text-blue-600' : 'text-gray-600')}"
+											th:text="${chuyen.trangThai}"></p>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
 								<div class="flex items-start">
 									<i class="fas fa-users text-purple-500 text-xl mr-3 mt-1"></i>
 									<div>
-										<span class="text-gray-600 text-sm block mb-1">Số lượng hành khách</span>
+										<span class="text-gray-600 text-sm block mb-1">Số lượng
+											hành khách</span>
 										<p class="font-semibold text-gray-800 text-lg">
-											<span th:text="${soLuongHanhKhach}"></span> / 
-											<span th:text="${chuyen.soLuongToiDa}"></span> người
+											<span th:text="${soLuongHanhKhach}"></span> / <span
+												th:text="${chuyen.soLuongToiDa}"></span> người
 										</p>
 									</div>
 								</div>
@@ -174,14 +210,12 @@
 							<button @click="activeTab = 'passengers'"
 								:class="{ 'border-blue-500 text-blue-600': activeTab === 'passengers', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'passengers' }"
 								class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center">
-								<i class="fas fa-users mr-2"></i>
-								Danh Sách Hành Khách
+								<i class="fas fa-users mr-2"></i> Danh Sách Hành Khách
 							</button>
 							<button @click="activeTab = 'itinerary'"
 								:class="{ 'border-blue-500 text-blue-600': activeTab === 'itinerary', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'itinerary' }"
 								class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center">
-								<i class="fas fa-map-marked-alt mr-2"></i>
-								Lộ Trình Chi Tiết
+								<i class="fas fa-map-marked-alt mr-2"></i> Lộ Trình Chi Tiết
 							</button>
 						</nav>
 					</div>
@@ -189,55 +223,71 @@
 					<!-- Tab Danh Sách Hành Khách -->
 					<div x-show="activeTab === 'passengers'" class="mt-6" x-transition>
 						<div class="bg-white rounded-lg shadow-md overflow-hidden">
-							<div class="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-								<h3 class="text-xl font-semibold text-gray-800 flex items-center">
-									<i class="fas fa-users text-blue-600 mr-2"></i>
-									Tổng số: <span class="text-blue-600 mx-2" th:text="${#lists.size(danhSachHanhKhach)}"></span> hành khách
+							<div
+								class="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+								<h3
+									class="text-xl font-semibold text-gray-800 flex items-center">
+									<i class="fas fa-users text-blue-600 mr-2"></i> Tổng số: <span
+										class="text-blue-600 mx-2"
+										th:text="${danhSachHanhKhach != null ? #lists.size(danhSachHanhKhach) : 0}"></span>
+									hành khách
 								</h3>
 							</div>
 							<div class="overflow-x-auto">
 								<table class="w-full text-sm text-left text-gray-600">
 									<thead class="text-xs text-gray-700 uppercase bg-gray-50">
 										<tr>
-											<th class="px-6 py-3">
-												<i class="fas fa-user mr-2 text-gray-400"></i>Họ Tên
-											</th>
-											<th class="px-6 py-3">
-												<i class="fas fa-phone mr-2 text-gray-400"></i>Số Điện Thoại
-											</th>
-											<th class="px-6 py-3">
-												<i class="fas fa-envelope mr-2 text-gray-400"></i>Email
-											</th>
-											<th class="px-6 py-3">
-												<i class="fas fa-venus-mars mr-2 text-gray-400"></i>Giới Tính
-											</th>
+											<th class="px-6 py-3"><i
+												class="fas fa-user mr-2 text-gray-400"></i>Họ Tên</th>
+											<th class="px-6 py-3"><i
+												class="fas fa-phone mr-2 text-gray-400"></i>Số Điện Thoại</th>
+											<th class="px-6 py-3"><i
+												class="fas fa-envelope mr-2 text-gray-400"></i>Email</th>
+											<th class="px-6 py-3"><i
+												class="fas fa-venus-mars mr-2 text-gray-400"></i>Giới Tính</th>
+											<th class="px-6 py-3"><i
+												class="fas fa-users mr-2 text-gray-400"></i>Số lượng</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:if="${#lists.isEmpty(danhSachHanhKhach)}">
-											<td colspan="4" class="text-center py-12">
-												<i class="fas fa-user-slash text-4xl text-gray-300 mb-3"></i>
+										<!-- HIỂN THỊ KHI KHÔNG CÓ HÀNH KHÁCH -->
+										<tr
+											th:if="${danhSachHanhKhach == null or #lists.isEmpty(danhSachHanhKhach)}">
+											<td colspan="4" class="text-center py-12"><i
+												class="fas fa-user-slash text-4xl text-gray-300 mb-3"></i>
 												<p class="text-gray-500">Chưa có hành khách nào đăng ký.</p>
 											</td>
 										</tr>
-										<tr th:each="khach, iterStat : ${danhSachHanhKhach}" 
-											class="border-b hover:bg-blue-50 transition"
-											th:classappend="${iterStat.odd ? 'bg-white' : 'bg-gray-50'}">
-											<td class="px-6 py-4 font-medium text-gray-900" th:text="${khach.hoTen}"></td>
-											<td class="px-6 py-4" th:text="${khach.soDienThoai}"></td>
-											<td class="px-6 py-4" th:text="${khach.email}"></td>
-											<td class="px-6 py-4">
-												<span th:if="${khach.gioiTinh == 'Nam'}" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
-													<i class="fas fa-mars mr-1"></i>
-													<span th:text="${khach.gioiTinh}"></span>
-												</span>
-												<span th:if="${khach.gioiTinh == 'Nữ'}" class="inline-flex items-center px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-semibold">
-													<i class="fas fa-venus mr-1"></i>
-													<span th:text="${khach.gioiTinh}"></span>
-												</span>
-												<span th:if="${khach.gioiTinh != 'Nam' && khach.gioiTinh != 'Nữ'}" th:text="${khach.gioiTinh}"></span>
-											</td>
-										</tr>
+
+										<!-- HIỂN THỊ DANH SÁCH HÀNH KHÁCH -->
+										<th:block
+											th:if="${danhSachHanhKhach != null and !#lists.isEmpty(danhSachHanhKhach)}">
+											<tr th:each="khach, iterStat : ${danhSachHanhKhach}"
+												class="border-b hover:bg-blue-50 transition"
+												th:classappend="${iterStat.odd ? 'bg-white' : 'bg-gray-50'}">
+												<td class="px-6 py-4 font-medium text-gray-900"
+													th:text="${khach.hoTen}"></td>
+												<td class="px-6 py-4" th:text="${khach.soDienThoai}"></td>
+												<td class="px-6 py-4" th:text="${khach.email}"></td>
+												<td class="px-6 py-4"><span
+													th:if="${khach.gioiTinh == 'Nam'}"
+													class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
+														<i class="fas fa-mars mr-1"></i> <span
+														th:text="${khach.gioiTinh}"></span>
+												</span> <span th:if="${khach.gioiTinh == 'Nữ'}"
+													class="inline-flex items-center px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-semibold">
+														<i class="fas fa-venus mr-1"></i> <span
+														th:text="${khach.gioiTinh}"></span>
+												</span> <span
+													th:if="${khach.gioiTinh != 'Nam' && khach.gioiTinh != 'Nữ'}"
+													th:text="${khach.gioiTinh}"></span></td>
+												<td class="px-6 py-4 text-center"><span
+													class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-bold">
+														<i class="fas fa-user-friends mr-1"></i> <span
+														th:text="${khach.soLuong} + ' người'"></span>
+												</span></td>
+											</tr>
+										</th:block>
 									</tbody>
 								</table>
 							</div>
@@ -247,54 +297,65 @@
 					<!-- Tab Lộ Trình -->
 					<div x-show="activeTab === 'itinerary'" class="mt-6" x-transition>
 						<div class="bg-white p-6 rounded-lg shadow-md">
-							<!-- Có lịch trình -->
-							<div th:if="${lichTrinh != null and !#lists.isEmpty(lichTrinh)}" class="space-y-8">
-								<div th:each="lt : ${lichTrinh}" class="relative pl-10 group">
-									<!-- Timeline line -->
-									<div class="absolute left-0 top-1 h-full border-l-2 border-blue-200 group-last:border-transparent ml-3"></div>
-									
-									<!-- Timeline dot -->
-									<div class="absolute left-0 top-1 w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold z-10"
-										th:text="${lt.thuTuNgay}"></div>
-									
-									<!-- Content card -->
-									<div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-md transition">
-										<p class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
-											<i class="fas fa-tasks text-blue-600 mr-2"></i>
-											<span th:text="${lt.hoatDong}"></span>
-										</p>
-										<div class="mt-2 space-y-2 text-sm text-gray-700">
-											<p th:if="${lt.diaDiem != null}" class="flex items-start">
-												<i class="fas fa-map-marker-alt w-5 text-center text-red-500 mr-3 mt-1"></i>
-												<span>
-													<strong class="font-semibold">Địa điểm:</strong> 
-													<span th:text="${lt.diaDiem.tenDiaDiem}"></span>
-												</span>
+							<!-- CÓ LỊCH TRÌNH -->
+							<th:block
+								th:if="${lichTrinh != null and !#lists.isEmpty(lichTrinh)}">
+								<div class="space-y-8">
+									<div th:each="lt : ${lichTrinh}" class="relative pl-10 group">
+										<!-- Timeline line -->
+										<div
+											class="absolute left-0 top-1 h-full border-l-2 border-blue-200 group-last:border-transparent ml-3"></div>
+
+										<!-- Timeline dot -->
+										<div
+											class="absolute left-0 top-1 w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold z-10"
+											th:text="${lt.thuTuNgay}"></div>
+
+										<!-- Content card -->
+										<div
+											class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-md transition">
+											<p
+												class="font-semibold text-lg text-gray-800 mb-3 flex items-center">
+												<i class="fas fa-tasks text-blue-600 mr-2"></i> <span
+													th:text="${lt.hoatDong}"></span>
 											</p>
-											<p th:if="${lt.khachSan != null}" class="flex items-start">
-												<i class="fas fa-hotel w-5 text-center text-purple-500 mr-3 mt-1"></i>
-												<span>
-													<strong class="font-semibold">Khách sạn:</strong> 
-													<span th:text="${lt.khachSan.tenKhachSan}"></span>
-												</span>
-											</p>
-											<p th:if="${lt.phuongTien != null}" class="flex items-start">
-												<i class="fas fa-bus w-5 text-center text-green-500 mr-3 mt-1"></i>
-												<span>
-													<strong class="font-semibold">Phương tiện:</strong> 
-													<span th:text="${lt.phuongTien.loaiPhuongTien} + ' (' + ${lt.phuongTien.bienSo} + ')'"></span>
-												</span>
-											</p>
+											<div class="mt-2 space-y-2 text-sm text-gray-700">
+												<p th:if="${lt.diaDiem != null}" class="flex items-start">
+													<i
+														class="fas fa-map-marker-alt w-5 text-center text-red-500 mr-3 mt-1"></i>
+													<span> <strong class="font-semibold">Địa
+															điểm:</strong> <span th:text="${lt.diaDiem.tenDiaDiem}"></span>
+													</span>
+												</p>
+												<p th:if="${lt.khachSan != null}" class="flex items-start">
+													<i
+														class="fas fa-hotel w-5 text-center text-purple-500 mr-3 mt-1"></i>
+													<span> <strong class="font-semibold">Khách
+															sạn:</strong> <span th:text="${lt.khachSan.tenKhachSan}"></span>
+													</span>
+												</p>
+												<p th:if="${lt.phuongTien != null}" class="flex items-start">
+													<i
+														class="fas fa-bus w-5 text-center text-green-500 mr-3 mt-1"></i>
+													<span> <strong class="font-semibold">Phương
+															tiện:</strong> <span
+														th:text="${lt.phuongTien.loaiPhuongTien} + ' (' + ${lt.phuongTien.bienSo} + ')'"></span>
+													</span>
+												</p>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							
-							<!-- Không có lịch trình -->
-							<div th:if="${lichTrinh == null or #lists.isEmpty(lichTrinh)}" class="text-center py-12">
+							</th:block>
+
+							<!-- KHÔNG CÓ LỊCH TRÌNH -->
+							<div th:if="${lichTrinh == null or #lists.isEmpty(lichTrinh)}"
+								class="text-center py-12">
 								<i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
-								<p class="text-gray-500 text-lg font-medium mb-2">Chưa có lịch trình chi tiết</p>
-								<p class="text-gray-400 text-sm">Lịch trình cho chuyến đi này sẽ được cập nhật sau.</p>
+								<p class="text-gray-500 text-lg font-medium mb-2">Chưa có
+									lịch trình chi tiết</p>
+								<p class="text-gray-400 text-sm">Lịch trình cho chuyến đi
+									này sẽ được cập nhật sau.</p>
 							</div>
 						</div>
 					</div>

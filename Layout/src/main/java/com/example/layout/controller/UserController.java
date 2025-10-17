@@ -50,6 +50,8 @@ public class UserController {
         	else if (user.getMaVaiTro() == 3 || user.getMaVaiTro() == 5) { // HUONGDANVIEN hoặc TAIXE
         		return "redirect:/hdvtx/dashboard";
             }
+        	else if (user.getMaVaiTro() == 4)
+        		return "redirect:/home";
         	else
         	{
         		KhachHang kh = khachHangRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
@@ -174,10 +176,10 @@ public class UserController {
     		return "redirect:/reset-pass";
     	}
     }
-    @GetMapping("/access-denied")
+    @GetMapping("/access_denied")
     public String showAccessDeniedForm()
     {
-    	return "access-denied";
+    	return "access_denied";
     }
     @GetMapping("/logout")
     public String handleLogout(HttpSession session,

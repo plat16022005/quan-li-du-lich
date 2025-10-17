@@ -10,9 +10,15 @@ import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.NhanvienRepository;
 import com.example.layout.service.HdvTxService;
 import com.example.layout.service.LichTrinhService;
+import com.example.layout.service.TripExportPdfService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/hdvtx")
@@ -34,6 +39,8 @@ public class HdvTxDashboardController {
     @Autowired private ChuyenDuLichRepository chuyenDuLichRepository;
     @Autowired private KhachHangRepository khachHangRepository;
     @Autowired private LichTrinhService lichTrinhService;
+    @Autowired
+    private TripExportPdfService tripExportPdfService;
     private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
 
     public static class CurrentUserDTO {
@@ -105,79 +112,46 @@ public class HdvTxDashboardController {
         return "hdvtx/available-trips";
     }
 
-    @GetMapping("/trip-details/{id}")
-    public String showTripDetails(@PathVariable("id") Integer tripId, 
-                                   Model model, 
-                                   HttpSession session, 
-                                   HttpServletRequest request) {
-        logger.info("=== BẮT ĐẦU XEM CHI TIẾT CHUYẾN ĐI {} ===", tripId);
+    @GetMapping("/trip-details/{id}/download")
+    public ResponseEntity<byte[]> downloadTripDetails(@PathVariable("id") Integer tripId, HttpSession session) {
+        logger.info("=== BẮT ĐẦU TẢI XUỐNG CHI TIẾT CHUYẾN ĐI {} ===", tripId);
         
         try {
             CurrentUserDTO currentUser = getCurrentUser(session);
             if (currentUser == null) {
-                logger.warn("User chưa đăng nhập, redirect về /login");
-                return "redirect:/login";
+                return ResponseEntity.status(401).build();
             }
-            logger.info("User đăng nhập: {} - Vai trò: {}", currentUser.getHoTen(), currentUser.getMaVaiTro());
 
-            // ✅ FIX: Sử dụng fetch để load đầy đủ tour
             ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId).orElse(null);
             if (chuyen == null) {
-                logger.error("KHÔNG TÌM THẤY chuyến đi với ID: {}", tripId);
-                return "redirect:/hdvtx/available-trips";
-            }
-            
-            // Force load tour nếu có
-            if (chuyen.getTour() != null) {
-                logger.info("Chuyến có tour: {}", chuyen.getTour().getTenTour());
-                // Trigger lazy loading
-                chuyen.getTour().getMaTour();
-            } else {
-                logger.info("Chuyến không có tour (chuyến riêng lẻ)");
+                return ResponseEntity.notFound().build();
             }
 
             int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
-            logger.info("Số lượng hành khách: {}", soLuongHanhKhach);
-            
             List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
-            logger.info("Số lượng records hành khách: {}", danhSachHanhKhach.size());
 
             List<LichTrinh> lichTrinh;
             if (chuyen.getTour() != null && chuyen.getTour().getMaTour() != null) {
-                Integer maTour = chuyen.getTour().getMaTour();
-                logger.info("Đang lấy lịch trình cho tour ID: {}", maTour);
-                try {
-                    lichTrinh = lichTrinhService.getLichTrinhByTour(maTour);
-                    logger.info("Tìm thấy {} lịch trình", lichTrinh.size());
-                } catch (Exception e) {
-                    logger.error("LỖI khi lấy lịch trình: ", e);
-                    lichTrinh = java.util.Collections.emptyList();
-                }
+                lichTrinh = lichTrinhService.getLichTrinhByTour(chuyen.getTour().getMaTour());
             } else {
-                logger.warn("Chuyến đi không có tour, không lấy lịch trình");
                 lichTrinh = java.util.Collections.emptyList();
             }
 
-            if (lichTrinh == null) {
-                lichTrinh = java.util.Collections.emptyList();
-                logger.warn("lichTrinh was null, setting to empty list");
-            }
+            // ✅ Export PDF thay vì Word
+            byte[] pdfData = tripExportPdfService.exportTripDetailsToPdf(chuyen, soLuongHanhKhach, danhSachHanhKhach, lichTrinh);
 
-            logger.info("Đang thêm dữ liệu vào model...");
-            model.addAttribute("chuyen", chuyen);
-            model.addAttribute("soLuongHanhKhach", soLuongHanhKhach);
-            model.addAttribute("danhSachHanhKhach", danhSachHanhKhach);
-            model.addAttribute("lichTrinh", lichTrinh);
-            model.addAttribute("currentUser", currentUser);
-            model.addAttribute("currentUri", request.getRequestURI());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.attachment()
+                    .filename("ChiTietChuyenDi_" + tripId + ".pdf", java.nio.charset.StandardCharsets.UTF_8)
+                    .build());
 
-            logger.info("=== HOÀN THÀNH XỬ LÝ, RENDER VIEW trip-details ===");
-            return "trip-details";
+            logger.info("=== TẢI XUỐNG THÀNH CÔNG ===");
+            return ResponseEntity.ok().headers(headers).body(pdfData);
             
         } catch (Exception e) {
-            logger.error("LỖI NGHIÊM TRỌNG khi xử lý trip-details: ", e);
-            e.printStackTrace();
-            return "redirect:/hdvtx/dashboard";
+            logger.error("LỖI khi tải xuống: ", e);
+            return ResponseEntity.status(500).build();
         }
     }
     

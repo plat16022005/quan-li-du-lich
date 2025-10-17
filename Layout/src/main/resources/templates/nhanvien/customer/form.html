@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chỉnh sửa Khách hàng</title>
+    <title th:text="${customer.maKhachHang != null ? 'Chỉnh sửa Khách hàng' : 'Thêm Khách hàng'}">Khách hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -27,8 +27,11 @@
           <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
             <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
           </a>
-          <a th:href="@{/nhanvien/manager-tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager-tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+          <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
             <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Xuất báo cáo</span>
           </a>
         </nav>
         <div class="mt-auto w-full p-4 border-t border-gray-800">
@@ -45,14 +48,14 @@
         >
           <div>
             <a
-              th:href="@{/nhanvien/customers/{id}(id=${customer.maKhachHang})}"
+              th:href="@{${customer.maKhachHang != null ? '/nhanvien/customers/' + customer.maKhachHang : '/nhanvien/customers'}}"
               class="text-blue-600 hover:underline"
             >
-              <i class="fas fa-arrow-left mr-2"></i>Quay lại trang chi tiết
+              <i class="fas fa-arrow-left mr-2"></i>
+              <span th:text="${customer.maKhachHang != null ? 'Quay lại trang chi tiết' : 'Quay lại danh sách'}"></span>
             </a>
             <h1 class="text-2xl font-semibold text-gray-800 mt-2">
-              Chỉnh sửa thông tin:
-              <span th:text="${customer.taiKhoan.hoTen}"></span>
+              <span th:text="${customer.maKhachHang != null ? 'Chỉnh sửa thông tin: ' + (customer.taiKhoan != null ? customer.taiKhoan.hoTen : '') : 'Thêm khách hàng mới'}"></span>
             </h1>
           </div>
         </header>
@@ -60,11 +63,11 @@
         <main class="flex-1 p-6">
           <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
             <form
-              th:action="@{/nhanvien/customers/update}"
+              th:action="@{${customer.maKhachHang != null ? '/nhanvien/customers/update' : '/nhanvien/customers/save'}}"
               th:object="${customer}"
               method="post"
             >
-              <input type="hidden" th:field="*{maKhachHang}" />
+              <input type="hidden" th:field="*{maKhachHang}" th:if="${customer.maKhachHang != null}" />
               <input type="hidden" th:field="*{taiKhoan}" />
               <input type="hidden" th:field="*{ngayThamGia}" />
 

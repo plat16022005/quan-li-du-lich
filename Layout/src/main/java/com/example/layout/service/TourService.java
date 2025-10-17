@@ -42,7 +42,6 @@ public class TourService {
         // ✅ Sửa đúng ở đây
         return tourRepository.findById(maTour).orElse(null);
     }
-    
 
     public TourDetailDTO getTourDetails(Integer maTour) {
         Tour tour = tourRepository.findById(maTour)

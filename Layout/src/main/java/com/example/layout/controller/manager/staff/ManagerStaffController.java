@@ -50,7 +50,7 @@ public class ManagerStaffController {
     ) {
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         Pageable pageable = PageRequest.of(page, size);

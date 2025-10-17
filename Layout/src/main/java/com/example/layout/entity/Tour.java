@@ -38,7 +38,7 @@ public class Tour {
     @JsonIgnore  // 🛑 Thêm ở đây để bỏ qua khi serialize JSON
     private Set<DiaDiem> diaDiems;
 
-    @OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tour", fetch = FetchType.EAGER)
     @JsonIgnore  // 🛑 Thêm ở đây để bỏ qua danh sách chuyến khi serialize JSON
     private List<ChuyenDuLich> danhSachChuyen;
 

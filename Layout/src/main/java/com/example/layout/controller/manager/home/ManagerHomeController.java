@@ -27,11 +27,11 @@ public class ManagerHomeController {
 		User user = (User) session.getAttribute("user");
 		if (user == null)
 		{
-			return "redirect:/access-denied";
+			return "redirect:/access_denied";
 		}
 		if (user.getMaVaiTro() != 1)
 		{
-			return "redirect:/access-denied";
+			return "redirect:/access_denied";
 		}
         return "manager/home";
     }
