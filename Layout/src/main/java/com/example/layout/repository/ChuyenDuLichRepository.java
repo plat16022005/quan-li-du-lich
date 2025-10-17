@@ -1,12 +1,14 @@
 package com.example.layout.repository;
 
 import com.example.layout.entity.ChuyenDuLich;
+import com.example.layout.entity.Tour;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 //import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +32,8 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findChuyenSapKhoiHanh();
        List<ChuyenDuLich> findByTrangThai(String trangThai);
        long countByTrangThai(String trangThai);
+       List<ChuyenDuLich> findByTourAndTrangThai(Tour tour, String trangThai);
+
+       // Ví dụ nếu muốn chỉ lấy chuyến còn mở đặt
+       List<ChuyenDuLich> findByTourAndNgayBatDauAfter(Tour tour, LocalDate date);
 }

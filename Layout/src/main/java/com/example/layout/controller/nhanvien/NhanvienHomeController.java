@@ -63,6 +63,6 @@ public class NhanvienHomeController {
         if (user == null || user.getMaVaiTro() != 2) {
             return "redirect:/access-denied";
         }
-        return "nhanvien/manager-tour";
+        return "nhanvien/manager_tour";
     }
 }

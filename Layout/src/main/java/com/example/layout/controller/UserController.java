@@ -47,6 +47,8 @@ public class UserController {
         		return "redirect:/manager/home";
         	else if (user.getMaVaiTro() == 2)
         		return "redirect:/nhanvien/dashboard";
+        	else if (user.getMaVaiTro() == 4)
+        		return "redirect:/home";
         	else
         	{
         		KhachHang kh = khachHangRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
