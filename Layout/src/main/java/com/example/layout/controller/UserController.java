@@ -173,10 +173,10 @@ public class UserController {
     		return "redirect:/reset-pass";
     	}
     }
-    @GetMapping("/access-denied")
+    @GetMapping("/access_denied")
     public String showAccessDeniedForm()
     {
-    	return "access-denied";
+    	return "access_denied";
     }
     @GetMapping("/logout")
     public String handleLogout(HttpSession session,

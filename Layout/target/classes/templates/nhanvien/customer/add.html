@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm Khách hàng mới</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col" id="sidebar">
+        <div class="flex items-center justify-center h-20 border-b border-gray-700">
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
+          </a>
+          <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
+            <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="mt-auto w-full p-4 border-t border-gray-800">
+          <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <div>
+            <a
+              th:href="@{/nhanvien/customers}"
+              class="text-blue-600 hover:underline"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>
+              Quay lại danh sách
+            </a>
+            <h1 class="text-2xl font-semibold text-gray-800 mt-2">
+              Thêm khách hàng mới
+            </h1>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <!-- Display error message if any -->
+          <div th:if="${errorMessage}" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+            <span class="font-medium">Lỗi!</span>
+            <span th:text="${errorMessage}"></span>
+          </div>
+
+          <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
+            <form
+              th:action="@{/nhanvien/customers/save-new}"
+              th:object="${newCustomer}"
+              method="post"
+            >
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Thông tin tài khoản
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label
+                    for="hoTen"
+                    class="block text-sm font-medium text-gray-700"
+                    >Họ Tên *</label
+                  >
+                  <input
+                    type="text"
+                    id="hoTen"
+                    th:field="*{hoTen}"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="email"
+                    class="block text-sm font-medium text-gray-700"
+                    >Email *</label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    th:field="*{email}"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="soDienThoai"
+                    class="block text-sm font-medium text-gray-700"
+                    >Số điện thoại *</label
+                  >
+                  <input
+                    type="tel"
+                    id="soDienThoai"
+                    th:field="*{soDienThoai}"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Thông tin chi tiết
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                  <label
+                    for="diaChi"
+                    class="block text-sm font-medium text-gray-700"
+                    >Địa chỉ</label
+                  >
+                  <input
+                    type="text"
+                    id="diaChi"
+                    th:field="*{diaChi}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="ngaySinh"
+                    class="block text-sm font-medium text-gray-700"
+                    >Ngày sinh</label
+                  >
+                  <input
+                    type="date"
+                    id="ngaySinh"
+                    th:field="*{ngaySinh}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="gioiTinh"
+                    class="block text-sm font-medium text-gray-700"
+                    >Giới tính</label
+                  >
+                  <select
+                    id="gioiTinh"
+                    th:field="*{gioiTinh}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Chọn giới tính --</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    for="bietDen"
+                    class="block text-sm font-medium text-gray-700"
+                    >Biết đến qua</label
+                  >
+                  <select
+                    id="bietDen"
+                    th:field="*{bietDen}"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Chọn nguồn --</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Google">Google</option>
+                    <option value="Website">Website</option>
+                    <option value="Bạn bè giới thiệu">Bạn bè giới thiệu</option>
+                    <option value="Quảng cáo">Quảng cáo</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mt-8 flex items-center justify-end gap-4">
+                <a
+                  th:href="@{/nhanvien/customers}"
+                  class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg"
+                  >Hủy</a
+                >
+                <button
+                  type="submit"
+                  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                >
+                  <i class="fas fa-save mr-2"></i>Thêm khách hàng
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

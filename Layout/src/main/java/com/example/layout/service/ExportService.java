@@ -38,21 +38,22 @@ public class ExportService {
     private static final Locale VIETNAM_LOCALE = Locale.forLanguageTag("vi-VN");
 
     public byte[] exportToExcel(String reportType, LocalDate fromDate, LocalDate toDate) throws IOException {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Báo cáo");
+        try {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Báo cáo");
 
-        // Create header style
-        CellStyle headerStyle = workbook.createCellStyle();
-        XSSFFont headerFont = ((XSSFWorkbook) workbook).createFont();
-        headerFont.setBold(true);
-        headerStyle.setFont(headerFont);
-        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            // Create header style
+            CellStyle headerStyle = workbook.createCellStyle();
+            XSSFFont headerFont = ((XSSFWorkbook) workbook).createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
 
         // Create header row
         Row headerRow = sheet.createRow(0);
-        if ("marketing".equals(reportType)) {
+        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
             createMarketingExcelReport(sheet, headerRow, headerStyle);
-        } else if ("expense".equals(reportType)) {
+        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
             createExpenseExcelReport(sheet, headerRow, headerStyle, fromDate, toDate);
         }
 
@@ -61,12 +62,51 @@ public class ExportService {
             sheet.autoSizeColumn(i);
         }
 
-        // Write to ByteArrayOutputStream
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
+            // Write to ByteArrayOutputStream
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            workbook.close();
 
-        return outputStream.toByteArray();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            // If POI fails, return a simple CSV-like Excel file
+            return createSimpleExcelFallback(reportType, fromDate, toDate);
+        }
+    }
+
+    private byte[] createSimpleExcelFallback(String reportType, LocalDate fromDate, LocalDate toDate) throws IOException {
+        StringBuilder csvContent = new StringBuilder();
+        
+        // Xử lý title báo cáo
+        String title = "";
+        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
+            title = "Marketing/Nguồn khách hàng";
+        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
+            title = "Chi phí/Doanh thu";
+        }
+        csvContent.append("Báo cáo ").append(title).append("\n");
+        
+        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
+            csvContent.append("Nguồn khách hàng,Số lượng\n");
+            Map<String, Long> marketingData = reportService.thongKeNguonKhachHang();
+            for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
+                csvContent.append(getMarketingSourceLabel(entry.getKey())).append(",").append(entry.getValue()).append("\n");
+            }
+        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
+            csvContent.append("Thời gian,Chi phí (VNĐ)\n");
+            if (fromDate != null) {
+                Map<String, BigDecimal> expenseData = reportService.thongKeChiPhi(fromDate.getYear(), fromDate.getMonthValue());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                for (Map.Entry<String, BigDecimal> entry : expenseData.entrySet()) {
+                    if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
+                        String dateStr = LocalDate.parse(entry.getKey()).format(formatter);
+                        csvContent.append(dateStr).append(",").append(entry.getValue()).append("\n");
+                    }
+                }
+            }
+        }
+        
+        return csvContent.toString().getBytes("UTF-8");
     }
 
     public byte[] exportToPDF(String reportType, LocalDate fromDate, LocalDate toDate) throws IOException, DocumentException {
@@ -75,12 +115,19 @@ public class ExportService {
         PdfWriter.getInstance(document, outputStream);
 
         document.open();
-        document.addTitle("Báo cáo " + (reportType.equals("marketing") ? "Marketing" : "Chi phí"));
+        
+        // Xử lý title
+        String titleText = "";
+        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
+            titleText = "MARKETING/NGUỒN KHÁCH HÀNG";
+        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
+            titleText = "CHI PHÍ/DOANH THU";
+        }
+        document.addTitle("Báo cáo " + titleText);
 
         // Add title
         com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 18, com.itextpdf.text.Font.BOLD);
-        Paragraph title = new Paragraph("BÁO CÁO " + 
-            (reportType.equals("marketing") ? "MARKETING" : "CHI PHÍ"), titleFont);
+        Paragraph title = new Paragraph("BÁO CÁO " + titleText, titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
         document.add(new Paragraph("\n")); // Add spacing
@@ -97,9 +144,9 @@ public class ExportService {
         }
 
         // Create content based on report type
-        if ("marketing".equals(reportType)) {
+        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
             createMarketingPDFReport(document);
-        } else if ("expense".equals(reportType)) {
+        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
             createExpensePDFReport(document, fromDate, toDate);
         }
 

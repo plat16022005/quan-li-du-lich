@@ -36,4 +36,9 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
 
        // Ví dụ nếu muốn chỉ lấy chuyến còn mở đặt
        List<ChuyenDuLich> findByTourAndNgayBatDauAfter(Tour tour, LocalDate date);
+       
+       @Query("SELECT COUNT(c) FROM ChuyenDuLich c WHERE c.ngayBatDau BETWEEN :startDate AND :endDate AND c.trangThai = :trangThai")
+       Long countByNgayBatDauBetweenAndTrangThai(@Param("startDate") java.time.LocalDate startDate, 
+                                                 @Param("endDate") java.time.LocalDate endDate, 
+                                                 @Param("trangThai") String trangThai);
 }

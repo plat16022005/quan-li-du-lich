@@ -11,5 +11,7 @@ import java.util.List;
 @Repository
 public interface LichTrinhRepository extends JpaRepository<LichTrinh, Integer> {
     List<LichTrinh> findByTour_MaTour(Integer maTour);
+
     List<LichTrinh> findByTourOrderByThuTuNgayAsc(Tour tour);
 }
+

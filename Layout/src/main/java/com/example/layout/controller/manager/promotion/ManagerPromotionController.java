@@ -35,7 +35,7 @@ public class ManagerPromotionController {
 
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -55,7 +55,7 @@ public class ManagerPromotionController {
     public String addPromotion(HttpSession session, @ModelAttribute KhuyenMai km) {
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         khuyenMaiService.save(km);
@@ -67,7 +67,7 @@ public class ManagerPromotionController {
     public String updatePromotion(HttpSession session, @ModelAttribute KhuyenMai km) {
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         khuyenMaiService.save(km);
@@ -79,7 +79,7 @@ public class ManagerPromotionController {
     public String deletePromotion(HttpSession session, @PathVariable Integer id) {
         User user = (User) session.getAttribute("user");
         if (user == null || user.getMaVaiTro() != 1) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         khuyenMaiService.deleteById(id);

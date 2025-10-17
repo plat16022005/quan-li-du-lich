@@ -43,7 +43,7 @@ public class ManagerTourController {
         User user = (User) session.getAttribute("user");
         // Cho phép Admin (1) hoặc Quản lý tour (2)
         if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
 
         List<Tour> tours = tourService.getAllTours();
@@ -308,7 +308,7 @@ public class ManagerTourController {
     {
         User user = (User) session.getAttribute("user");
         if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
-            return "redirect:/access-denied";
+            return "redirect:/access_denied";
         }
     	session.setAttribute("matour", maTour);
     	return "manager/tour_detail";
