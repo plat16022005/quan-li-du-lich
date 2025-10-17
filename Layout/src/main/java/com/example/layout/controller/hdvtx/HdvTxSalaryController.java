@@ -49,7 +49,7 @@ public class HdvTxSalaryController {
             nhanVien.getMaNhanVien()
         ));
 
-        return "hdvtx/thong-ke-thu-lao";
+        return "hdvtx/thong_ke_thu_lao";
     }
     
 }

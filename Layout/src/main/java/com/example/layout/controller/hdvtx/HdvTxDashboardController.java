@@ -93,7 +93,7 @@ public class HdvTxDashboardController {
         model.addAttribute("assignedTrips", assignedTrips);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("currentUri", request.getRequestURI());
-        return "hdvtx/assigned-trips";
+        return "hdvtx/assigned_trips";
     }
 
     @GetMapping("/available-trips")
@@ -109,7 +109,7 @@ public class HdvTxDashboardController {
         model.addAttribute("availableTrips", availableTrips);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("currentUri", request.getRequestURI());
-        return "hdvtx/available-trips";
+        return "hdvtx/available_trips";
     }
 
     @GetMapping("/trip-details/{id}/download")
