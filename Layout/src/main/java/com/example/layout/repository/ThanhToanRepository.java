@@ -27,4 +27,7 @@ public interface ThanhToanRepository extends JpaRepository<ThanhToan, Integer> {
 
     @Query("SELECT COALESCE(SUM(tt.soTien), 0) FROM ThanhToan tt WHERE tt.datCho.maDatCho = :maDatCho")
     BigDecimal findTotalPaidByDatChoId(@Param("maDatCho") Integer maDatCho);
+    
+    @Query("SELECT COALESCE(SUM(t.soTien), 0) FROM ThanhToan t WHERE CAST(t.ngayThanhToan AS DATE) = :date")
+    BigDecimal getRevenueByDate(@Param("date") java.time.LocalDate date);
 }

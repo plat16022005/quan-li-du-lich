@@ -25,4 +25,19 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
     
     @Query("SELECT dc FROM DatCho dc JOIN dc.chuyenDuLich c WHERE c.tour.maTour = :maTour")
     List<DatCho>  findByChuyenDuLich_Tour_MaTour(@Param("maTour") Integer maTour);
+    
+    @Query(value = """
+        SELECT TOP 5 
+            kh.HoTen as customerName,
+            t.TenTour as tourName,
+            dc.NgayDat as bookingDate,
+            dc.TrangThai as status
+        FROM DatCho dc
+        JOIN KhachHang kh ON dc.MaKhachHang = kh.MaKhachHang
+        JOIN TaiKhoan tk ON kh.MaTaiKhoan = tk.MaTaiKhoan
+        JOIN ChuyenDuLich cdl ON dc.MaChuyen = cdl.MaChuyen
+        JOIN Tour t ON cdl.MaTour = t.MaTour
+        ORDER BY dc.NgayDat DESC
+        """, nativeQuery = true)
+    List<Object[]> findTop5RecentBookings();
 }

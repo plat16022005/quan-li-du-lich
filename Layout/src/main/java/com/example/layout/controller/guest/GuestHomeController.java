@@ -16,11 +16,11 @@ public class GuestHomeController {
 		User user = (User) session.getAttribute("user");
 		if (user == null)
 		{
-			return "redirect:/access-denied";
+			return "redirect:/access_denied";
 		}
 		if (user.getMaVaiTro() != 4)
 		{
-			return "redirect:/access-denied";
+			return "redirect:/access_denied";
 		}
         return "guest/welcome";
     }

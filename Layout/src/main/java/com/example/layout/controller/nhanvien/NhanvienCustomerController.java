@@ -1,10 +1,14 @@
 package com.example.layout.controller.nhanvien;
 
+import com.example.layout.dto.NewCustomerDTO;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
+import com.example.layout.entity.User;
 import com.example.layout.service.DatChoService;
 import com.example.layout.service.KhachHangService;
+import com.example.layout.service.UserService;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +34,13 @@ public class NhanvienCustomerController {
 
     private final KhachHangService khachHangService;
     private final DatChoService datChoService;
+    private final UserService userService;
     
     
-    public NhanvienCustomerController(KhachHangService khachHangService,DatChoService datChoService) {
+    public NhanvienCustomerController(KhachHangService khachHangService, DatChoService datChoService, UserService userService) {
         this.khachHangService = khachHangService;
 		this.datChoService = datChoService;
+		this.userService = userService;
     } 
 
     @GetMapping
@@ -92,6 +98,60 @@ public class NhanvienCustomerController {
         khachHangService.save(customer);
         redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin khách hàng thành công!");
         return "redirect:/nhanvien/customers/" + customer.getMaKhachHang();
+    }
+    
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        model.addAttribute("newCustomer", new NewCustomerDTO());
+        return "nhanvien/customer/add"; // View: /templates/nhanvien/customer/add.html
+    }
+    
+    @PostMapping("/save-new")
+    public String saveNewCustomer(@ModelAttribute("newCustomer") NewCustomerDTO newCustomerDTO,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            // Tạo tài khoản mới
+            boolean userCreated = userService.register(
+                newCustomerDTO.getEmail(), // Sử dụng email làm username
+                "123456", // Mật khẩu mặc định
+                newCustomerDTO.getHoTen(),
+                newCustomerDTO.getEmail(),
+                newCustomerDTO.getSoDienThoai()
+            );
+            
+            if (!userCreated) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Email đã tồn tại trong hệ thống!");
+                return "redirect:/nhanvien/customers/add";
+            }
+            
+            // Lấy User vừa tạo
+            User user = userService.getConfirm(newCustomerDTO.getEmail());
+            
+            // Tạo KhachHang
+            KhachHang khachHang = new KhachHang();
+            khachHang.setTaiKhoan(user);
+            khachHang.setDiaChi(newCustomerDTO.getDiaChi());
+            khachHang.setNgaySinh(newCustomerDTO.getNgaySinh());
+            khachHang.setGioiTinh(newCustomerDTO.getGioiTinh());
+            khachHang.setBietDen(newCustomerDTO.getBietDen());
+            khachHang.setNgayThamGia(LocalDate.now());
+            
+            khachHangService.save(khachHang);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm khách hàng mới thành công!");
+            return "redirect:/nhanvien/customers";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi thêm khách hàng: " + e.getMessage());
+            return "redirect:/nhanvien/customers/add";
+        }
+    }
+    
+    @PostMapping("/save")
+    public String saveCustomer(@ModelAttribute("customer") KhachHang customer,
+                              RedirectAttributes redirectAttributes) {
+        khachHangService.save(customer);
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm khách hàng mới thành công!");
+        return "redirect:/nhanvien/customers";
     }
     
 }

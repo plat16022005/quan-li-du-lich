@@ -30,4 +30,9 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findChuyenSapKhoiHanh();
        List<ChuyenDuLich> findByTrangThai(String trangThai);
        long countByTrangThai(String trangThai);
+       
+       @Query("SELECT COUNT(c) FROM ChuyenDuLich c WHERE c.ngayBatDau BETWEEN :startDate AND :endDate AND c.trangThai = :trangThai")
+       Long countByNgayBatDauBetweenAndTrangThai(@Param("startDate") java.time.LocalDate startDate, 
+                                                 @Param("endDate") java.time.LocalDate endDate, 
+                                                 @Param("trangThai") String trangThai);
 }
