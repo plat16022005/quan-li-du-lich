@@ -43,20 +43,23 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
 
       
        @Query("SELECT c FROM ChuyenDuLich c " +
-               "WHERE MONTH(c.ngayBatDau) = :month AND YEAR(c.ngayBatDau) = :year " +
-               "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
-        List<ChuyenDuLich> findByMonthYearAndStaff(@Param("month") int month,
-                                                   @Param("year") int year,
-                                                   @Param("staffId") Integer staffId);
+    	       "WHERE ((MONTH(c.ngayKetThuc) = :month AND YEAR(c.ngayKetThuc) = :year) " +
+    	       "OR (MONTH(c.ngayBatDau) = :month AND YEAR(c.ngayBatDau) = :year)) " +
+    	       "AND ((c.huongDanVien IS NOT NULL AND c.huongDanVien.maNhanVien = :staffId) " +
+    	       "OR (c.taiXe IS NOT NULL AND c.taiXe.maNhanVien = :staffId)) " +
+    	       "ORDER BY c.ngayBatDau DESC")
+    	List<ChuyenDuLich> findByMonthYearAndStaff(@Param("month") int month, 
+    	                                             @Param("year") int year, 
+    	                                             @Param("staffId") Integer staffId);
 
-
-        @Query("SELECT c FROM ChuyenDuLich c " +
-               "WHERE c.ngayBatDau BETWEEN :fromDate AND :toDate " +
-               "AND (c.huongDanVien.maNhanVien = :staffId OR c.taiXe.maNhanVien = :staffId)")
-        List<ChuyenDuLich> findByPeriodAndStaff(@Param("fromDate") LocalDate fromDate,
-                                               @Param("toDate") LocalDate toDate,
-                                               @Param("staffId") Integer staffId);
-
+    	@Query("SELECT c FROM ChuyenDuLich c " +
+    	       "WHERE c.ngayKetThuc BETWEEN :fromDate AND :toDate " +
+    	       "AND ((c.huongDanVien IS NOT NULL AND c.huongDanVien.maNhanVien = :staffId) " +
+    	       "OR (c.taiXe IS NOT NULL AND c.taiXe.maNhanVien = :staffId)) " +
+    	       "ORDER BY c.ngayBatDau DESC")
+    	List<ChuyenDuLich> findByPeriodAndStaff(@Param("fromDate") LocalDate fromDate, 
+    	                                         @Param("toDate") LocalDate toDate, 
+    	                                         @Param("staffId") Integer staffId);
 
         @Query("SELECT c FROM ChuyenDuLich c " +
                "WHERE YEAR(c.ngayBatDau) = :year " +
@@ -75,4 +78,6 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
                 @Param("startDate") LocalDate startDate,
                 @Param("endDate") LocalDate endDate
             );
+        
+        
 }

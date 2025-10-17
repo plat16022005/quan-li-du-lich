@@ -36,7 +36,6 @@ public class HdvTxDashboardController {
     @Autowired private LichTrinhService lichTrinhService;
     private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
 
-    // Lớp DTO không thay đổi
     public static class CurrentUserDTO {
         private final String hoTen;
         private final String chucVu;
@@ -80,10 +79,6 @@ public class HdvTxDashboardController {
         if (currentUser == null) return "redirect:/login";
 
         List<ChuyenDuLich> assignedTrips = hdvTxService.getAssignedTrips(currentUser);
-        List<ChuyenDuLich> assignedTrips1 = hdvTxService.getAssignedTrips(currentUser)
-        	    .stream()
-        	    .filter(chuyen -> chuyen.getNgayKetThuc() != null && chuyen.getNgayKetThuc().isAfter(LocalDate.now()))
-        	    .collect(Collectors.toList());
         assignedTrips.forEach(chuyen ->
             chuyen.setSoLuongHienTai(chuyenDuLichRepository.getTotalParticipants(chuyen.getMaChuyen()))
         );
@@ -118,7 +113,6 @@ public class HdvTxDashboardController {
         logger.info("=== BẮT ĐẦU XEM CHI TIẾT CHUYẾN ĐI {} ===", tripId);
         
         try {
-            // Kiểm tra đăng nhập
             CurrentUserDTO currentUser = getCurrentUser(session);
             if (currentUser == null) {
                 logger.warn("User chưa đăng nhập, redirect về /login");
@@ -126,27 +120,28 @@ public class HdvTxDashboardController {
             }
             logger.info("User đăng nhập: {} - Vai trò: {}", currentUser.getHoTen(), currentUser.getMaVaiTro());
 
-            // Lấy thông tin chuyến đi
-            logger.info("Đang tìm chuyến đi với ID: {}", tripId);
+            // ✅ FIX: Sử dụng fetch để load đầy đủ tour
             ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId).orElse(null);
             if (chuyen == null) {
                 logger.error("KHÔNG TÌM THẤY chuyến đi với ID: {}", tripId);
                 return "redirect:/hdvtx/available-trips";
             }
-            logger.info("Tìm thấy chuyến: {} - Tour: {}", 
-                        chuyen.getMaChuyen(), 
-                        chuyen.getTour() != null ? chuyen.getTour().getTenTour() : "NULL");
+            
+            // Force load tour nếu có
+            if (chuyen.getTour() != null) {
+                logger.info("Chuyến có tour: {}", chuyen.getTour().getTenTour());
+                // Trigger lazy loading
+                chuyen.getTour().getMaTour();
+            } else {
+                logger.info("Chuyến không có tour (chuyến riêng lẻ)");
+            }
 
-            // Lấy số lượng hành khách
             int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
             logger.info("Số lượng hành khách: {}", soLuongHanhKhach);
             
-            // Lấy danh sách hành khách
             List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
             logger.info("Số lượng records hành khách: {}", danhSachHanhKhach.size());
 
-            // Xử lý lịch trình
-         // Trong phương thức showTripDetails
             List<LichTrinh> lichTrinh;
             if (chuyen.getTour() != null && chuyen.getTour().getMaTour() != null) {
                 Integer maTour = chuyen.getTour().getMaTour();
@@ -154,15 +149,6 @@ public class HdvTxDashboardController {
                 try {
                     lichTrinh = lichTrinhService.getLichTrinhByTour(maTour);
                     logger.info("Tìm thấy {} lịch trình", lichTrinh.size());
-                    for (LichTrinh lt : lichTrinh) {
-                        logger.debug("LichTrinh {}: Ngày {} - {} - DiaDiem: {} - KhachSan: {} - PhuongTien: {}", 
-                                    lt.getMaLichTrinh(),
-                                    lt.getThuTuNgay(),
-                                    lt.getHoatDong(),
-                                    lt.getDiaDiem() != null ? lt.getDiaDiem().getTenDiaDiem() : "NULL",
-                                    lt.getKhachSan() != null ? lt.getKhachSan().getTenKhachSan() : "NULL",
-                                    lt.getPhuongTien() != null ? lt.getPhuongTien().getLoaiPhuongTien() : "NULL");
-                    }
                 } catch (Exception e) {
                     logger.error("LỖI khi lấy lịch trình: ", e);
                     lichTrinh = java.util.Collections.emptyList();
@@ -172,14 +158,10 @@ public class HdvTxDashboardController {
                 lichTrinh = java.util.Collections.emptyList();
             }
 
-            // Kiểm tra null và log
-            logger.info("lichTrinh is null: {}", lichTrinh == null);
             if (lichTrinh == null) {
                 lichTrinh = java.util.Collections.emptyList();
                 logger.warn("lichTrinh was null, setting to empty list");
             }
-
-            // Thêm vào model
 
             logger.info("Đang thêm dữ liệu vào model...");
             model.addAttribute("chuyen", chuyen);
@@ -194,12 +176,10 @@ public class HdvTxDashboardController {
             
         } catch (Exception e) {
             logger.error("LỖI NGHIÊM TRỌNG khi xử lý trip-details: ", e);
-            // In ra stack trace để debug
             e.printStackTrace();
             return "redirect:/hdvtx/dashboard";
         }
     }
-    // ... (các phương thức còn lại)
     
     @PostMapping("/trips/assign/{tripId}")
     public String assignTrip(@PathVariable("tripId") int tripId, RedirectAttributes redirectAttributes, HttpSession session) {

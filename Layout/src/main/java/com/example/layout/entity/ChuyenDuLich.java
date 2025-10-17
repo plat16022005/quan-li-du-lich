@@ -96,12 +96,15 @@ public class ChuyenDuLich {
         return ngayKetThuc;
     }
 
-    @Transient // Báo cho JPA không lưu trường này vào CSDL
-    public Long getSoNgay() {
-        if (ngayBatDau == null || ngayKetThuc == null) {
-            return 0L; 
+    @Transient
+    public Integer getSoNgay() {
+        if (tour != null && tour.getSoNgay() != null) {
+            return tour.getSoNgay();
         }
-        return ChronoUnit.DAYS.between(ngayBatDau, ngayKetThuc) + 1;
+        if (ngayBatDau != null && ngayKetThuc != null) {
+            return (int) java.time.temporal.ChronoUnit.DAYS.between(ngayBatDau, ngayKetThuc) + 1;
+        }
+        return 0;
     }
     
     public void setNgayKetThuc(LocalDate ngayKetThuc) {
