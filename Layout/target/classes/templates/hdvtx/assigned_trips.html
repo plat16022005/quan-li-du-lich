@@ -1,104 +1,343 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Chuyến Đã Nhận</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script
-	src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-	defer></script>
+    <meta charset="UTF-8">
+    <title>Chuyến Đã Nhận</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
 <body class="bg-gray-100">
-	<div class="flex h-screen overflow-hidden">
-		<aside th:replace="~{hdvtx/dashboard :: aside}"></aside>
+    <div class="flex h-screen overflow-hidden">
+        <aside th:replace="~{hdvtx/dashboard :: aside}"></aside>
 
-		<div class="flex-1 flex flex-col overflow-y-auto">
-			<header th:replace="~{hdvtx/dashboard :: header}"></header>
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <header th:replace="~{hdvtx/dashboard :: header}"></header>
 
-			<main class="flex-1 p-6">
-				<h2 class="text-2xl font-bold text-gray-800 mb-6">Các Chuyến Đi
-					Bạn Đã Nhận</h2>
+            <main class="flex-1 p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-briefcase mr-2 text-green-600"></i>
+                    Các Chuyến Đi Bạn Đã Nhận
+                </h2>
 
-				<div th:if="${successMessage}"
-					class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-					role="alert">
-					<span class="block sm:inline" th:text="${successMessage}"></span>
-				</div>
-				<div th:if="${errorMessage}"
-					class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-					role="alert">
-					<span class="block sm:inline" th:text="${errorMessage}"></span>
-				</div>
+                <!-- ✅ THÔNG BÁO CẢNH BÁO TRÙNG LỊCH -->
+                <div th:if="${conflictingTripIds != null && !#sets.isEmpty(conflictingTripIds)}" 
+                     class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-2xl text-yellow-600 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-yellow-800 mb-1">⚠️ Cảnh báo trùng lịch!</p>
+                            <p class="text-sm text-yellow-700">
+                                Bạn có <strong class="text-yellow-900 text-lg" th:text="${#sets.size(conflictingTripIds)}"></strong> chuyến đi bị trùng lịch (được tô đậm màu cam).
+                                Vui lòng kiểm tra lại thời gian để tránh xung đột!
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="bg-white rounded-lg shadow-md overflow-x-auto">
-					<table class="w-full text-sm text-left text-gray-600">
-						<thead class="text-xs text-gray-700 uppercase bg-gray-50">
-							<tr>
-								<th class="px-6 py-3">Mã Chuyến</th>
-								<th class="px-6 py-3">Tên Tour</th>
-								<th class="px-6 py-3">Ngày Khởi Hành</th>
-								<th class="px-6 py-3">Số Ngày</th>
-								<th class="px-6 py-3">Hành Khách</th>
-								<th class="px-6 py-3">Trạng Thái</th>
-								<th class="px-6 py-3 text-center">Hành Động</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:if="${#lists.isEmpty(assignedTrips)}">
-								<td colspan="7" class="text-center py-4 text-gray-500">Bạn
-									chưa nhận chuyến đi nào.</td>
-							</tr>
-							<tr th:each="chuyen : ${assignedTrips}"
-								class="bg-white border-b hover:bg-gray-50">
-								<td class="px-6 py-4 font-medium text-gray-900"
-									th:text="${chuyen.maChuyen}"></td>
-								<td class="px-6 py-4"
-									th:text="${chuyen.tour?.tenTour ?: 'Chuyến riêng lẻ'}"></td>
-								<td class="px-6 py-4"
-									th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></td>
-								<td class="px-6 py-4" th:text="${chuyen.getSoNgay()}"></td>
-								<td class="px-6 py-4"
-									th:text="${chuyen.soLuongHienTai + ' / ' + chuyen.soLuongToiDa}"></td>
-								<td class="px-6 py-4"><span
-									th:if="${chuyen.trangThai == 'Đang diễn ra'}"
-									class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold">
-										<i class="fas fa-play-circle mr-1"></i>Đang diễn ra
-								</span> <span th:if="${chuyen.trangThai == 'Sắp diễn ra'}"
-									class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
-										<i class="fas fa-clock mr-1"></i>Sắp diễn ra
-								</span> <span
-									th:if="${chuyen.trangThai == 'Đã hoàn thành' || chuyen.trangThai == 'Đã kết thúc'}"
-									class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-semibold">
-										<i class="fas fa-check-circle mr-1"></i>Đã hoàn thành
-								</span></td>
-								<td class="px-6 py-4 text-center space-x-4"><a
-									th:href="@{/hdvtx/trip-details/{id}/download(id=${chuyen.maChuyen})}"
-									class="font-medium text-blue-600 hover:underline inline-flex items-center">
-										<i class="fas fa-download mr-1"></i>Lịch trình
-								</a> <!-- ✅ Chỉ cho hủy nếu chuyến chưa hoàn thành --> <span
-									th:if="${chuyen.trangThai != 'Đã hoàn thành' && chuyen.trangThai != 'Đã kết thúc'}">
-										<form
-											th:action="@{/hdvtx/trips/cancel/{tripId}(tripId=${chuyen.maChuyen})}"
-											method="post" class="inline"
-											onsubmit="return confirm('Bạn có chắc muốn hủy nhận chuyến này không?');">
-											<button type="submit"
-												class="font-medium text-red-600 hover:underline">
-												<i class="fas fa-times-circle mr-1"></i>Hủy
-											</button>
-										</form>
-								</span> <!-- ✅ Hiển thị thông báo nếu chuyến đã hoàn thành --> <span
-									th:if="${chuyen.trangThai == 'Đã hoàn thành' || chuyen.trangThai == 'Đã kết thúc'}"
-									class="text-gray-400 text-xs italic"> <i
-										class="fas fa-lock mr-1"></i>Không thể hủy
-								</span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</main>
-		</div>
-	</div>
+                <!-- ✅ THÔNG BÁO THÀNH CÔNG -->
+                <div th:if="${successMessage}" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg mb-4 shadow-sm animate-fade-in" role="alert">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-2xl text-green-500 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-green-800">✅ Thành công!</p>
+                            <p class="text-green-700 text-sm" th:text="${successMessage}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ THÔNG BÁO LỖI -->
+                <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-4 shadow-sm animate-fade-in" role="alert">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-500 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-red-800 mb-1">❌ Lỗi</p>
+                            <p class="text-red-700 text-sm whitespace-pre-line" th:text="${errorMessage}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅✅✅ FORM TÌM KIẾM VÀ LỌC ✅✅✅ -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <form method="get" th:action="@{/hdvtx/assigned-trips}" class="space-y-4">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-filter text-blue-600 text-xl mr-2"></i>
+                            <h3 class="text-lg font-semibold text-gray-800">Tìm kiếm & Lọc</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Lọc theo Trạng Thái -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-info-circle mr-1 text-gray-400"></i>Trạng Thái
+                                </label>
+                                <select name="trangThai" 
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Tất cả</option>
+                                    <option value="Sắp diễn ra" th:selected="${filterTrangThai == 'Sắp diễn ra'}">Sắp diễn ra</option>
+                                    <option value="Đang diễn ra" th:selected="${filterTrangThai == 'Đang diễn ra'}">Đang diễn ra</option>
+                                    <option value="Đã hoàn thành" th:selected="${filterTrangThai == 'Đã hoàn thành'}">Đã hoàn thành</option>
+                                </select>
+                            </div>
+
+                            <!-- Tìm theo Tên Tour -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-search mr-1 text-gray-400"></i>Tên Tour
+                                </label>
+                                <input type="text" 
+                                       name="tenTour" 
+                                       th:value="${filterTenTour}"
+                                       placeholder="Nhập tên tour..."
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Từ Ngày -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-alt mr-1 text-gray-400"></i>Từ Ngày
+                                </label>
+                                <input type="date" 
+                                       name="tuNgay" 
+                                       th:value="${filterTuNgay}"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Đến Ngày -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-times mr-1 text-gray-400"></i>Đến Ngày
+                                </label>
+                                <input type="date" 
+                                       name="denNgay" 
+                                       th:value="${filterDenNgay}"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Nút Tìm Kiếm -->
+                            <div class="flex items-end">
+                                <button type="submit" 
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                                    <i class="fas fa-search mr-2"></i>Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nút Reset -->
+                        <div class="flex justify-end">
+                            <a th:href="@{/hdvtx/assigned-trips}" 
+                               class="text-sm text-gray-600 hover:text-gray-800 underline flex items-center">
+                                <i class="fas fa-redo mr-1"></i>Xóa bộ lọc
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- BẢNG DỮ LIỆU (GIỮ NGUYÊN PHẦN NÀY) -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-hashtag mr-1 text-gray-400"></i>Mã Chuyến
+                                </th>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-map-marked-alt mr-1 text-gray-400"></i>Tên Tour
+                                </th>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-calendar-alt mr-1 text-gray-400"></i>Ngày Khởi Hành
+                                </th>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-calendar-times mr-1 text-gray-400"></i>Ngày Kết Thúc
+                                </th>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-users mr-1 text-gray-400"></i>Hành Khách
+                                </th>
+                                <th class="px-6 py-3">
+                                    <i class="fas fa-info-circle mr-1 text-gray-400"></i>Trạng Thái
+                                </th>
+                                <th class="px-6 py-3 text-center">
+                                    <i class="fas fa-cog mr-1 text-gray-400"></i>Hành Động
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(assignedTrips)}">
+                                <td colspan="7" class="text-center py-12">
+                                    <i class="fas fa-search text-5xl text-gray-300 mb-3"></i>
+                                    <p class="text-gray-500 text-lg font-medium">Không tìm thấy chuyến đi nào</p>
+                                    <p class="text-gray-400 text-sm mt-2">Thử thay đổi bộ lọc hoặc xóa điều kiện tìm kiếm</p>
+                                </td>
+                            </tr>
+                            
+                            <!-- ✅ HIGHLIGHT CÁC DÒNG BỊ TRÙNG LỊCH -->
+                            <tr th:each="chuyen : ${assignedTrips}" 
+                                th:classappend="${conflictingTripIds != null && conflictingTripIds.contains(chuyen.maChuyen)} ? 
+                                    'bg-yellow-50 border-l-4 border-yellow-500 hover:bg-yellow-100' : 
+                                    'bg-white border-b hover:bg-gray-50'"
+                                class="transition duration-200">
+                                
+                                <!-- Mã Chuyến với icon cảnh báo -->
+                                <td class="px-6 py-4 font-medium">
+                                    <div class="flex items-center">
+                                        <!-- ✅ ICON CẢNH BÁO -->
+                                        <span th:if="${conflictingTripIds != null && conflictingTripIds.contains(chuyen.maChuyen)}" 
+                                              class="mr-2 text-yellow-600 animate-pulse" 
+                                              title="Chuyến này bị trùng lịch!">
+                                            <i class="fas fa-exclamation-triangle text-lg"></i>
+                                        </span>
+                                        <span class="text-blue-600" th:text="${chuyen.maChuyen}"></span>
+                                    </div>
+                                </td>
+                                
+                                <!-- Tên Tour -->
+                                <td class="px-6 py-4" 
+                                    th:classappend="${conflictingTripIds != null && conflictingTripIds.contains(chuyen.maChuyen)} ? 
+                                        'font-bold text-yellow-900' : 'text-gray-900'" 
+                                    th:text="${chuyen.tour?.tenTour ?: 'Chuyến riêng lẻ'}">
+                                </td>
+
+                                <!-- ✅ HIGHLIGHT NGÀY KHỞI HÀNH -->
+                                <td class="px-6 py-4" 
+                                    th:classappend="${conflictingTripIds != null && conflictingTripIds.contains(chuyen.maChuyen)} ? 
+                                        'font-bold text-yellow-900' : 'text-gray-700'" 
+                                    th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}">
+                                </td>
+                                
+                                <!-- ✅ ĐỔI TỪ SỐ NGÀY THÀNH NGÀY KẾT THÚC -->
+                                <td class="px-6 py-4" 
+                                    th:classappend="${conflictingTripIds != null && conflictingTripIds.contains(chuyen.maChuyen)} ? 
+                                        'font-semibold text-yellow-900' : 'text-gray-700'"
+                                    th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}">
+                                </td>
+                                
+                                <!-- Hành Khách -->
+                                <td class="px-6 py-4">
+                                    <span class="font-semibold" th:text="${chuyen.soLuongHienTai}"></span>
+                                    <span class="text-gray-500">/ <span th:text="${chuyen.soLuongToiDa}"></span></span>
+                                </td>
+
+                                <!-- ✅ Trạng Thái -->
+                                <td class="px-6 py-4">
+                                    <span th:if="${chuyen.trangThai == 'Đang diễn ra'}"
+                                        class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-play-circle mr-1"></i>Đang diễn ra
+                                    </span>
+                                    <span th:if="${chuyen.trangThai == 'Sắp diễn ra'}"
+                                        class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-clock mr-1"></i>Sắp diễn ra
+                                    </span>
+                                    <span th:if="${chuyen.trangThai == 'Đã hoàn thành' || chuyen.trangThai == 'Đã kết thúc'}"
+                                        class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-check-circle mr-1"></i>Đã hoàn thành
+                                    </span>
+                                </td>
+                                
+                                <!-- Hành Động -->
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <!-- ✅ NÚT TẢI VỀ LỊCH TRÌNH PDF -->
+                                        <a th:href="@{/hdvtx/trip-details/{id}/download(id=${chuyen.maChuyen})}" 
+                                           class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-xs font-medium"
+                                           title="Tải xuống lịch trình PDF">
+                                            <i class="fas fa-download mr-1"></i>Tải về
+                                        </a>
+                                        
+     
+                                        <span th:if="${chuyen.trangThai == 'Sắp diễn ra'}">
+                                            <form th:action="@{/hdvtx/trips/cancel/{tripId}(tripId=${chuyen.maChuyen})}" 
+                                                  method="post" 
+                                                  class="inline cancel-form"
+                                                  th:data-tour-name="${chuyen.tour?.tenTour ?: 'Chuyến riêng lẻ'}"
+                                                  th:data-start-date="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}">
+                                                <button type="submit" 
+                                                        class="inline-flex items-center px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs font-medium"
+                                                        title="Hủy nhận chuyến này">
+                                                    <i class="fas fa-times-circle mr-1"></i>Hủy
+                                                </button>
+                                            </form>
+                                        </span>
+
+                                        <!-- Thông báo không thể hủy -->
+                                        <span th:if="${chuyen.trangThai != 'Sắp diễn ra'}"
+                                            class="inline-flex items-center px-3 py-1.5 bg-gray-200 text-gray-500 rounded text-xs cursor-not-allowed"
+                                            title="Không thể hủy chuyến đang/đã diễn ra">
+                                            <i class="fas fa-lock mr-1"></i>Không thể hủy
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ✅ LƯU Ý QUAN TRỌNG -->
+                <div class="mt-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-blue-800 mb-1">Lưu ý quan trọng</p>
+                            <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
+                                <li>Các chuyến được tô màu cam là chuyến có <strong>thời gian trùng nhau</strong></li>
+                                <li>Bạn chỉ có thể hủy các chuyến có trạng thái <strong>"Sắp diễn ra"</strong></li>
+                                <li>Chuyến đang diễn ra hoặc đã hoàn thành <strong>không thể hủy</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ✅ JAVASCRIPT -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Xử lý form hủy chuyến
+        const cancelForms = document.querySelectorAll('.cancel-form');
+        
+        cancelForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const tourName = this.getAttribute('data-tour-name');
+                const startDate = this.getAttribute('data-start-date');
+                
+                const message = '⚠️ Bạn có chắc muốn HỦY NHẬN chuyến đi này?\n\n' +
+                    '📍 Tour: ' + tourName + '\n' +
+                    '📅 Ngày khởi hành: ' + startDate + '\n\n' +
+                    '⚠️ Lưu ý: Bạn sẽ không còn phụ trách chuyến này nữa!';
+                
+                if (!confirm(message)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // ✅ Auto-hide thông báo sau 8 giây
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.animate-fade-in');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 8000);
+    });
+    </script>
+
+    <!-- ✅ CSS ANIMATION -->
+    <style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+    </style>
 </body>
 </html>
