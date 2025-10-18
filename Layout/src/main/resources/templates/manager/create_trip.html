@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tạo Chuyến Đi Mới</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside th:replace="~{manager/tour :: #sidebar}"></aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="flex items-center justify-between p-6 bg-white border-b">
+          <div>
+            <a th:href="@{/manager/tour}" class="text-blue-600 hover:underline"
+              ><i class="fas fa-arrow-left mr-2"></i>Quay lại</a
+            >
+            <h1 class="text-2xl font-semibold mt-2">
+              Tạo Chuyến Đi Mới cho Tour:
+              <span class="text-blue-600" th:text="${tour.tenTour}"></span>
+            </h1>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <form
+            th:action="@{/manager/tour/create-trip-post}"
+            th:object="${chuyenDuLich}"
+            method="post"
+            class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-sm"
+          >
+            <input type="hidden" th:field="*{tour.maTour}" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  for="ngayBatDau"
+                  class="block text-sm font-medium text-gray-700"
+                  >Ngày bắt đầu</label
+                >
+                <input
+                  type="date"
+                  id="ngayBatDau"
+                  th:field="*{ngayBatDau}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="ngayKetThuc"
+                  class="block text-sm font-medium text-gray-700"
+                  >Ngày kết thúc</label
+                >
+                <input
+                  type="date"
+                  id="ngayKetThuc"
+                  th:field="*{ngayKetThuc}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="soLuongToiDa"
+                  class="block text-sm font-medium text-gray-700"
+                  >Số lượng tối đa</label
+                >
+                <input
+                  type="number"
+                  id="soLuongToiDa"
+                  th:field="*{soLuongToiDa}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                  required
+                  min="1"
+                />
+              </div>
+              <div>
+                <label
+                  for="trangThai"
+                  class="block text-sm font-medium text-gray-700"
+                  >Trạng thái</label
+                >
+                <select
+                  id="trangThai"
+                  th:field="*{trangThai}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="Sắp diễn ra">Sắp diễn ra</option>
+                  <option value="Đang diễn ra">Đang diễn ra</option>
+                </select>
+              </div>
+              <div>
+                <label for="hdv" class="block text-sm font-medium text-gray-700"
+                  >Hướng dẫn viên</label
+                >
+                <select
+                  id="hdv"
+                  th:field="*{huongDanVien}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">-- Chọn Hướng dẫn viên (tùy chọn) --</option>
+                  <option
+                    th:each="guide : ${hdv}"
+                    th:value="${guide.maNhanVien}"
+                    th:text="${guide.taiKhoan.hoTen}"
+                  ></option>
+                </select>
+              </div>
+              <div>
+                <label for="tx" class="block text-sm font-medium text-gray-700"
+                  >Tài xế</label
+                >
+                <select
+                  id="tx"
+                  th:field="*{taiXe}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">-- Chọn Tài xế (tùy chọn) --</option>
+                  <option
+                    th:each="driver : ${tx}"
+                    th:value="${driver.maNhanVien}"
+                    th:text="${driver.taiKhoan.hoTen}"
+                  ></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-4">
+              <a
+                th:href="@{/manager/tour}"
+                class="px-4 py-2 bg-gray-200 text-gray-800 font-bold rounded-lg"
+                >Hủy</a
+              >
+              <button
+                type="submit"
+                class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg"
+              >
+                Lưu Chuyến Đi
+              </button>
+            </div>
+          </form>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

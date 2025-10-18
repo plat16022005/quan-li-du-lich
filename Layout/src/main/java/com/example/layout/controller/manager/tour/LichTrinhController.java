@@ -3,6 +3,11 @@ package com.example.layout.controller.manager.tour;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.repository.TourRepository;
+import com.example.layout.service.DiaDiemService;
+import com.example.layout.service.KhachSanService;
+import com.example.layout.service.LichTrinhService;
+import com.example.layout.service.PhuongTienService;
+import com.example.layout.service.TourService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,11 +21,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/manager/lichtrinh")
 public class LichTrinhController {
+
+
+    private final LichTrinhService lichTrinhService;
+    private final TourService tourService; 
+    private final DiaDiemService diaDiemService;
+    private final KhachSanService khachSanService;
+    private final PhuongTienService phuongTienService;
+
+    public LichTrinhController(LichTrinhService lichTrinhService, TourService tourService, DiaDiemService diaDiemService, KhachSanService khachSanService, PhuongTienService phuongTienService) {
+        this.lichTrinhService = lichTrinhService;
+        this.tourService = tourService;
+        this.diaDiemService = diaDiemService;
+        this.khachSanService = khachSanService;
+        this.phuongTienService = phuongTienService;
+    }
 
     @Autowired
     private LichTrinhRepository lichTrinhRepository;
@@ -98,5 +120,48 @@ public class LichTrinhController {
         public void setMaPhuongTien(Integer maPhuongTien) { this.maPhuongTien = maPhuongTien; }
         public Integer getMaKhachSan() { return maKhachSan; }
         public void setMaKhachSan(Integer maKhachSan) { this.maKhachSan = maKhachSan; }
+    }
+
+
+    @GetMapping("/tour/{maTour}")
+    @ResponseBody 
+    public ResponseEntity<List<LichTrinh>> getLichTrinhByTour(@PathVariable Integer maTour) {
+        List<LichTrinh> lichTrinhList = lichTrinhService.getLichTrinhByTourOrderByNgay(maTour);
+        return ResponseEntity.ok(lichTrinhList);
+    }
+
+
+    @GetMapping("/form-data")
+    @ResponseBody 
+    public ResponseEntity<Map<String, Object>> getFormData() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("diaDiemList", diaDiemService.findAll());
+        response.put("khachSanList", khachSanService.findAll());
+        response.put("phuongTienList", phuongTienService.findAll());
+        return ResponseEntity.ok(response);
+    }
+    
+
+    @PostMapping("/save")
+    @ResponseBody
+    public ResponseEntity<LichTrinh> createLichTrinh(@RequestBody LichTrinh lichTrinh) {
+        LichTrinh savedLichTrinh = lichTrinhService.saveLichTrinh(lichTrinh);
+        return ResponseEntity.ok(savedLichTrinh);
+    }
+
+
+    @PutMapping("/save/{maLichTrinh}")
+    @ResponseBody 
+    public ResponseEntity<LichTrinh> updateLichTrinh(@PathVariable Integer maLichTrinh, @RequestBody LichTrinh updatedData) {
+        LichTrinh saved = lichTrinhService.update(maLichTrinh, updatedData); // Cần tạo hàm này trong service
+        return ResponseEntity.ok(saved);
+    }
+
+
+    @DeleteMapping("/delete/{maLichTrinh}")
+    @ResponseBody
+    public ResponseEntity<?> deleteLichTrinh(@PathVariable Integer maLichTrinh) {
+        lichTrinhService.deleteLichTrinh(maLichTrinh);
+        return ResponseEntity.ok().build();
     }
 }

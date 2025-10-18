@@ -193,14 +193,34 @@
                 <span id="selected-tour-id" class="text-blue-600"></span>
               </div>
 
-              <!-- ➕ Nút thêm chi tiết -->
-              <button
-                id="add-detail-btn"
+              <!-- ➕ Nút tạo chuyến -->
+              <a
+                id="create-trip-btn"
+                href="#"
                 class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden"
               >
                 <i class="fas fa-plus"></i>
-                <span>Thêm chi tiết</span>
-              </button>
+                <span>Tạo Chuyến</span>
+              </a>
+
+              <!-- 📋 Nút xem danh sách chuyến -->
+              <a
+                id="list-trips-btn"
+                href="#"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden ml-2"
+              >
+                <i class="fas fa-list-ul"></i>
+                <span>Xem DS Chuyến</span>
+              </a>
+              <!-- 📅 Nút quản lý lịch trình -->
+              <a
+                id="detail-tour-btn"
+                href="#"
+                class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden ml-2"
+              >
+                <i class="fas fa-calendar-alt"></i>
+                <span>QL Lịch trình</span>
+              </a>
             </div>
 
             <!-- Nút thêm tour -->
@@ -945,14 +965,37 @@
         });
 
       function selectTour(id) {
-        selectedTourId = id;
+        /* comment %} selectedTourId = id;
         const label = document.getElementById("selected-tour-label");
         const value = document.getElementById("selected-tour-id");
         const btn = document.getElementById("add-detail-btn");
 
         value.textContent = id;
         label.classList.remove("hidden");
-        btn.classList.remove("hidden");
+        btn.classList.remove("hidden"); */
+
+        selectedTourId = id;
+
+        // Lấy các element cần thay đổi
+        const label = document.getElementById("selected-tour-label");
+        const value = document.getElementById("selected-tour-id");
+        const createBtn = document.getElementById("create-trip-btn");
+        const listBtn = document.getElementById("list-trips-btn");
+        const detailBtn = document.getElementById("detail-tour-btn"); // Thêm dòng này
+
+        // Hiển thị label "Mã tour: [id]"
+        value.textContent = id;
+        label.classList.remove("hidden");
+
+        // Cập nhật đường dẫn cho cả 3 nút
+        createBtn.href = `/manager/tour/${id}/create-chuyenDuLich`;
+        listBtn.href = `/manager/tour/${id}/trips`;
+        detailBtn.href = `/manager/tour/detail/${id}`; // Thêm dòng này
+
+        // Hiển thị cả 3 nút
+        createBtn.classList.remove("hidden");
+        listBtn.classList.remove("hidden");
+        detailBtn.classList.remove("hidden");
       }
     </script>
   </body>

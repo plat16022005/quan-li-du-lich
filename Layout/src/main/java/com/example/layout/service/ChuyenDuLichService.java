@@ -64,6 +64,14 @@ public class ChuyenDuLichService {
         chuyenDuLichRepository.deleteById(maChuyen);
     }
 
+    public List<ChuyenDuLich> findByTour_MaTour(Integer maTour) {
+        return chuyenDuLichRepository.findByTour_MaTour(maTour);
+    }
+
+    public Page<ChuyenDuLich> findByTour_MaTour(Integer maTour, Pageable pageable) {
+        return chuyenDuLichRepository.findByTour_MaTour(maTour, pageable);
+    }   
+
     public ChuyenDuLich updateStatus(Integer maChuyen, String newStatus) {
         ChuyenDuLich chuyen = getChuyenById(maChuyen);
         if (chuyen != null) {

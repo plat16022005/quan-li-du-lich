@@ -4,6 +4,7 @@ import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.Tour;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,10 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
        List<ChuyenDuLich> findByHuongDanVien_MaNhanVien(Integer maNhanVien);
 
        List<ChuyenDuLich> findByTaiXe_MaNhanVien(Integer maNhanVien);
+
+       List<ChuyenDuLich> findByTour_MaTour(Integer maTour);
+
+       Page<ChuyenDuLich> findByTour_MaTour(Integer maTour, Pageable pageable);
 
       
        @Query("SELECT c FROM ChuyenDuLich c " +

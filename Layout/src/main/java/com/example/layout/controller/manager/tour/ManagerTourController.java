@@ -1,13 +1,20 @@
 package com.example.layout.controller.manager.tour;
 
 import com.example.layout.entity.User;
+import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.entity.Tour;
 import com.example.layout.entity.ChuyenDuLich;
+import com.example.layout.entity.LichTrinh;
 import com.example.layout.service.TourService;
 import com.example.layout.service.ChuyenDuLichService;
+import com.example.layout.service.LichTrinhService;
+import com.example.layout.service.NhanVienService;
 
 import jakarta.servlet.http.HttpSession;
+
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,17 +32,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
 @Controller
 @RequestMapping("/manager")
 public class ManagerTourController {
 
     private final TourService tourService;
     private final ChuyenDuLichService chuyenDuLichService;
-    
-    public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService) {
+    private final NhanVienService nhanVienService;
+    private final LichTrinhService lichTrinhService;
+
+    public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService, NhanVienService nhanVienService, LichTrinhService lichTrinhService) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
+        this.nhanVienService = nhanVienService;
+        this.lichTrinhService = lichTrinhService;
     }
 
     @GetMapping("/tour")
@@ -313,4 +323,122 @@ public class ManagerTourController {
     	session.setAttribute("matour", maTour);
     	return "manager/tour_detail";
     }
+
+    @GetMapping("/tour/{maTour}/create-trip")
+    public String createTrip(@PathVariable("maTour") String maTour, Model model, HttpSession session) {
+        Tour tour = tourService.getTourById(Integer.parseInt(maTour));
+        if (tour == null) {
+            return "redirect:/manager/tour";
+        }
+
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return "redirect:/access_denied";
+        }
+
+        ChuyenDuLich chuyenDuLich = new ChuyenDuLich();
+        chuyenDuLich.setTour(tour);
+
+        model.addAttribute("tour", tour);
+        model.addAttribute("chuyenDuLich", chuyenDuLich);
+        model.addAttribute("hdv", nhanVienService.getallHuongDanVien());
+        model.addAttribute("tx", nhanVienService.getallTaiXe());    
+
+        return "manager/create_trip";
+    }
+
+    @GetMapping("tour/{maTour}/trips")
+    public String showAllTrips(@PathVariable("maTour") String maTour, Model model,HttpSession session) {
+        Tour tour = tourService.getTourById(Integer.parseInt(maTour));
+        if (tour == null) {
+            return "redirect:/manager/tour";
+        }
+
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return "redirect:/access_denied";
+        }
+
+        List<ChuyenDuLich> chuyenDuLichList = chuyenDuLichService.findByTour_MaTour(Integer.parseInt(maTour));
+        
+        model.addAttribute("tour", tour);
+        model.addAttribute("chuyenDuLichList", chuyenDuLichList);
+        return "manager/show_all_trips";
+    }
+    
+
+    @GetMapping("/tour/trips/{maChuyen}")
+    public String showTripDetailPage(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return "redirect:/access_denied";
+        }
+
+        ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
+        if (chuyen == null) {
+            return "redirect:/manager/tour"; 
+        }
+
+        List<LichTrinh> lichTrinhList = lichTrinhService.getLichTrinhByTour(chuyen.getTour().getMaTour());
+
+        model.addAttribute("chuyen", chuyen);
+        model.addAttribute("lichTrinhList", lichTrinhList);
+
+        return "manager/trip_detail";
+    }
+
+    @GetMapping("/tour/trips/edit/{maChuyen}")
+    public String showEditTripForm(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return "redirect:/access_denied";
+        }
+
+        ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
+        if (chuyen == null) {
+            return "redirect:/manager/tour";
+        }
+
+        model.addAttribute("chuyenDuLich", chuyen); 
+        model.addAttribute("tour", chuyen.getTour());
+        model.addAttribute("hdv", nhanVienService.getallHuongDanVien());
+        model.addAttribute("tx", nhanVienService.getallTaiXe());
+        
+        return "manager/create_trip";
+    }
+    
+    @GetMapping("/tour/trips/delete/{maChuyen}")
+    public String deleteTrip(@PathVariable("maChuyen") Integer maChuyen, RedirectAttributes redirectAttributes) {
+        // Lấy maTour để biết đường quay lại trang danh sách chuyến
+        ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
+        Integer maTour = (chuyen != null) ? chuyen.getTour().getMaTour() : null;
+
+        try {
+            chuyenDuLichService.deleteById(maChuyen);
+            redirectAttributes.addFlashAttribute("success", "Xóa chuyến đi thành công!");
+        } catch (Exception e) {
+            // Xử lý lỗi nếu chuyến đi đã có khách đặt, không thể xóa
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa chuyến đi này vì đã có dữ liệu liên quan.");
+        }
+        
+        // Quay lại trang danh sách chuyến của tour đó, hoặc trang tour chính nếu không lấy được maTour
+        return "redirect:" + (maTour != null ? "/manager/tour/" + maTour + "/trips" : "/manager/tour");
+    }
+
+    @PostMapping("/tour/create-trip-post")
+    public String handleSaveChuyenDuLich(@ModelAttribute("chuyenDuLich") ChuyenDuLich chuyenDuLich, 
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            chuyenDuLichService.saveChuyen(chuyenDuLich);
+            redirectAttributes.addFlashAttribute("success", "Lưu chuyến đi thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi lưu chuyến đi.");
+        }
+        
+        Integer maTour = chuyenDuLich.getTour().getMaTour();
+        return "redirect:/manager/tour/" + maTour + "/trips";
+    }
+
+    
 }
