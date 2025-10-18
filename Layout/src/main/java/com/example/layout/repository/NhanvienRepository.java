@@ -2,6 +2,7 @@ package com.example.layout.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +50,6 @@ public interface NhanvienRepository extends JpaRepository<Nhanvien, Integer> {
                 @Param("startDate") LocalDate startDate,
                 @Param("endDate") LocalDate endDate
         );
+
+        Optional<Nhanvien> findByTaiKhoan_MaTaiKhoan(Integer maTaiKhoan);
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 //import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ public class ChuyenDuLich {
     @Column(name = "MaChuyen")
     private Integer maChuyen;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTour")
     private Tour tour;
 
@@ -33,11 +34,11 @@ public class ChuyenDuLich {
     @Column(name = "SoLuongToiDa")
     private int soLuongToiDa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaHuongDanVien")
     private Nhanvien huongDanVien;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTaiXe")
     private Nhanvien taiXe;
 
@@ -45,6 +46,8 @@ public class ChuyenDuLich {
     private BigDecimal giaThueHDV;
 	@Column(name = "GiaThueTX", precision = 18, scale = 2)
     private BigDecimal giaThueTX;
+	@Transient 
+    private int soLuongHienTai;
 //    @ManyToMany
 //    @JoinTable(
 //        name = "Chuyen_KhachSan",
@@ -93,6 +96,17 @@ public class ChuyenDuLich {
         return ngayKetThuc;
     }
 
+    @Transient
+    public Integer getSoNgay() {
+        if (tour != null && tour.getSoNgay() != null) {
+            return tour.getSoNgay();
+        }
+        if (ngayBatDau != null && ngayKetThuc != null) {
+            return (int) java.time.temporal.ChronoUnit.DAYS.between(ngayBatDau, ngayKetThuc) + 1;
+        }
+        return 0;
+    }
+    
     public void setNgayKetThuc(LocalDate ngayKetThuc) {
         this.ngayKetThuc = ngayKetThuc;
     }
@@ -158,4 +172,6 @@ public class ChuyenDuLich {
 //    public void setPhuongTiens(Set<PhuongTien> phuongTiens) {
 //        this.phuongTiens = phuongTiens;
 //    }
+	public int getSoLuongHienTai() { return soLuongHienTai; }
+    public void setSoLuongHienTai(int soLuongHienTai) { this.soLuongHienTai = soLuongHienTai; }
 }

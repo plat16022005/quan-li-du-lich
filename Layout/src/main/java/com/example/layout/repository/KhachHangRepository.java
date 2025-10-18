@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.layout.dto.HanhKhachDTO;
 import com.example.layout.entity.KhachHang;
 
 @Repository	
@@ -37,4 +38,16 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer> {
 	        )
 	    """)
 	Page<KhachHang> search(@Param("keyword") String keyword, Pageable pageable);
+	
+	@Query("SELECT new com.example.layout.dto.HanhKhachDTO(" +
+		       "tk.hoTen, tk.soDienThoai, tk.email, kh.gioiTinh, " +
+		       "COALESCE(SUM(ctdc.soLuong), 1L)) " +
+		       "FROM DatCho dc " +
+		       "JOIN dc.khachHang kh " +
+		       "JOIN kh.taiKhoan tk " +
+		       "LEFT JOIN dc.chiTietDatChos ctdc " +
+		       "WHERE dc.chuyenDuLich.maChuyen = :maChuyen " +
+		       "GROUP BY tk.hoTen, tk.soDienThoai, tk.email, kh.gioiTinh")
+		List<HanhKhachDTO> findHanhKhachByMaChuyen(@Param("maChuyen") Integer maChuyen);
+	
 }

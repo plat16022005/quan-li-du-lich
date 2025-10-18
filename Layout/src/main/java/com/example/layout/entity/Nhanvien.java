@@ -28,6 +28,9 @@ public class Nhanvien {
     @Temporal(TemporalType.DATE)
     private LocalDate ngayVaoLam;
 
+    @Column(name = "ThuLaoTheoNgay", precision = 18, scale = 2)
+    private BigDecimal thuLaoTheoNgay;
+    
 	public Integer getMaNhanVien() {
 		return maNhanVien;
 	}
