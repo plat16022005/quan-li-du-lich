@@ -40,4 +40,9 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
         ORDER BY dc.NgayDat DESC
         """, nativeQuery = true)
     List<Object[]> findTop5RecentBookings();
+    
+    @Query("SELECT COALESCE(SUM(ct.soLuong), 0) " +
+            "FROM DatCho dc JOIN ChiTietDatCho ct ON dc.maDatCho = ct.datCho.maDatCho " +
+            "WHERE dc.chuyenDuLich.maChuyen = :maChuyen")
+     int getTongSoLuongDaDat(@Param("maChuyen") Integer maChuyen);
 }

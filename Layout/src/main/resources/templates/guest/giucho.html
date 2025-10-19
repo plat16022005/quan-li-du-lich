@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Tour & Giữ Chỗ - TravelGO</title>
+    <title>Đặt Chuyến Đi - TravelGO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,26 +13,30 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        .sticky-summary {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 100px;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
     <!-- Header -->
     <header class="bg-white shadow-md fixed w-full z-20 top-0">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="customer-homepage.html#home" class="flex items-center">
+            <a href="/home" class="flex items-center">
                 <i class="fas fa-route text-3xl text-blue-600"></i>
                 <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
             </a>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="customer-homepage.html#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
-                <a href="all-tours.html" class="text-blue-600 hover:text-blue-600 font-semibold">Tour Du Lịch</a>
+                <a class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
+                <a href="all-tours.html" class="text-gray-600 hover:text-blue-600 font-semibold">Tour Du Lịch</a>
                 <a href="customer-homepage.html#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
                 <a href="customer-homepage.html#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
             </div>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="#" class="text-gray-600 hover:text-blue-600 font-semibold">Đăng Nhập</a>
-                <a href="#" class="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition">Đăng Ký</a>
+                <!-- Login/Register section -->
             </div>
             <button class="md:hidden text-gray-600 text-2xl">
                 <i class="fas fa-bars"></i>
@@ -40,127 +44,118 @@
         </nav>
     </header>
 
-    <main class="pt-24 pb-12 bg-gray-100">
+    <main class="pt-24 pb-12">
         <div class="container mx-auto px-6">
-            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Xác Nhận & Đặt Tour</h1>
+            <!-- Breadcrumb -->
+            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a th:href="@{/home/tour}" class="text-gray-500 hover:text-blue-600">Tất cả tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
+                    </li>
+                    <li class="flex items-center">
+                        <a th:href="@{/home/tour/{maTour}(maTour=${tour.maTour})}" th:text="${tour.tenTour}" class="text-gray-500 hover:text-blue-600">Tên Tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
+                    </li>
+                    <li class="flex items-center">
+                        <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="text-gray-500 hover:text-blue-600">Chọn chuyến</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
+                    </li>
+                    <li class="flex items-center text-gray-800">
+                        Đặt chuyến
+                    </li>
+                </ol>
+            </nav>
 
-            <div class="flex flex-col lg:flex-row gap-12">
-                <!-- Left Column: Customer Info Form -->
-                <div class="w-full lg:w-2/3 bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Thông tin liên hệ</h2>
-                    <form action="#" method="POST" class="space-y-6">
-                        <div>
-                            <label for="full-name" class="block font-semibold text-gray-700 mb-2">Họ và tên</label>
-                            <input type="text" id="full-name" name="full-name" placeholder="Nguyễn Văn A" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        </div>
-                        <div>
-                            <label for="email" class="block font-semibold text-gray-700 mb-2">Email</label>
-                            <input type="email" id="email" name="email" placeholder="you@example.com" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        </div>
-                        <div>
-                            <label for="phone" class="block font-semibold text-gray-700 mb-2">Số điện thoại</label>
-                            <input type="tel" id="phone" name="phone" placeholder="09xxxxxxxx" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        </div>
-                         <div>
-                            <label for="address" class="block font-semibold text-gray-700 mb-2">Địa chỉ</label>
-                            <input type="text" id="address" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label for="notes" class="block font-semibold text-gray-700 mb-2">Yêu cầu đặc biệt (nếu có)</label>
-                            <textarea id="notes" name="notes" rows="4" placeholder="Ví dụ: Ăn chay, phòng gần thang máy,..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                        </div>
-                    </form>
-                </div>
+				<form th:action="@{/tour/booking/{maChuyen}/submit(maChuyen=${chuyen.maChuyen})}" method="get" class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+				    <!-- LEFT COLUMN -->
+				    <div class="lg:col-span-2">
+				        <div class="bg-white p-8 rounded-lg shadow-md">
+				            <h2 class="text-2xl font-bold text-gray-800 mb-6">Thông Tin Liên Lạc</h2>
+				            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				                <div>
+				                    <label for="fullName" class="block text-sm font-medium text-gray-700">Họ và Tên</label>
+				                    <input readonly th:value="${user.hoTen}" name="fullName" type="text" id="fullName"
+				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				                </div>
+				                <div>
+				                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+				                    <input readonly th:value="${user.email}" name="email" type="email" id="email"
+				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				                </div>
+				                <div>
+				                    <label for="phone" class="block text-sm font-medium text-gray-700">Số Điện Thoại</label>
+				                    <input readonly th:value="${user.soDienThoai}" name="phone" type="tel" id="phone"
+				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				                </div>
+				                <div>
+				                    <label for="address" class="block text-sm font-medium text-gray-700">Địa Chỉ</label>
+				                    <input readonly th:value="${khachhang.diaChi}" name="address" type="text" id="address"
+				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				                </div>
+				            </div>
+				            <div class="mt-6">
+				                <label for="notes" class="block text-sm font-medium text-gray-700">Yêu cầu đặc biệt</label>
+				                <textarea id="notes" name="notes" rows="4"
+				                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+				                          placeholder="Ví dụ: Ăn chay, phòng tầng cao..."></textarea>
+				            </div>
+				        </div>
+				    </div>
+				
+				    <!-- RIGHT COLUMN -->
+				    <div class="lg:col-span-1">
+				        <div class="sticky-summary bg-white p-6 rounded-lg shadow-md">
+				            <h3 class="text-xl font-bold text-gray-800 border-b pb-4">Tóm Tắt Chuyến Đi</h3>
+				            <div class="mt-4">
+				                <img th:src="${tour.hinhAnh}" alt="Tour Image" class="rounded-lg w-full h-40 object-cover">
+				                <h4 th:text="${tour.tenTour}" class="font-bold text-lg mt-4">Tên tour</h4>
+				                <div class="text-sm text-gray-600 mt-2 space-y-2">
+				                    <p><strong>Khởi hành:</strong> 
+				                       <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+				                    </p>
+				                    <p><strong>Ngày về:</strong> 
+				                       <span th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></span>
+				                    </p>
+				                </div>
+				            </div>
+				            <div class="border-y my-4 py-4">
+				                <h4 class="font-bold text-lg mb-2">Số lượng</h4>
+				                <div class="flex justify-between items-center text-gray-700">
+				                    <label for="adults">Người lớn</label>
+				                    <input type="number" id="adults" name="adults" value="1" min="1"
+				                           class="w-20 text-center border border-gray-300 rounded-md">
+				                </div>
+				                <div class="flex justify-between items-center text-gray-700 mt-2">
+				                    <label for="children">Trẻ em</label>
+				                    <input type="number" id="children" name="children" value="0" min="0"
+				                           class="w-20 text-center border border-gray-300 rounded-md">
+				                </div>
+				            </div>
+				            <div class="mt-4">
+				                <label for="discountCode" class="block text-sm font-medium text-gray-700">Mã giảm giá</label>
+				                <input type="text" id="discountCode" name="discountCode"
+				                       class="flex-1 block w-full border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+				                       placeholder="Nhập mã ở đây">
+				            </div>
+				
+				            <button type="submit" class="w-full mt-6 bg-blue-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
+				                Tiến hành thanh toán
+				            </button>
+				        </div>
+				    </div>
+				</form>
 
-                <!-- Right Column: Booking Summary -->
-                <aside class="w-full lg:w-1/3">
-                    <div class="bg-white p-8 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-4">Tóm tắt chuyến đi</h3>
-                        <div class="flex items-center space-x-4">
-                            <img src="https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=2070&auto=format&fit=crop" alt="Hạ Long Bay" class="w-24 h-24 rounded-lg object-cover">
-                            <div>
-                                <h4 class="font-bold text-lg">Khám phá Vịnh Hạ Long - Kỳ Quan Thế Giới</h4>
-                                <p class="text-sm text-gray-500">3 ngày 2 đêm</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 border-t pt-4">
-                            <div class="flex justify-between items-center mb-4">
-                                <label for="guests-summary" class="font-semibold text-gray-700">Số lượng khách</label>
-                                <input type="number" id="guests-summary" value="1" min="1" class="w-20 p-2 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
-                            <div class="flex justify-between text-gray-700">
-                                <p>Giá mỗi khách:</p>
-                                <p id="price-per-guest">2,990,000₫</p>
-                            </div>
-                            <div class="flex justify-between font-bold text-xl mt-4 border-t pt-4">
-                                <p>Tổng cộng:</p>
-                                <p id="total-price" class="text-blue-600">2,990,000₫</p>
-                            </div>
-                        </div>
-                        <button type="submit" form="customer-info-form" class="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg text-lg font-bold hover:bg-blue-700 transition">Xác Nhận Giữ Chỗ</button>
-                    </div>
-                </aside>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10">
+    <footer class="bg-gray-800 text-white py-10 mt-12">
         <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">TravelGO</h3>
-                    <p class="text-gray-400">Cùng bạn khám phá mọi miền đất hứa, tạo nên những kỷ niệm khó phai.</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Liên kết nhanh</h4>
-                    <ul class="space-y-2">
-                        <li><a href="customer-homepage.html#about-us" class="text-gray-400 hover:text-white">Về Chúng Tôi</a></li>
-                        <li><a href="all-tours.html" class="text-gray-400 hover:text-white">Tour Du Lịch</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Điều khoản</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Liên hệ</h4>
-                     <ul class="space-y-2 text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> Dĩ An, Bình Dương</li>
-                        <li class="flex items-center"><i class="fas fa-phone-alt mr-2"></i> (+84) 123 456 789</li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-2"></i> contact@travelgo.com</li>
-                    </ul>
-                </div>
-                <div>
-                     <h4 class="font-semibold mb-4">Theo dõi chúng tôi</h4>
-                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-youtube"></i></a>
-                     </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500">
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
                 <p>&copy; 2025 TravelGO. All rights reserved.</p>
             </div>
         </div>
     </footer>
-    
-    <script>
-        const guestsInput = document.getElementById('guests-summary');
-        const pricePerGuestText = document.getElementById('price-per-guest');
-        const totalPriceText = document.getElementById('total-price');
 
-        const pricePerGuest = 2990000;
-
-        function updateTotalPrice() {
-            const numberOfGuests = parseInt(guestsInput.value) || 0;
-            const totalPrice = numberOfGuests * pricePerGuest;
-            
-            totalPriceText.textContent = totalPrice.toLocaleString('vi-VN') + '₫';
-        }
-
-        guestsInput.addEventListener('input', updateTotalPrice);
-        
-        // Initial calculation
-        updateTotalPrice();
-    </script>
 </body>
 </html>
+

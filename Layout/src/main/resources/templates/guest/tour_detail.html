@@ -1,191 +1,166 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi Tiết Tour - Khám phá Vịnh Hạ Long - TravelGO</title>
+    <title>Chi Tiết Tour - TravelGO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
         body {
             font-family: 'Inter', sans-serif;
         }
-        .sticky-booking {
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 2rem;
+            bottom: -2rem;
+            width: 2px;
+            background-color: #e5e7eb;
+        }
+         .sticky-sidebar {
             position: -webkit-sticky;
             position: sticky;
-            top: 100px; /* 80px header + 20px margin */
+            top: 100px; /* Adjust this value based on your header's height */
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
     <!-- Header -->
     <header class="bg-white shadow-md fixed w-full z-20 top-0">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="customer-homepage.html#home" class="flex items-center">
+            <a href="/home" class="flex items-center">
                 <i class="fas fa-route text-3xl text-blue-600"></i>
                 <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
             </a>
-
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="customer-homepage.html#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
+                <a href="all-tours.html" class="text-gray-600 hover:text-blue-600 font-semibold">Tour Du Lịch</a>
+                <a href="customer-homepage.html#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
+                <a href="customer-homepage.html#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-4">
+                <!-- Login/Register section can be added here if needed -->
+            </div>
+            <button class="md:hidden text-gray-600 text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
         </nav>
     </header>
 
-    <main class="pt-20">
-        <!-- Tour Title & Info -->
-        <section class="bg-white py-8">
-            <div class="container mx-auto px-6">
-                <h1 class="text-4xl font-bold text-gray-800" th:text="${tour.tenTour}">Khám phá Vịnh Hạ Long - Kỳ Quan Thế Giới</h1>
-                <div class="flex items-center mt-4 text-gray-600 space-x-6">
+    <main class="pt-24 pb-12 bg-white">
+        <div class="container mx-auto px-6">
+            <!-- Breadcrumb -->
+            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a href="/home/tour" class="text-gray-500 hover:text-blue-600">Tất cả tour</a>
+                        <i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
+                    </li>
+                    <li class="flex items-center text-gray-800">
+                        <span th:text="${tour.tenTour}">Tên Tour Chi Tiết</span>
+                    </li>
+                </ol>
+            </nav>
 
-                    <div class="flex items-center">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        <span th:text="${tour.moTa}"></span>
-                    </div>
-                </div>
+            <!-- Main Image -->
+            <div class="max-w-5xl mx-auto rounded-lg overflow-hidden">
+                 <img th:src="${tour.hinhAnh}" src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop" alt="Main tour image" class="w-full h-auto">
             </div>
-        </section>
 
-        <!-- Image Gallery -->
-
-<!-- Image Gallery -->
-<section class="container mx-auto px-6 mt-8">
-    <div class="flex justify-center">
-        <img th:src="${tour.hinhAnh}" alt="Ảnh tour" class="max-h-[500px] object-contain rounded-lg shadow-lg">
-    </div>
-</section>
-
-        <!-- Main Content -->
-        <div class="container mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12">
-            <!-- Left Column: Tour Details -->
-            <div class="w-full lg:w-2/3">
-                <div class="bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 border-b pb-4">Chi tiết hành trình</h2>
+            <!-- Main Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-8">
+                <!-- Left Column: Tour Info & Itinerary -->
+                <div class="lg:col-span-2">
+                    <h1 th:text="${tour.tenTour}" class="text-4xl font-bold text-gray-800">Khám phá Vịnh Hạ Long - Kỳ Quan Thế Giới</h1>
                     
-                    <!-- Overview -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-6">
-                        <div>
-                            <i class="fas fa-clock text-3xl text-blue-600"></i>
-                            <p class="mt-2 font-semibold">Thời gian</p>
-                            <p class="text-gray-600" th:text="${tour.soNgay} + ' ngày'">3 ngày 2 đêm</p>
+                    <!-- Key Info -->
+                    <div class="flex items-center space-x-8 text-gray-600 border-y py-4 my-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-blue-500 text-2xl mr-3"></i>
+                            <div>
+                                <p class="font-semibold">Thời gian</p>
+                                <p th:text="${tour.soNgay} + ' ngày'">3 ngày 2 đêm</p>
+                            </div>
                         </div>
-                        <div>
-                            <i class="fas fa-users text-3xl text-blue-600"></i>
-                            <p class="mt-2 font-semibold">Số người</p>
-                            <p class="text-gray-600">Tối đa 30</p>
-                        </div>
-
-                        <div>
-                            <i class="fas fa-user-tie text-3xl text-blue-600"></i>
-                            <p class="mt-2 font-semibold">Hướng dẫn viên</p>
-                            <p class="text-gray-600">Tiếng Việt</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-blue-500 text-2xl mr-3"></i>
+                            <div>
+                                <p class="font-semibold">Địa điểm</p>
+                                <p th:text="${tour.moTa}">Quảng Ninh</p>
+                            </div>
                         </div>
                     </div>
+                    
 
                     <!-- Itinerary -->
-                    <div class="mt-8">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Lịch trình chi tiết</h3>
-                        <div class="space-y-6 border-l-2 border-blue-200 ml-3 pl-6">
-                            <!-- Day 1 -->
-                            <div>
-                                <div class="flex items-center">
-                                    <div class="bg-blue-600 w-6 h-6 rounded-full text-white flex items-center justify-center font-bold -ml-9">1</div>
-                                    <h4 class="font-bold text-lg ml-4">Ngày 1: Hà Nội – Vịnh Hạ Long</h4>
-                                </div>
-                                <p class="mt-2 text-gray-600">Xe và hướng dẫn viên đón quý khách tại điểm hẹn, khởi hành đi Hạ Long. Đến nơi, quý khách lên du thuyền, nhận phòng và thưởng thức bữa trưa. Buổi chiều, tham quan hang Sửng Sốt, chèo thuyền kayak và tắm biển. Tối, ăn tối và nghỉ đêm trên du thuyền.</p>
-                            </div>
-                            <!-- Day 2 -->
-                            <div>
-                                <div class="flex items-center">
-                                    <div class="bg-blue-600 w-6 h-6 rounded-full text-white flex items-center justify-center font-bold -ml-9">2</div>
-                                    <h4 class="font-bold text-lg ml-4">Ngày 2: Khám Phá Vịnh Lan Hạ</h4>
-                                </div>
-                                <p class="mt-2 text-gray-600">Buổi sáng, quý khách có thể dậy sớm ngắm bình minh và tham gia lớp học Taichi. Sau bữa sáng, thuyền di chuyển sang vịnh Lan Hạ, khám phá khu vực Ba Trái Đào. Buổi chiều, tự do nghỉ ngơi. Tối, tham gia tiệc BBQ trên boong tàu.</p>
-                            </div>
-                            <!-- Day 3 -->
-                            <div>
-                                <div class="flex items-center">
-                                    <div class="bg-blue-600 w-6 h-6 rounded-full text-white flex items-center justify-center font-bold -ml-9">3</div>
-                                    <h4 class="font-bold text-lg ml-4">Ngày 3: Hạ Long – Hà Nội</h4>
-                                </div>
-                                <p class="mt-2 text-gray-600">Sau bữa sáng, du thuyền tham quan làng chài Cửa Vạn. Quý khách làm thủ tục trả phòng và dùng bữa trưa sớm. Xe đón quý khách trở về Hà Nội, kết thúc chuyến đi.</p>
-                            </div>
+ <div class="mt-10">
+    <h2 class="text-2xl font-bold mb-6">Lịch trình chi tiết</h2>
+    <div class="relative">
+
+        <!-- Vòng lặp theo ngày -->
+        <div th:each="ngay : ${danhSachNgay}" class="timeline-item relative pl-8 pb-8">
+            <!-- Nút tròn hiển thị ngày -->
+            <div class="absolute left-0 top-0 flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full text-white font-bold">
+                <span th:text="${ngay}">1</span>
+            </div>
+
+            <!-- Tiêu đề ngày -->
+            <h3 th:text="'Ngày ' + ${ngay}" class="text-lg font-bold text-gray-800"></h3>
+
+            <!-- Danh sách các lịch trình của ngày này -->
+            <ul>
+                <li th:each="item : ${lichTrinhs}"
+                    th:if="${item.thuTuNgay} == ${ngay}">
+                    <p th:text="${item.hoatDong}" class="mt-2 text-gray-600"></p>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+                </div>
+
+                <!-- Right Column: Booking Widget -->
+                <div class="lg:col-span-1">
+                    <div class="sticky-sidebar bg-white p-6 rounded-lg shadow-lg border">
+                        <p class="text-lg">Giá chỉ từ</p>
+                        <p class="text-4xl font-extrabold text-blue-600 my-2">
+                            <span th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')}">2,990,000</span>₫
+                            <span class="text-lg font-normal text-gray-500">/ người</span>
+                        </p>
+                        <p class="text-gray-500 text-sm mb-6">Giá cuối cùng có thể thay đổi tùy vào ngày khởi hành.</p>
+                        
+                        <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="w-full block text-center bg-blue-600 text-white text-lg font-bold py-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                            Xem các ngày khởi hành
+                        </a>
+
+                        <div class="mt-6 text-sm text-gray-600 space-y-3">
+                           <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Bảo hiểm du lịch</p>
+                           <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Hướng dẫn viên suốt tuyến</p>
+                           <p><i class="fas fa-times-circle text-red-500 mr-2"></i>Chi phí cá nhân</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Right Column: Booking -->
-            <aside class="w-full lg:w-1/3">
-                <div class="sticky-booking bg-white p-8 rounded-lg shadow-md">
-                    <p class="text-xl font-bold text-gray-800">Giá chỉ từ</p>
-<p class="text-4xl font-bold text-blue-600 my-2 inline-block"
-   th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + '₫'">
-</p>
-<span class="text-lg font-normal text-gray-500">/khách</span>
-
-                    <div class="mt-6">
-					<label for="booking-date" class="block font-semibold text-gray-700">Ngày khởi hành</label>
-					<p class="text-4xl font-bold text-blue-600 my-2 inline-block"
-					   th:if="${!#lists.isEmpty(tour.danhSachChuyen)}"
-					   th:text="${#temporals.format(tour.danhSachChuyen.get(0).ngayBatDau, 'dd/MM/yyyy')}">
-					</p>
-
-                    </div>
-                     <div class="mt-4">
-                        <label for="guests" class="block font-semibold text-gray-700">Số lượng khách</label>
-                        <input type="number" id="guests" value="1" min="1" class="w-full mt-2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <button class="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg text-lg font-bold hover:bg-blue-700 transition">Đặt Tour Ngay</button>
-                    <p class="text-xs text-gray-500 text-center mt-4">Bạn sẽ không bị tính phí cho đến khi xác nhận</p>
-                </div>
-            </aside>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-gray-800 text-white py-10">
+    <footer class="bg-gray-800 text-white py-10 mt-12">
         <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">TravelGO</h3>
-                    <p class="text-gray-400">Cùng bạn khám phá mọi miền đất hứa, tạo nên những kỷ niệm khó phai.</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Liên kết nhanh</h4>
-                    <ul class="space-y-2">
-                        <li><a href="customer-homepage.html#about-us" class="text-gray-400 hover:text-white">Về Chúng Tôi</a></li>
-                        <li><a href="all-tours.html" class="text-gray-400 hover:text-white">Tour Du Lịch</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Điều khoản</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Liên hệ</h4>
-                     <ul class="space-y-2 text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> Dĩ An, Bình Dương</li>
-                        <li class="flex items-center"><i class="fas fa-phone-alt mr-2"></i> (+84) 123 456 789</li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-2"></i> contact@travelgo.com</li>
-                    </ul>
-                </div>
-                <div>
-                     <h4 class="font-semibold mb-4">Theo dõi chúng tôi</h4>
-                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-youtube"></i></a>
-                     </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500">
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
                 <p>&copy; 2025 TravelGO. All rights reserved.</p>
             </div>
         </div>
     </footer>
-    
+
 </body>
 </html>
+

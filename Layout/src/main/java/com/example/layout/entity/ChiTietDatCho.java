@@ -27,6 +27,27 @@ public class ChiTietDatCho {
     @Column(name = "LoaiVe", length = 50)
     private String loaiVe;
 
+	public void setTreCon(Integer treCon) {
+		this.treCon = treCon;
+	}
+
+	public String getYeuCau() {
+		return yeuCau;
+	}
+
+	public void setYeuCau(String yeuCau) {
+		this.yeuCau = yeuCau;
+	}
+
+	@Column(name = "NguoiLon")
+    private Integer nguoiLon;
+    
+    @Column(name = "TreCon")
+    private Integer treCon;
+    
+    @Column(name = "YeuCau", length = 255)
+    private String yeuCau;
+    
 	public Integer getMaChiTiet() {
 		return maChiTiet;
 	}
@@ -75,6 +96,16 @@ public class ChiTietDatCho {
 		this.loaiVe = loaiVe;
 	}
     
-    // Getters and setters
+    public Integer getNguoiLon() {
+		return nguoiLon;
+	}
+
+	public void setNguoiLon(Integer nguoiLon) {
+		this.nguoiLon = nguoiLon;
+	}
+
+	public Integer getTreCon() {
+		return treCon;
+	}
     
 }

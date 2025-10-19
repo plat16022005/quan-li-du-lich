@@ -42,6 +42,9 @@ public class Tour {
     @JsonIgnore  // 🛑 Thêm ở đây để bỏ qua danh sách chuyến khi serialize JSON
     private List<ChuyenDuLich> danhSachChuyen;
 
+	@OneToMany(mappedBy = "tour", fetch = FetchType.EAGER)
+    private List<LichTrinh> lichTrinhs;
+	
     public List<ChuyenDuLich> getDanhSachChuyen() {
         return danhSachChuyen;
     }
@@ -105,4 +108,12 @@ public class Tour {
     public void setHinhAnh(String hinhAnh) {
         this.hinhAnh = hinhAnh;
     }
+    public List<LichTrinh> getLichTrinhs() {
+		return lichTrinhs;
+	}
+
+	public void setLichTrinhs(List<LichTrinh> lichTrinhs) {
+		this.lichTrinhs = lichTrinhs;
+	}
+
 }

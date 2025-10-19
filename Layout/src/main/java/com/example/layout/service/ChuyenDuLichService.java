@@ -3,6 +3,7 @@ package com.example.layout.service;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.repository.ChuyenDuLichRepository;
+import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.NhanvienRepository;
 
 import org.springframework.data.domain.*;
@@ -25,13 +26,16 @@ public class ChuyenDuLichService {
     private final ChuyenDuLichRepository chuyenDuLichRepository;
     private final NhanVienService nhanVienService;
     private final NhanvienRepository nhanVienRepository;
+    private final DatChoRepository datChoRepository;
 
     public ChuyenDuLichService(ChuyenDuLichRepository chuyenDuLichRepository, 
                                NhanVienService nhanVienService,
-                               NhanvienRepository nhanVienRepository) {
+                               NhanvienRepository nhanVienRepository,
+                               DatChoRepository datChoRepository) {
         this.chuyenDuLichRepository = chuyenDuLichRepository;
         this.nhanVienService = nhanVienService;
         this.nhanVienRepository = nhanVienRepository;
+        this.datChoRepository = datChoRepository;
     }
 
     // === CÁC PHƯƠNG THỨC CƠ BẢN ===
@@ -419,5 +423,22 @@ public class ChuyenDuLichService {
     private double calculateBonus(ChuyenDuLich trip) {
 
         return 0;
+    }
+    public ChuyenDuLich getChuyenWithSoLuongHienTai(Integer maChuyen) {
+        ChuyenDuLich chuyen = chuyenDuLichRepository.findById(maChuyen)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến"));
+
+        int soLuongHienTai = datChoRepository.getTongSoLuongDaDat(maChuyen);
+        chuyen.setSoLuongHienTai(soLuongHienTai);
+        return chuyen;
+    }
+
+    public List<ChuyenDuLich> getAllChuyenWithSoLuongHienTai() {
+        List<ChuyenDuLich> danhSach = chuyenDuLichRepository.findAll();
+        for (ChuyenDuLich c : danhSach) {
+            int daDat = datChoRepository.getTongSoLuongDaDat(c.getMaChuyen());
+            c.setSoLuongHienTai(daDat);
+        }
+        return danhSach;
     }
 }
