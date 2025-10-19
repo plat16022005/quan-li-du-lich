@@ -2,6 +2,7 @@ package com.example.layout.controller.manager.home;
 
 import jakarta.servlet.http.HttpSession;
 
+import com.example.layout.dto.UpcomingTourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
@@ -57,7 +58,13 @@ public class ManagerHomeController {
     }
     @GetMapping("/home/upcoming-tours")
     @ResponseBody
-    public List<ChuyenDuLich> getUpcomingTours() {
-        return chuyenDuLichRepository.findByTrangThai("Sắp diễn ra");
+    public List<UpcomingTourDTO> getUpcomingTours() {
+        return chuyenDuLichRepository.findByTrangThai("Sắp diễn ra")
+                .stream()
+                .map(chuyen -> new UpcomingTourDTO(
+                        chuyen.getTour() != null ? chuyen.getTour().getTenTour() : "Không xác định",
+                        chuyen.getNgayBatDau()
+                ))
+                .toList();
     }
 }
