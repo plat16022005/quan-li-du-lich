@@ -1,6 +1,7 @@
 package com.example.layout.repository;
 
 import com.example.layout.entity.ChuyenDuLich;
+import com.example.layout.entity.LichTrinh;
 import com.example.layout.entity.Tour;
 
 import org.springframework.data.jpa.repository.Query;
@@ -167,4 +168,5 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
     	    		    @Param("endDate") LocalDate endDate,
     	    		    @Param("staffId") Integer staffId
     	    		);
+        List<ChuyenDuLich> findByTour(Tour tour);
 }
