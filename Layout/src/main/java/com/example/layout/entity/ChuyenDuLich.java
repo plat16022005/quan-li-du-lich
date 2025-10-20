@@ -8,8 +8,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 //import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "ChuyenDuLich")
 public class ChuyenDuLich {
@@ -19,7 +17,6 @@ public class ChuyenDuLich {
     private Integer maChuyen;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore 
     @JoinColumn(name = "MaTour")
     private Tour tour;
 

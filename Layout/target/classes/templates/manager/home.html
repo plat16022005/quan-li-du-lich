@@ -265,33 +265,36 @@ fetch('/manager/home/stats')
     </script>
 <script>
 fetch('/manager/home/upcoming-tours')
-.then(res => res.json())
-.then(data => {
-  const tbody = document.getElementById('upcoming-tours-body');
-  tbody.innerHTML = '';
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.getElementById('upcoming-tours-body');
+    tbody.innerHTML = '';
 
-  if (data.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="2" class="text-center py-4 text-gray-500">
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr>
+        <td colspan="3" class="text-center py-4 text-gray-500">
           Không có tour sắp khởi hành
         </td>
       </tr>`;
-    return;
-  }
+      return;
+    }
 
-  data.forEach(item => {
-    const row = document.createElement('tr');
-    row.className = 'bg-white border-b hover:bg-gray-50';
-    row.innerHTML = `
-      <td class="px-6 py-4 font-medium text-gray-900">${item.tenTour}</td>
-      <td class="px-6 py-4">${new Date(item.ngayBatDau).toLocaleDateString('vi-VN')}</td>
-    `;
-    tbody.appendChild(row);
-  });
-})
-.catch(err => console.error('Lỗi tải tour:', err));
+    data.forEach(tour => {
+      const row = document.createElement('tr');
+      row.className = 'bg-white border-b hover:bg-gray-50';
 
+      // số khách đã đặt có thể là một trường tính thêm sau này, ví dụ lấy từ DatCho
+      const soKhach = tour.soKhach ?? 0;
+      const max = tour.soLuongToiDa ?? 0;
+
+      row.innerHTML = `
+        <td class="px-6 py-4 font-medium text-gray-900">${tour.tour.tenTour}</td>
+        <td class="px-6 py-4">${new Date(tour.ngayBatDau).toLocaleDateString('vi-VN')}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  })
+  .catch(err => console.error('Lỗi tải tour:', err));
 </script>
 <script>
 const marketingCtx = document.getElementById('customer-marketing-chart').getContext('2d');
