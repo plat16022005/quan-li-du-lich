@@ -398,6 +398,15 @@ public class ManagerTourController {
         if (chuyen == null) {
             return "redirect:/manager/tour";
         }
+        
+        if (chuyen != null) {
+            System.out.println(">>> DEBUG CONTROLLER: Ngày bắt đầu lấy từ DB là: " + chuyen.getNgayBatDau());
+            System.out.println(">>> DEBUG CONTROLLER: Ngày kết thúc lấy từ DB là: " + chuyen.getNgayKetThuc());
+            // Kiểm tra luôn kiểu dữ liệu
+            if(chuyen.getNgayBatDau() != null) {
+                System.out.println(">>> KIỂU DỮ LIỆU: " + chuyen.getNgayBatDau().getClass().getName());
+            }
+        }
 
         model.addAttribute("chuyenDuLich", chuyen); 
         model.addAttribute("tour", chuyen.getTour());

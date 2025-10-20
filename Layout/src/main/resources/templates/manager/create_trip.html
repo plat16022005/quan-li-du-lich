@@ -28,8 +28,12 @@
             <a th:href="@{/manager/tour}" class="text-blue-600 hover:underline"
               ><i class="fas fa-arrow-left mr-2"></i>Quay lại</a
             >
+
             <h1 class="text-2xl font-semibold mt-2">
-              Tạo Chuyến Đi Mới cho Tour:
+              <span
+                th:text="*{maChuyen == null ? 'Tạo Chuyến Đi Mới' : 'Chỉnh Sửa Chuyến Đi'}"
+              ></span>
+              cho Tour:
               <span class="text-blue-600" th:text="${tour.tenTour}"></span>
             </h1>
           </div>
@@ -43,6 +47,7 @@
             class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-sm"
           >
             <input type="hidden" th:field="*{tour.maTour}" />
+            <input type="hidden" th:field="*{maChuyen}" />
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -54,9 +59,9 @@
                 <input
                   type="date"
                   id="ngayBatDau"
-                  th:field="*{ngayBatDau}"
+                  name="ngayBatDau"
+                  th:value="${chuyenDuLich.ngayBatDau != null ? #temporals.format(chuyenDuLich.ngayBatDau, 'yyyy-MM-dd') : ''}"
                   class="mt-1 w-full px-3 py-2 border rounded-md"
-                  required
                 />
               </div>
               <div>
@@ -68,9 +73,9 @@
                 <input
                   type="date"
                   id="ngayKetThuc"
-                  th:field="*{ngayKetThuc}"
+                  name="ngayKetThuc"
+                  th:value="${chuyenDuLich.ngayKetThuc != null ? #temporals.format(chuyenDuLich.ngayKetThuc, 'yyyy-MM-dd') : ''}"
                   class="mt-1 w-full px-3 py-2 border rounded-md"
-                  required
                 />
               </div>
               <div>
@@ -136,6 +141,36 @@
                     th:text="${driver.taiKhoan.hoTen}"
                   ></option>
                 </select>
+              </div>
+              <div>
+                <label
+                  for="giaThueHDV"
+                  class="block text-sm font-medium text-gray-700"
+                  >Giá thuê HDV</label
+                >
+                <input
+                  type="number"
+                  id="giaThueHDV"
+                  th:field="*{giaThueHDV}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                  step="1000"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label
+                  for="giaThueTX"
+                  class="block text-sm font-medium text-gray-700"
+                  >Giá thuê Tài xế</label
+                >
+                <input
+                  type="number"
+                  id="giaThueTX"
+                  th:field="*{giaThueTX}"
+                  class="mt-1 w-full px-3 py-2 border rounded-md"
+                  step="1000"
+                  min="0"
+                />
               </div>
             </div>
 

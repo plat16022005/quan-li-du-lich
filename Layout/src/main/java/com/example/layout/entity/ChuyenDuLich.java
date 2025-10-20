@@ -24,11 +24,11 @@ public class ChuyenDuLich {
     private Tour tour;
 
     @Column(name = "NgayBatDau")
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
     private LocalDate ngayBatDau;
 
     @Column(name = "NgayKetThuc")
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
     private LocalDate ngayKetThuc;
 
     @Column(name = "TrangThai", length = 20)
