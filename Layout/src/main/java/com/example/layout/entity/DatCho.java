@@ -1,6 +1,8 @@
 package com.example.layout.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,6 +28,17 @@ public class DatCho {
 
     @Column(name = "TrangThai", length = 20)
     private String trangThai;
+    
+    public BigDecimal getTiLeGiam() {
+		return tiLeGiam;
+	}
+
+	public void setTiLeGiam(BigDecimal tiLeGiam) {
+		this.tiLeGiam = tiLeGiam;
+	}
+
+	@Column(name = "TiLeGiam", precision = 5, scale = 2)
+    private BigDecimal tiLeGiam;
 
     @OneToMany(mappedBy = "datCho")
     private Set<ChiTietDatCho> chiTietDatChos;
