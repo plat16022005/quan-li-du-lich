@@ -48,7 +48,8 @@ public class ManagerGuestController {
 	    List<Map<String, Object>> response = new ArrayList<>();
 	    for (PhanHoi ph : phanHois) {
 	        Map<String, Object> item = new HashMap<>();
-	        item.put("tourName", ph.getTour() != null ? ph.getTour().getTenTour() : "Tour đã xóa");
+	        item.put("tourName", ph.getChuyenDuLich() != null ? ph.getChuyenDuLich().getTour().getTenTour() : "Tour đã xóa");
+	        item.put("maChuyen", ph.getChuyenDuLich().getMaChuyen());
 	        item.put("comment", ph.getNoiDung());
 	        item.put("rating", ph.getDanhGia());
 	        item.put("date", ph.getNgayTao() != null ? ph.getNgayTao().toString() : null);

@@ -16,9 +16,17 @@ public class PhanHoi {
     @JoinColumn(name = "MaKhachHang")
     private KhachHang khachHang;
 
-    @ManyToOne
-    @JoinColumn(name = "MaTour")
-    private Tour tour;
+    public ChuyenDuLich getChuyenDuLich() {
+		return chuyenDuLich;
+	}
+
+	public void setChuyenDuLich(ChuyenDuLich chuyenDuLich) {
+		this.chuyenDuLich = chuyenDuLich;
+	}
+
+	@ManyToOne
+    @JoinColumn(name = "MaChuyen")
+    private ChuyenDuLich chuyenDuLich;
 
     @Column(name = "NoiDung")
     private String noiDung;
@@ -43,14 +51,6 @@ public class PhanHoi {
 
 	public void setKhachHang(KhachHang khachHang) {
 		this.khachHang = khachHang;
-	}
-
-	public Tour getTour() {
-		return tour;
-	}
-
-	public void setTour(Tour tour) {
-		this.tour = tour;
 	}
 
 	public String getNoiDung() {

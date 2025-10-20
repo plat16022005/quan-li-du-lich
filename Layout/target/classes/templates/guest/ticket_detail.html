@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Vé - TravelGO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #ticket-section, #ticket-section * {
+                visibility: visible;
+            }
+            #ticket-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            header, footer, #action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed w-full z-20 top-0">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/home" class="flex items-center">
+                <i class="fas fa-route text-3xl text-blue-600"></i>
+                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-4">
+                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-6">
+            <!-- Breadcrumb -->
+            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a href="/profile" class="text-gray-500 hover:text-blue-600">Hồ sơ</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
+                    </li>
+                    <li class="flex items-center text-gray-800">
+                        Chi tiết vé
+                    </li>
+                </ol>
+            </nav>
+
+            <div id="ticket-section" class="bg-white p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <!-- Ticket Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start border-b-2 border-dashed pb-6">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-800">VÉ ĐIỆN TỬ (E-TICKET)</h1>
+                        <p class="text-gray-500 mt-1">Mã đặt chỗ: <span th:text="TRAVELGO + ${datCho.maDatCho}" class="font-bold text-gray-700">TGO123XYZ</span></p>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex items-center text-blue-600">
+                        <i class="fas fa-route text-4xl"></i>
+                        <span class="ml-3 text-3xl font-bold">TravelGO</span>
+                    </div>
+                </div>
+
+                <!-- Tour & Passenger Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                    <div>
+                        <h2 class="text-sm uppercase font-semibold text-gray-500">Chuyến đi</h2>
+                        <p th:text="${chuyen.tour.tenTour}" class="text-xl font-bold text-gray-900 mt-1">Săn Mây Tà Xùa - Chinh Phục Sống Lưng Khủng Long</p>
+                    </div>
+                    <div>
+                        <h2 class="text-sm uppercase font-semibold text-gray-500">Hành khách</h2>
+                        <p th:text="${user.hoTen}" class="text-xl font-bold text-gray-900 mt-1">Nguyễn Văn An</p>
+                    </div>
+                </div>
+
+                <!-- Date & Time Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-8">
+                    <div>
+                        <h2 class="text-sm uppercase font-semibold text-gray-500">Ngày khởi hành</h2>
+                        <p th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}" class="text-lg font-semibold text-gray-800 mt-1">25/12/2025</p>
+                    </div>
+                    <div>
+                        <h2 class="text-sm uppercase font-semibold text-gray-500">Ngày về</h2>
+                        <p th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}" class="text-lg font-semibold text-gray-800 mt-1">26/12/2025</p>
+                    </div>
+                    <div>
+                        <h2 class="text-sm uppercase font-semibold text-gray-500">Số lượng</h2>
+                        <p th:text="${chitiet.nguoiLon + ' Người lớn, ' + chitiet.treCon + ' Trẻ em'}"
+						   class="text-lg font-semibold text-gray-800 mt-1">
+						</p>
+
+                    </div>
+                </div>
+
+                <!-- QR Code & Details -->
+                <div class="mt-8 pt-6 border-t-2 border-dashed flex flex-col sm:flex-row items-center gap-8">
+                    <div class="flex-shrink-0">
+                        <img src="/uploads/qr.png" alt="QR Code" class="rounded-lg">
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <h3 class="font-bold text-lg text-gray-800 mb-2">Thông tin quan trọng</h3>
+                        <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Trạng thái: <strong class="text-green-600">ĐÃ THANH TOÁN</strong></p>
+                        <p class="mt-2">Vui lòng đưa mã QR này tại điểm tập trung để xác nhận tham gia chuyến đi.</p>
+                        <p class="mt-2">Chúc quý khách có một chuyến đi vui vẻ và đầy ắp kỷ niệm cùng TravelGO!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div id="action-buttons" class="max-w-4xl mx-auto mt-8 flex justify-end space-x-4">
+                <button onclick="window.print()" class="bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition">
+                    <i class="fas fa-print mr-2"></i>In Vé
+                </button>
+				<button onclick="downloadPDF()" 
+				        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition">
+				    <i class="fas fa-file-pdf mr-2"></i>Tải PDF
+				</button>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-10 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
+                <p>&copy; 2025 TravelGO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const element = document.getElementById("ticket-section");
+
+        // Chụp nội dung thành ảnh
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
+
+        // Tạo PDF
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("ve-dien-tu.pdf");
+    }
+</script>
+
+</body>
+</html>

@@ -398,34 +398,33 @@
             }
 
             feedbackData.forEach((fb) => {
-              const stars =
-                '<i class="fas fa-star"></i>'.repeat(fb.rating || 0) +
-                '<i class="far fa-star"></i>'.repeat(5 - (fb.rating || 0));
+            	  const stars =
+            	    '<i class="fas fa-star"></i>'.repeat(fb.rating || 0) +
+            	    '<i class="far fa-star"></i>'.repeat(5 - (fb.rating || 0));
 
-              const feedbackEl = document.createElement("div");
-              feedbackEl.className =
-                "p-4 rounded-lg bg-gray-50 border hover:bg-gray-100 transition-colors";
-              feedbackEl.innerHTML = `
-        <div class="flex justify-between items-center mb-2">
-          <h5 class="font-semibold text-gray-800">${
-            fb.tourName || "Không có tên tour"
-          }</h5>
-          <span class="text-xs text-gray-500">${
-            formatDate(fb.date) || "---"
-          }</span>
-        </div>
-        <div class="flex items-center mb-2">
-          <span class="text-yellow-400">${stars}</span>
-          <span class="ml-2 text-sm font-semibold text-gray-600">${
-            fb.rating || 0
-          }/5</span>
-        </div>
-        <p class="text-sm text-gray-600">${
-          fb.comment ? `"${fb.comment}"` : "Không có nội dung"
-        }</p>`;
+            	  const feedbackEl = document.createElement("div");
+            	  feedbackEl.className =
+            	    "p-4 rounded-lg bg-gray-50 border hover:bg-gray-100 transition-colors";
+            	  feedbackEl.innerHTML = `
+            	    <div class="flex justify-between items-center mb-2">
+            	      <div>
+            	        <h5 class="font-semibold text-gray-800">${fb.tourName || "Không có tên tour"}</h5>
+            	        <p class="text-xs text-gray-500">
+            	          <strong>Mã chuyến:</strong> ${fb.maChuyen || "N/A"}
+            	        </p>
+            	      </div>
+            	      <span class="text-xs text-gray-500">${formatDate(fb.date) || "---"}</span>
+            	    </div>
+            	    <div class="flex items-center mb-2">
+            	      <span class="text-yellow-400">${stars}</span>
+            	      <span class="ml-2 text-sm font-semibold text-gray-600">${fb.rating || 0}/5</span>
+            	    </div>
+            	    <p class="text-sm text-gray-600">${fb.comment ? `"${fb.comment}"` : "Không có nội dung"}</p>
+            	  `;
 
-              feedbackContainer.appendChild(feedbackEl);
-            });
+            	  feedbackContainer.appendChild(feedbackEl);
+            	});
+
           })
           .catch((error) => {
             console.error("Error loading feedback:", error);

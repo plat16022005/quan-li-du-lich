@@ -1,11 +1,12 @@
 package com.example.layout.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public class BookingApiDTO {
     private Integer maDatCho;
-    private Date ngayDat;
+    private LocalDate ngayDat;
     private String trangThai;
     private KhachHangSummary khachHang;
     private ChuyenSummary chuyenDuLich;
@@ -13,9 +14,9 @@ public class BookingApiDTO {
 
     public BookingApiDTO() {}
 
-    public BookingApiDTO(Integer maDatCho, Date ngayDat, String trangThai, KhachHangSummary khachHang, ChuyenSummary chuyenDuLich, List<ChiTietDatChoDTO> chiTietDatCho) {
+    public BookingApiDTO(Integer maDatCho, LocalDate localDate, String trangThai, KhachHangSummary khachHang, ChuyenSummary chuyenDuLich, List<ChiTietDatChoDTO> chiTietDatCho) {
         this.maDatCho = maDatCho;
-        this.ngayDat = ngayDat;
+        this.ngayDat = localDate;
         this.trangThai = trangThai;
         this.khachHang = khachHang;
         this.chuyenDuLich = chuyenDuLich;
@@ -23,14 +24,14 @@ public class BookingApiDTO {
     }
 
     public Integer getMaDatCho() { return maDatCho; }
-    public Date getNgayDat() { return ngayDat; }
+    public LocalDate getNgayDat() { return ngayDat; }
     public String getTrangThai() { return trangThai; }
     public KhachHangSummary getKhachHang() { return khachHang; }
     public ChuyenSummary getChuyenDuLich() { return chuyenDuLich; }
     public List<ChiTietDatChoDTO> getChiTietDatCho() { return chiTietDatCho; }
 
     public void setMaDatCho(Integer maDatCho) { this.maDatCho = maDatCho; }
-    public void setNgayDat(Date ngayDat) { this.ngayDat = ngayDat; }
+    public void setNgayDat(LocalDate ngayDat) { this.ngayDat = ngayDat; }
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
     public void setKhachHang(KhachHangSummary khachHang) { this.khachHang = khachHang; }
     public void setChuyenDuLich(ChuyenSummary chuyenDuLich) { this.chuyenDuLich = chuyenDuLich; }

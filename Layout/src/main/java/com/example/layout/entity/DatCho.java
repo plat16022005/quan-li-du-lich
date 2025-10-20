@@ -3,6 +3,7 @@ package com.example.layout.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -23,8 +24,7 @@ public class DatCho {
     private ChuyenDuLich chuyenDuLich;
 
     @Column(name = "NgayDat")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date ngayDat;
+    private LocalDate ngayDat;
 
     @Column(name = "TrangThai", length = 20)
     private String trangThai;
@@ -40,7 +40,7 @@ public class DatCho {
 	@Column(name = "TiLeGiam", precision = 5, scale = 2)
     private BigDecimal tiLeGiam;
 
-    @OneToMany(mappedBy = "datCho")
+	@OneToMany(mappedBy = "datCho", fetch = FetchType.EAGER)
     private Set<ChiTietDatCho> chiTietDatChos;
 
     @ManyToMany
@@ -75,11 +75,11 @@ public class DatCho {
 		this.chuyenDuLich = chuyenDuLich;
 	}
 
-	public Date getNgayDat() {
+	public LocalDate getNgayDat() {
 		return ngayDat;
 	}
 
-	public void setNgayDat(Date ngayDat) {
+	public void setNgayDat(LocalDate ngayDat) {
 		this.ngayDat = ngayDat;
 	}
 

@@ -35,23 +35,19 @@
     <!-- Header -->
     <header class="bg-white shadow-md fixed w-full z-20 top-0">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="customer-homepage.html#home" class="flex items-center">
+            <a href="/home" class="flex items-center">
                 <i class="fas fa-route text-3xl text-blue-600"></i>
                 <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
             </a>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="customer-homepage.html#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
-                <a href="all-tours.html" class="text-gray-600 hover:text-blue-600">Tour Du Lịch</a>
-                <a href="customer-homepage.html#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
-                <a href="customer-homepage.html#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
+
             </div>
             <!-- User Profile Section -->
             <div class="hidden md:flex items-center space-x-4">
                  <div class="relative">
-                    <button class="flex items-center space-x-2">
-                        <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=AV" alt="Avatar" class="h-10 w-10 rounded-full object-cover">
-                        <span class="font-semibold text-gray-700">Nguyễn Văn A</span>
-                    </button>
+	                <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+	                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+	                </a>
                 </div>
             </div>
             <button class="md:hidden text-gray-600 text-2xl">
@@ -75,51 +71,37 @@
                 </div>
 
                 <!-- Review Form -->
-                <form class="mt-8 space-y-6">
-                    <div>
-                        <label class="block font-semibold text-gray-700 mb-2">Xếp hạng của bạn</label>
-                        <div class="star-rating flex flex-row-reverse justify-end text-3xl">
-                            <input type="radio" id="star5" name="rating" value="5" class="hidden" /><label for="star5" title="Tuyệt vời"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star4" name="rating" value="4" class="hidden" /><label for="star4" title="Tốt"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star3" name="rating" value="3" class="hidden" /><label for="star3" title="Bình thường"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star2" name="rating" value="2" class="hidden" /><label for="star2" title="Tệ"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star1" name="rating" value="1" class="hidden" /><label for="star1" title="Rất tệ"><i class="fas fa-star"></i></label>
-                        </div>
-                    </div>
+				<form class="mt-8 space-y-6" action="/do-rating" method="post">
+				    <!-- 🆕 Truyền maChuyen ẩn -->
+				    <input type="hidden" name="maChuyen" th:value="${chuyen.maChuyen}">
+				
+				    <!-- rating -->
+				    <div>
+				        <label class="block font-semibold text-gray-700 mb-2">Xếp hạng của bạn</label>
+				        <div class="star-rating flex flex-row-reverse justify-end text-3xl">
+				            <input type="radio" id="star5" name="rating" value="5" class="hidden" /><label for="star5"><i class="fas fa-star"></i></label>
+				            <input type="radio" id="star4" name="rating" value="4" class="hidden" /><label for="star4"><i class="fas fa-star"></i></label>
+				            <input type="radio" id="star3" name="rating" value="3" class="hidden" /><label for="star3"><i class="fas fa-star"></i></label>
+				            <input type="radio" id="star2" name="rating" value="2" class="hidden" /><label for="star2"><i class="fas fa-star"></i></label>
+				            <input type="radio" id="star1" name="rating" value="1" class="hidden" /><label for="star1"><i class="fas fa-star"></i></label>
+				        </div>
+				    </div>
+				
+				    <!-- review content -->
+				    <div>
+				        <label for="review-content" class="block font-semibold text-gray-700 mb-2">Nội dung đánh giá</label>
+				        <textarea name="review_content" id="review-content" rows="6"
+				                  placeholder="Hãy chia sẻ cảm nhận của bạn..."
+				                  class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+				    </div>
+				
+				    <div class="text-center pt-4">
+				        <button type="submit" class="bg-blue-600 text-white font-bold px-10 py-3 rounded-lg hover:bg-blue-700">
+				            Gửi Đánh Giá
+				        </button>
+				    </div>
+				</form>
 
-                    <div>
-                        <label for="review-title" class="block font-semibold text-gray-700 mb-2">Tiêu đề đánh giá</label>
-                        <input type="text" id="review-title" placeholder="Ví dụ: Một chuyến đi tuyệt vời!" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div>
-                        <label for="review-content" class="block font-semibold text-gray-700 mb-2">Nội dung đánh giá</label>
-                        <textarea id="review-content" rows="6" placeholder="Hãy chia sẻ cảm nhận của bạn về chuyến đi, về hướng dẫn viên, dịch vụ,..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold text-gray-700 mb-2">Thêm hình ảnh</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                            <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Tải lên một file</span>
-                                        <input id="file-upload" name="file-upload" type="file" class="sr-only" multiple>
-                                    </label>
-                                    <p class="pl-1">hoặc kéo và thả</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, GIF lên đến 10MB</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-center pt-4">
-                        <button type="submit" class="w-full md:w-auto bg-blue-600 text-white px-10 py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition">Gửi Đánh Giá</button>
-                    </div>
-                </form>
             </div>
         </div>
     </main>

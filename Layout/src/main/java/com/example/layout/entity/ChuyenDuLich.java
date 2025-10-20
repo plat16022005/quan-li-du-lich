@@ -53,7 +53,11 @@ public class ChuyenDuLich {
 
     @Transient
     private int soLuongHienTai;
+    @Transient
+    private Integer maDatCho;
 
+    public Integer getMaDatCho() { return maDatCho; }
+    public void setMaDatCho(Integer maDatCho) { this.maDatCho = maDatCho; }
     // ===================== PHƯƠNG THỨC TÍNH =====================
     @Transient
     public int getSoChoConLai() {

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+	crossorigin="anonymous">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+	crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Của Bạn - TravelGO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+	<div th:if="${errorPass}" class="alert alert-danger alert-dismissible"
+		role="alert"
+		style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+		<strong>Lỗi!</strong> <span th:text="${errorPass}"></span>
+		<button type="button" class="btn-close" data-bs-dismiss="alert"
+			aria-label="Close"></button>
+	</div>
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed w-full z-20 top-0">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/home" class="flex items-center">
+                <i class="fas fa-route text-3xl text-blue-600"></i>
+                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+            </a>
+
+            <div class="hidden md:flex items-center space-x-4">
+                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Left Sidebar -->
+                <aside class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex flex-col items-center">
+                            <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=AVT" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-blue-200">
+                            <h2 th:text="${user.hoTen}" class="text-xl font-bold mt-4">Nguyễn Văn An</h2>
+                            <p th:text="${user.email}" class="text-gray-500">an.nguyen@email.com</p>
+                        </div>
+                        <nav class="mt-8 space-y-2">
+                            <a href="#" id="profile-tab-btn" class="flex items-center px-4 py-3 bg-blue-50 text-blue-600 font-bold rounded-lg">
+                                <i class="fas fa-user-circle w-6"></i>
+                                <span class="ml-3">Thông tin cá nhân</span>
+                            </a>
+                            <a href="#" id="history-tab-btn" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg">
+                                <i class="fas fa-history w-6"></i>
+                                <span class="ml-3">Lịch sử chuyến đi</span>
+                            </a>
+                            <a href="#" id="password-tab-btn" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg">
+                                <i class="fas fa-key w-6"></i>
+                                <span class="ml-3">Đổi mật khẩu</span>
+                            </a>
+                             <a href="/logout" class="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 font-semibold rounded-lg">
+                                <i class="fas fa-sign-out-alt w-6"></i>
+                                <span class="ml-3">Đăng xuất</span>
+                            </a>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Right Content -->
+                <div class="lg:col-span-3">
+                    <!-- Profile Information Section -->
+                    <div id="profile-section" class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="flex justify-between items-center mb-6 border-b pb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Thông Tin Cá Nhân</h2>
+                            <button id="edit-profile-btn" class="bg-blue-100 text-blue-600 font-semibold px-4 py-2 rounded-lg hover:bg-blue-200 transition">
+                                <i class="fas fa-pencil-alt mr-2"></i>Chỉnh sửa
+                            </button>
+                        </div>
+						<div id="profile-fields" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 text-gray-700">
+						    <div>
+						        <label class="font-semibold">Họ và Tên:</label>
+						        <p data-field="hoTen" th:text="${user.hoTen}">Nguyễn Văn An</p>
+						    </div>
+						    <div>
+						        <label class="font-semibold">Email:</label>
+						        <p data-field="email" th:text="${user.email}">an.nguyen@email.com</p>
+						    </div>
+						    <div>
+						        <label class="font-semibold">Số Điện Thoại:</label>
+						        <p data-field="soDienThoai" th:text="${user.soDienThoai}">0987 654 321</p>
+						    </div>
+						    <div>
+						        <label class="font-semibold">Ngày sinh:</label>
+						        <p data-field="ngaySinh" th:text="${#temporals.format(kh.ngaySinh, 'dd/MM/yyyy')}">1995-08-15</p>
+						    </div>
+						    <div class="md:col-span-2">
+						        <label class="font-semibold">Địa chỉ:</label>
+						        <p data-field="diaChi" th:text="${kh.diaChi}">123 Đường ABC, TP.HCM</p>
+						    </div>
+						</div>
+
+                    </div>
+
+                    <!-- Tour History Section -->
+                    <div id="history-section" class="hidden bg-white p-8 rounded-lg shadow-md">
+                         <div class="mb-6 border-b pb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Lịch Sử Chuyến Đi</h2>
+                         </div>
+                         <!-- History Tabs -->
+                        <div class="mb-6 border-b border-gray-200">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <a href="#" id="completed-trips-btn" class="border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Chuyến đã đi</a>
+                                <a href="#" id="upcoming-trips-btn" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Sắp đi</a>
+                            </nav>
+                        </div>
+
+                         <!-- Completed Trips Content -->
+						<div id="completed-trips-content" class="space-y-6">
+						    <div th:each="chuyen : ${completedTrips}" 
+						         class="flex flex-col md:flex-row items-center bg-gray-50 p-4 rounded-lg">
+						        <img th:src="${chuyen.tour.hinhAnh}" 
+						             alt="Ảnh tour" 
+						             class="w-full md:w-48 h-32 object-cover rounded-md">
+						        <div class="flex-1 md:ml-6 mt-4 md:mt-0">
+						            <h3 class="text-lg font-bold" th:text="${chuyen.tour.tenTour}">Tên tour</h3>
+						            <p class="text-sm text-gray-500">
+						                Khởi hành: <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+						            </p>
+						            <p class="text-sm text-green-600 font-semibold">Trạng thái: Đã hoàn thành</p>
+						        </div>
+						        <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+									<a th:if="${!ratedTripIds.contains(chuyen.maChuyen)}"
+									   th:href="@{'/review/' + ${chuyen.maChuyen}}"
+									   class="bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 transition">
+									    Viết Đánh Giá
+									</a>
+									
+									<button th:if="${ratedTripIds.contains(chuyen.maChuyen)}"
+									        class="bg-gray-300 text-gray-600 font-semibold px-4 py-2 rounded-lg cursor-not-allowed"
+									        disabled>
+									    ✅ Đã đánh giá
+									</button>
+
+						        </div>
+						    </div>
+						</div>
+
+                         <!-- Upcoming Trips Content -->
+						<div id="upcoming-trips-content" class="hidden space-y-6">
+						    <div th:each="chuyen : ${upcomingTrips}" 
+						         class="flex flex-col md:flex-row items-center bg-gray-50 p-4 rounded-lg">
+						        <img th:src="${chuyen.tour.hinhAnh}" 
+						             alt="Ảnh tour" 
+						             class="w-full md:w-48 h-32 object-cover rounded-md">
+						        <div class="flex-1 md:ml-6 mt-4 md:mt-0">
+						            <h3 class="text-lg font-bold" th:text="${chuyen.tour.tenTour}">Tên tour</h3>
+						            <p class="text-sm text-gray-500">
+						                Khởi hành: <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+						            </p>
+						            <p class="text-sm text-blue-600 font-semibold">Trạng thái: Sắp khởi hành</p>
+						        </div>
+						        <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+								<a th:href="@{'/ticket/detail/' + ${chuyen.maDatCho}}"
+								   class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+								   Xem Chi Tiết Vé
+								</a>
+						        </div>
+						    </div>
+						</div>
+
+                    </div>
+
+                    <!-- Change Password Section -->
+                    <form action="/do-changepass" method="post">
+	                    <div id="password-section" class="hidden bg-white p-8 rounded-lg shadow-md">
+	                        <div class="mb-6 border-b pb-4">
+	                            <h2 class="text-2xl font-bold text-gray-800">Đổi Mật Khẩu</h2>
+	                        </div>
+	                        <div class="max-w-md">
+	                            <div class="space-y-6">
+	                                <div>
+	                                    <label for="current-password" class="block text-sm font-medium text-gray-700">Mật khẩu hiện tại</label>
+	                                    <input type="password" name="current_password" id="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+	                                </div>
+	                                <div>
+	                                    <label for="new-password" class="block text-sm font-medium text-gray-700">Mật khẩu mới</label>
+	                                    <input type="password" name="new_password" id="new-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+	                                </div>
+	                                <div>
+	                                    <label for="confirm-password" class="block text-sm font-medium text-gray-700">Xác nhận mật khẩu mới</label>
+	                                    <input type="password" name="confirm_password" id="confirm-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+	                                </div>
+	                            </div>
+	                            <div class="mt-8">
+	                                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition">
+	                                    Lưu Thay Đổi
+	                                </button>
+	                            </div>
+	                        </div>
+	                    </div>
+					</form>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-10 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
+                <p>&copy; 2025 TravelGO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileBtn = document.getElementById('profile-tab-btn');
+            const historyBtn = document.getElementById('history-tab-btn');
+            const passwordBtn = document.getElementById('password-tab-btn');
+
+            const profileSection = document.getElementById('profile-section');
+            const historySection = document.getElementById('history-section');
+            const passwordSection = document.getElementById('password-section');
+
+            const mainTabs = [
+                { btn: profileBtn, section: profileSection },
+                { btn: historyBtn, section: historySection },
+                { btn: passwordBtn, section: passwordSection }
+            ];
+
+            function setActiveMainTab(selectedTab) {
+                mainTabs.forEach(tab => {
+                    if (tab.btn === selectedTab.btn) {
+                        tab.section.classList.remove('hidden');
+                        tab.btn.classList.add('bg-blue-50', 'text-blue-600', 'font-bold');
+                        tab.btn.classList.remove('text-gray-600', 'hover:bg-gray-100', 'font-semibold');
+                    } else {
+                        tab.section.classList.add('hidden');
+                        tab.btn.classList.remove('bg-blue-50', 'text-blue-600', 'font-bold');
+                        tab.btn.classList.add('text-gray-600', 'hover:bg-gray-100', 'font-semibold');
+                    }
+                });
+            }
+
+            mainTabs.forEach(tab => {
+                if(tab.btn) {
+                     tab.btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        setActiveMainTab(tab);
+                    });
+                }
+            });
+
+            // Edit Profile Functionality
+			const editProfileBtn = document.getElementById('edit-profile-btn');
+			const profileFieldsContainer = document.getElementById('profile-fields');
+			let isEditing = false;
+			
+			editProfileBtn.addEventListener('click', () => {
+			    isEditing = !isEditing;
+			
+			    if (isEditing) {
+			        // 📝 Chế độ chỉnh sửa
+			        editProfileBtn.innerHTML = `<i class="fas fa-save mr-2"></i>Lưu Thay Đổi`;
+			        editProfileBtn.classList.remove('bg-blue-100', 'text-blue-600');
+			        editProfileBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+			
+			        const fields = profileFieldsContainer.querySelectorAll('p');
+			        fields.forEach(p => {
+			            const currentValue = p.textContent;
+			            const fieldName = p.getAttribute('data-field');
+			
+			            const input = document.createElement('input');
+			            input.name = fieldName;
+			            input.value = currentValue;
+			            input.className = 'block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500';
+			
+			            if (fieldName === 'ngaySinh') input.type = 'date';
+			            else input.type = 'text';
+			
+			            p.parentNode.replaceChild(input, p);
+			        });
+			
+			    } else {
+			        // 💾 Lưu thông tin
+			        const inputs = profileFieldsContainer.querySelectorAll('input');
+			        const data = {};
+			        inputs.forEach(input => data[input.name] = input.value);
+			
+			        fetch('/profile/update', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(data)
+			        })
+			        .then(res => {
+			            if (!res.ok) throw new Error('Lỗi khi cập nhật');
+			            return res.text();
+			        })
+			        .then(() => {
+			            // ✅ Cập nhật UI
+			            inputs.forEach(input => {
+			                const p = document.createElement('p');
+			                p.setAttribute('data-field', input.name);
+			                p.textContent = input.value;
+			                input.parentNode.replaceChild(p, input);
+			            });
+			
+			            editProfileBtn.innerHTML = `<i class="fas fa-pencil-alt mr-2"></i>Chỉnh sửa`;
+			            editProfileBtn.classList.add('bg-blue-100', 'text-blue-600');
+			            editProfileBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+			            alert('✅ Cập nhật thông tin thành công!');
+			        })
+			        .catch(err => {
+			            console.error(err);
+			            alert('❌ Có lỗi khi lưu thông tin!');
+			        });
+			    }
+			});
+
+
+            // History Tabs Functionality
+            const completedTripsBtn = document.getElementById('completed-trips-btn');
+            const upcomingTripsBtn = document.getElementById('upcoming-trips-btn');
+            const completedTripsContent = document.getElementById('completed-trips-content');
+            const upcomingTripsContent = document.getElementById('upcoming-trips-content');
+
+            completedTripsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                upcomingTripsContent.classList.add('hidden');
+                completedTripsContent.classList.remove('hidden');
+
+                completedTripsBtn.classList.add('border-blue-600', 'text-blue-600');
+                completedTripsBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+
+                upcomingTripsBtn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                upcomingTripsBtn.classList.remove('border-blue-600', 'text-blue-600');
+            });
+
+            upcomingTripsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                completedTripsContent.classList.add('hidden');
+                upcomingTripsContent.classList.remove('hidden');
+
+                upcomingTripsBtn.classList.add('border-blue-600', 'text-blue-600');
+                upcomingTripsBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+
+                completedTripsBtn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                completedTripsBtn.classList.remove('border-blue-600', 'text-blue-600');
+            });
+        });
+    </script>
+</body>
+</html>
+

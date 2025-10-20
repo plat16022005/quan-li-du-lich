@@ -44,6 +44,7 @@ com\example\layout\entity\DiaDiem.class
 com\example\layout\controller\hdvtx\HdvTxDashboardController.class
 com\example\layout\config\SecurityConfig.class
 com\example\layout\config\WebConfig.class
+com\example\layout\config\GlobalControllerAdvice.class
 com\example\layout\repository\DiaDiemRepository.class
 com\example\layout\dto\SapKhoiHanhDTO.class
 com\example\layout\controller\manager\guest\ManagerGuestController.class
@@ -51,6 +52,7 @@ com\example\layout\dto\HanhKhachDTO.class
 com\example\layout\controller\hdvtx\HdvTxSalaryController.class
 com\example\layout\repository\NhanvienRepository.class
 com\example\layout\controller\manager\tour\DiaDiemController.class
+com\example\layout\controller\hdvtx\TripPdfExportController.class
 com\example\layout\service\LichTrinhService.class
 com\example\layout\service\KhuyenMaiService.class
 com\example\layout\service\TripExportPdfService.class
@@ -65,6 +67,7 @@ com\example\layout\repository\ThanhToanRepository.class
 com\example\layout\controller\guest\GuestHomeController.class
 com\example\layout\dto\ChiTietDatChoDTO.class
 com\example\layout\service\ThanhToanService.class
+com\example\layout\controller\guest\GuestBookingController.class
 com\example\layout\dto\BookingApiDTO.class
 com\example\layout\dto\TourDetailDTO.class
 com\example\layout\repository\ChiTietDatChoRepository.class
@@ -80,6 +83,7 @@ com\example\layout\service\impl\EmailServiceImpl$1.class
 com\example\layout\dto\NewCustomerDTO.class
 com\example\layout\service\TourService.class
 com\example\layout\dto\BookingApiDTO$KhachHangSummary.class
+com\example\layout\dto\UpcomingTourDTO.class
 com\example\layout\entity\Nhanvien.class
 com\example\layout\service\ChuyenDuLichService.class
 com\example\layout\entity\KhachHang.class

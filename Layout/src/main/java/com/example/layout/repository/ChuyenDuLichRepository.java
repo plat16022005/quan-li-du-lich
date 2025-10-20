@@ -169,4 +169,39 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
     	    		    @Param("staffId") Integer staffId
     	    		);
         List<ChuyenDuLich> findByTour(Tour tour);
+        @Query("""
+        	    SELECT c FROM DatCho d
+        	    JOIN d.chuyenDuLich c
+        	    JOIN c.tour t
+        	    WHERE d.khachHang.maKhachHang = :maKH
+        	    AND c.trangThai = 'Đã hoàn thành'
+        	    AND d.trangThai = 'Đã thanh toán'
+        	""")
+        	List<ChuyenDuLich> findChuyenDaHoanThanh(@Param("maKH") Integer maKH);
+
+        	@Query("""
+        	    SELECT c FROM DatCho d
+        	    JOIN d.chuyenDuLich c
+        	    JOIN c.tour t
+        	    WHERE d.khachHang.maKhachHang = :maKH
+        	    AND c.trangThai = 'Sắp diễn ra' or c.trangThai = 'Đang diễn ra'
+        	    AND d.trangThai = 'Đã thanh toán'
+        	""")
+        	List<ChuyenDuLich> findChuyenSapDienRa(@Param("maKH") Integer maKH);
+
+        	@Query("""
+        		    SELECT c FROM DatCho d
+        		    JOIN d.chuyenDuLich c
+        		    WHERE d.maDatCho = :maDatCho
+        		""")
+        		ChuyenDuLich findChuyenByMaDatCho(@Param("maDatCho") Integer maDatCho);
+        	@Query("""
+        		    SELECT d.maDatCho FROM DatCho d
+        		    WHERE d.khachHang.maKhachHang = :maKH
+        		    AND d.chuyenDuLich.maChuyen = :maChuyen
+        		""")
+        		Integer findMaDatChoByKhachHangAndChuyen(
+        		        @Param("maKH") Integer maKH,
+        		        @Param("maChuyen") Integer maChuyen
+        		);      
 }

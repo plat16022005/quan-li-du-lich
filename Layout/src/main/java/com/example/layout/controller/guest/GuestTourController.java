@@ -1,12 +1,17 @@
 package com.example.layout.controller.guest;
 
 import com.example.layout.entity.Tour;
+import com.example.layout.entity.User;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
+import com.example.layout.entity.PhanHoi;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.LichTrinhRepository;
+import com.example.layout.repository.PhanHoiRepository;
 import com.example.layout.repository.TourRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +31,11 @@ public class GuestTourController {
     private ChuyenDuLichRepository chuyenDuLichRepository;
     @Autowired
     private DatChoRepository datChoRepository;
-
+	@Autowired
+	private PhanHoiRepository phanHoiRepository;
     @GetMapping("home/tour/{id}")
-    public String getTourDetail(@PathVariable("id") Integer id, Model model) {
+    public String getTourDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {
+    	User user = (User) session.getAttribute("user");
         Tour tour = tourRepository.findTourWithLichTrinhs(id)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy Tour ID: " + id));
 
@@ -47,12 +54,13 @@ public class GuestTourController {
         for (int i = 1; i <= tour.getSoNgay(); i++) {
             danhSachNgay.add(i);
         }
-
+        List<PhanHoi> danhGiaList = phanHoiRepository.findByChuyenDuLich_Tour_MaTour(id);
+        
+        model.addAttribute("danhGiaList", danhGiaList);
         model.addAttribute("tour", tour);
         model.addAttribute("lichTrinhs", lichTrinhs);
         model.addAttribute("danhSachNgay", danhSachNgay);
-
-        System.out.println("=== Mapping 1 ===");
+        model.addAttribute("user", user);
         return "guest/tour_detail";
     }
 
@@ -62,8 +70,8 @@ public class GuestTourController {
     private LichTrinhRepository lichTrinhRepository;
 
     @GetMapping("/home/tour/{id}/list")
-    public String getChuyenDetail(@PathVariable("id") Integer id, Model model) {
-
+    public String getChuyenDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {
+    	User user = (User) session.getAttribute("user");
         // Lấy thông tin Tour
         Tour tour = tourRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Tour ID: " + id));
@@ -79,7 +87,7 @@ public class GuestTourController {
 
         model.addAttribute("tour", tour);
         model.addAttribute("danhSachChuyen", danhSachChuyen);
-
+        model.addAttribute("user", user);
         return "guest/listchuyen"; // file giao diện bạn sẽ tạo
     }
 

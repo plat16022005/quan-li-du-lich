@@ -24,14 +24,11 @@
                 <i class="fas fa-route text-3xl text-blue-600"></i>
                 <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
             </a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="customer-homepage.html#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
-                <a href="all-tours.html" class="text-gray-600 hover:text-blue-600 font-semibold">Tour Du Lịch</a>
-                <a href="customer-homepage.html#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
-                <a href="customer-homepage.html#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
-            </div>
-            <div class="hidden md:flex items-center space-x-4">
 
+            <div class="hidden md:flex items-center space-x-4">
+                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+                </a>
             </div>
             <button class="md:hidden text-gray-600 text-2xl">
                 <i class="fas fa-bars"></i>
