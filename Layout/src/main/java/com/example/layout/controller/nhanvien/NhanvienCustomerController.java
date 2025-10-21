@@ -90,7 +90,6 @@ public class NhanvienCustomerController {
             .orElseThrow(() -> new RuntimeException("Customer not found"));
         List<DatCho> bookingHistoryEntities = datChoService.findByKhachHangId(customerId);
 
-    // Chuyển đổi sang DTO
         CustomerDetailDTO customerDTO = new CustomerDetailDTO(customer);
         List<BookingHistoryDTO> bookingHistoryDTO = bookingHistoryEntities.stream()
             .map(BookingHistoryDTO::new) // Sử dụng constructor
