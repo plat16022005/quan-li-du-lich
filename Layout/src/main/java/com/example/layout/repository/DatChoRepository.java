@@ -2,6 +2,7 @@ package com.example.layout.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,7 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
     @Query("SELECT COALESCE(SUM(ct.soLuong), 0) " +
             "FROM DatCho dc JOIN ChiTietDatCho ct ON dc.maDatCho = ct.datCho.maDatCho " +
             "WHERE dc.chuyenDuLich.maChuyen = :maChuyen")
+
      int getTongSoLuongDaDat(@Param("maChuyen") Integer maChuyen);
     
     @Query("""
@@ -68,4 +70,11 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
     	""")
     	List<DatCho> findVeSapDienRa(@Param("maKH") Integer maKH);
 
+
+
+    // thống kê độ phổ biến của tour dựa trên số lượt đặt chỗ
+    @Query("SELECT t.tenTour as tenTour, COUNT(d.maDatCho) as soLuotDat " +
+            "FROM DatCho d JOIN d.chuyenDuLich c JOIN c.tour t " +
+            "GROUP BY t.maTour, t.tenTour ORDER BY soLuotDat DESC")
+    List<Map<String, Object>> findTourPopularity();
 }

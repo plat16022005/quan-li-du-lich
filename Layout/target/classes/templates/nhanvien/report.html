@@ -1,507 +1,649 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nhân viên - Xuất Báo Cáo</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-gray-100">
-  <div class="flex h-screen overflow-hidden">
-    <aside
-      class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
-      id="sidebar"
-    >
-      <div
-        class="flex items-center justify-center h-20 border-b border-gray-700"
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhân viên - Xuất Báo Cáo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
       >
-        <i class="fas fa-route text-3xl text-blue-400"></i>
-        <span class="ml-3 text-2xl font-bold">TravelGO</span>
-      </div>
-      <nav class="mt-8 px-4">
-        <a
-          th:href="@{/nhanvien/dashboard}"
-          class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
         >
-          <i class="fas fa-tachometer-alt w-6 text-center"></i
-          ><span class="ml-4">Dashboard</span>
-        </a>
-        <a
-          th:href="@{/nhanvien/bookings}"
-          class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/manager_tour}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i
+            ><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/report}"
+            class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i
+            ><span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <!-- Logout link (bottom-left) -->
+        <div
+          class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800"
         >
-          <i class="fas fa-book-open w-6 text-center"></i
-          ><span class="ml-4">Quản lý Đặt chỗ</span>
-        </a>
-        <a
-          th:href="@{/nhanvien/customers}"
-          class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
-        >
-          <i class="fas fa-users w-6 text-center"></i
-          ><span class="ml-4">Quản lý Khách hàng</span>
-        </a>
-        <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
-          <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
-        </a>
-        <a
-          th:href="@{/nhanvien/report}"
-          class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md"
-        >
-          <i class="fas fa-chart-pie w-6 text-center"></i
-          ><span class="ml-4">Xuất báo cáo</span>
-        </a>
-      </nav>
-      <!-- Logout link (bottom-left) -->
-      <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
-        <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
-          <i class="fas fa-sign-out-alt w-6 text-center"></i>
-          <span class="ml-4">Đăng xuất</span>
-        </a>
-      </div>
-    </aside>
+          <a
+            th:href="@{/logout}"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
 
-    <div class="flex-1 flex flex-col overflow-y-auto">
-      <header
-        class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
-      >
-        <h1 class="text-2xl font-semibold text-gray-800">Xuất Báo Cáo</h1>
-        <div class="flex items-center">
-          <div class="ml-3">
-            <p
-              class="text-sm font-semibold text-gray-800"
-              th:text="${session.user.hoTen}"
-            ></p>
-            <p class="text-xs text-gray-500">Nhân viên</p>
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <h1 class="text-2xl font-semibold text-gray-800">Xuất Báo Cáo</h1>
+          <div class="flex items-center">
+            <div class="ml-3">
+              <p
+                class="text-sm font-semibold text-gray-800"
+                th:text="${session.user.hoTen}"
+              ></p>
+              <p class="text-xs text-gray-500">Nhân viên</p>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main class="flex-1 p-6">
-        <!-- Page header inside main -->
-        <div class="mb-6">
-          <h2 class="text-xl font-semibold text-gray-800">Xuất Báo Cáo & Thống Kê</h2>
-          <p class="text-sm text-gray-500">Tạo và xuất các báo cáo thống kê doanh thu, khách hàng và đặt chỗ.</p>
-        </div>
+        <main class="flex-1 p-6">
+          <!-- Page header inside main -->
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">
+              Xuất Báo Cáo & Thống Kê
+            </h2>
+            <p class="text-sm text-gray-500">
+              Tạo và xuất các báo cáo thống kê doanh thu, khách hàng và đặt chỗ.
+            </p>
+          </div>
 
-    <!-- Combined Report Section -->
-    <div class="bg-white p-6 rounded-lg shadow-sm">
-            <!-- Header with options and export buttons -->
-            <div
-              class="flex flex-col md:flex-row items-center justify-between gap-4 border-b pb-4"
-            >
-              <!-- Left side: Report Options -->
-              <div
-                class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto"
-              >
-                <h2
-                  class="text-lg font-semibold text-gray-800 whitespace-nowrap"
-                >
-                  Tùy chọn:
-                </h2>
-                <select
-                  id="report-type"
-                  class="w-full sm:w-auto pl-4 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm"
-                >
-                  <option value="bookings">Thống kê đặt chỗ</option>
-                  <option value="customers">Thống kê khách hàng</option>
-                  <option value="revenue">Thống kê doanh thu</option>
-                </select>
-                <input
-                  type="month"
-                  id="date-range"
-                  class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                />
+          <!-- Combined Report Section -->
+          <main class="flex-1 p-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b pb-4">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                        <h2 class="text-lg font-semibold text-gray-800 whitespace-nowrap">Tùy chọn:</h2>
+                        <select id="report-type" class="w-full sm:w-auto p-2 border rounded-lg">
+                            <option value="bookings">Thống kê đặt chỗ</option>
+                            <option value="customers">Thống kê khách hàng</option>
+                            <option value="revenue">Thống kê doanh thu</option>
+                            <option value="tourPopularity">Thống kê Tour Phổ biến</option>
+                            <option value="locationStats">Thống kê Địa điểm</option>
+                            <option value="tripFinance">Báo cáo Thu/Chi theo Tháng</option>
+                        </select>
+                        <input type="month" id="date-range" class="w-full sm:w-auto p-2 border rounded-lg hidden">
+                        <button id="create-report" class="bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-cogs mr-2"></i>Tạo
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                         </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="text-center text-gray-500 mb-4" id="chart-title">Biểu đồ thống kê</p>
+                    
+                    <div id="chart-area" class="relative w-full h-96">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                    <div id="table-area" class="hidden overflow-x-auto">
+                        <table class="w-full text-sm"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr id="table-header"></tr></thead><tbody id="table-body"></tbody></table>
+                    </div>
+                </div>
+
+                <div id="monthly-finance-section" class="hidden mt-6 space-y-6">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-4">Danh sách chuyến đi trong tháng</h3>
+                        <table class="w-full text-sm"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Tên Chuyến</th><th class="px-6 py-3 text-right">Doanh Thu</th><th class="px-6 py-3 text-right">Chi Phí</th><th class="px-6 py-3 text-right">Lợi Nhuận</th></tr></thead><tbody id="trip-list-body"></tbody></table>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <div
+            id="trip-detail-modal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4"
+          >
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+              <div class="flex justify-between items-center p-5 border-b">
+                <h2 id="modal-title" class="text-xl font-bold"></h2>
                 <button
-                  id="create-report"
-                  class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md"
+                  onclick="closeModal()"
+                  class="text-gray-400 hover:text-gray-700 text-2xl"
                 >
-                  <i class="fas fa-cogs mr-2"></i>
-                  <span>Tạo</span>
+                  &times;
                 </button>
               </div>
-              <!-- Right side: Export Buttons -->
-              <div class="flex items-center gap-2 w-full sm:w-auto">
+              <div id="modal-body" class="p-6 space-y-2 text-lg"></div>
+              <div class="flex justify-end p-4 border-t bg-gray-50">
                 <button
-                  id="export-excel"
-                  class="w-full text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors"
+                  onclick="closeModal()"
+                  class="bg-white text-gray-700 px-4 py-2 rounded border"
                 >
-                  <i class="fas fa-file-excel mr-2"></i>
-                  <span>Xuất Excel</span>
-                </button>
-                <button
-                  id="export-pdf"
-                  class="w-full text-sm bg-red-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors"
-                >
-                  <i class="fas fa-file-pdf mr-2"></i>
-                  <span>Xuất PDF</span>
+                  Đóng
                 </button>
               </div>
             </div>
+          </div>
 
-            <!-- Chart Area -->
-            <div class="mt-4">
-              <p class="text-center text-gray-500 mb-4" id="chart-title">
-                Biểu đồ thống kê nguồn khách hàng
-              </p>
-              <!-- Container bao quanh canvas -->
-              <div class="relative w-full h-72">
-                <canvas id="reportChart"></canvas>
-              </div>
-        </div>
-      </div>
+          <script>
+            const ctx = document.getElementById("reportChart").getContext("2d");
+            let reportChart;
 
-    <script>
-      const ctx = document.getElementById("reportChart").getContext("2d");
-      let reportChart;
-
-      // Mapping label cho trạng thái đặt chỗ
-      const bookingStatusMapping = {
-        "Chờ xác nhận": "Chờ xác nhận",
-        "Đã xác nhận": "Đã xác nhận", 
-        "Đã thanh toán": "Đã thanh toán",
-        "Hoàn thành": "Hoàn thành",
-        "Đã hủy": "Đã hủy"
-      };
-
-      // Format số tiền
-      const formatCurrency = (amount) => {
-        return new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(amount);
-      };
-
-      // Format ngày tháng
-      const formatDate = (dateString) => {
-        try {
-          const date = new Date(dateString);
-          return new Intl.DateTimeFormat("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          }).format(date);
-        } catch (error) {
-          console.error("Error formatting date:", dateString, error);
-          return dateString;
-        }
-      };
-
-      // Hàm vẽ biểu đồ đặt chỗ (doughnut) - sử dụng API marketing
-      async function loadBookingData() {
-        try {
-          const res = await fetch("/nhanvien/report/api/marketing");
-          const data = await res.json();
-
-          const marketingSourceMapping = {
-            'friend': 'Người quen giới thiệu',
-            'facebook': 'Facebook',
-            'tiktok': 'Tiktok',
-            'google': 'Tìm kiếm trên Google',
-            'youtube': 'Quảng cáo Youtube',
-            'website': 'Website/Blog khác'
-          };
-          const labels = Object.keys(data).map((key) => marketingSourceMapping[key] || 'Khác');
-          const values = Object.values(data);
-
-          if (reportChart) reportChart.destroy();
-
-          reportChart = new Chart(ctx, {
-            type: "doughnut",
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: "Nguồn khách hàng",
-                  data: values,
-                  backgroundColor: [
-                    "rgba(59, 130, 246, 0.7)",
-                    "rgba(16, 185, 129, 0.7)",
-                    "rgba(245, 158, 11, 0.7)",
-                    "rgba(34, 197, 94, 0.7)",
-                    "rgba(239, 68, 68, 0.7)",
-                  ],
-                  borderColor: [
-                    "rgba(59, 130, 246, 1)",
-                    "rgba(16, 185, 129, 1)",
-                    "rgba(245, 158, 11, 1)",
-                    "rgba(34, 197, 94, 1)",
-                    "rgba(239, 68, 68, 1)",
-                  ],
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: "top" },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      return `${context.label}: ${context.parsed} người`;
-                    },
-                  },
-                },
-              },
-            },
-          });
-        } catch (error) {
-          console.error("Error loading booking data:", error);
-        }
-      }
-
-      // Hàm vẽ biểu đồ khách hàng (bar chart) - sử dụng API marketing
-      async function loadCustomerData() {
-        try {
-          const response = await fetch("/nhanvien/report/api/marketing");
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-
-          // Xử lý dữ liệu marketing cho khách hàng
-          const labels = Object.keys(data).map(key => {
-            const sourceMapping = {
-              'friend': 'Người quen giới thiệu',
-              'facebook': 'Facebook',
-              'tiktok': 'Tiktok',
-              'google': 'Tìm kiếm trên Google',
-              'youtube': 'Quảng cáo Youtube',
-              'website': 'Website/Blog khác'
+            // Mapping label cho trạng thái đặt chỗ
+            const bookingStatusMapping = {
+              "Chờ xác nhận": "Chờ xác nhận",
+              "Đã xác nhận": "Đã xác nhận",
+              "Đã thanh toán": "Đã thanh toán",
+              "Hoàn thành": "Hoàn thành",
+              "Đã hủy": "Đã hủy",
             };
-            return sourceMapping[key] || 'Khác';
-          });
-          const values = Object.values(data);
 
-          if (reportChart) {
-            reportChart.destroy();
-          }
+            // Format số tiền
+            const formatCurrency = (amount) => {
+              return new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(amount);
+            };
 
-          reportChart = new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: "Nguồn khách hàng",
-                  data: values,
-                  backgroundColor: "rgba(16, 185, 129, 0.7)",
-                  borderColor: "rgba(16, 185, 129, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: "top" },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      return `${context.parsed.y} người`;
+            // Format ngày tháng
+            const formatDate = (dateString) => {
+              try {
+                const date = new Date(dateString);
+                return new Intl.DateTimeFormat("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }).format(date);
+              } catch (error) {
+                console.error("Error formatting date:", dateString, error);
+                return dateString;
+              }
+            };
+
+            // Hàm vẽ biểu đồ đặt chỗ (doughnut) - sử dụng API marketing
+            async function loadBookingData() {
+              try {
+                const res = await fetch("/nhanvien/report/api/marketing");
+                const data = await res.json();
+
+                const marketingSourceMapping = {
+                  friend: "Người quen giới thiệu",
+                  facebook: "Facebook",
+                  tiktok: "Tiktok",
+                  google: "Tìm kiếm trên Google",
+                  youtube: "Quảng cáo Youtube",
+                  website: "Website/Blog khác",
+                };
+                const labels = Object.keys(data).map(
+                  (key) => marketingSourceMapping[key] || "Khác"
+                );
+                const values = Object.values(data);
+
+                if (reportChart) reportChart.destroy();
+
+                reportChart = new Chart(ctx, {
+                  type: "doughnut",
+                  data: {
+                    labels: labels,
+                    datasets: [
+                      {
+                        label: "Nguồn khách hàng",
+                        data: values,
+                        backgroundColor: [
+                          "rgba(59, 130, 246, 0.7)",
+                          "rgba(16, 185, 129, 0.7)",
+                          "rgba(245, 158, 11, 0.7)",
+                          "rgba(34, 197, 94, 0.7)",
+                          "rgba(239, 68, 68, 0.7)",
+                        ],
+                        borderColor: [
+                          "rgba(59, 130, 246, 1)",
+                          "rgba(16, 185, 129, 1)",
+                          "rgba(245, 158, 11, 1)",
+                          "rgba(34, 197, 94, 1)",
+                          "rgba(239, 68, 68, 1)",
+                        ],
+                        borderWidth: 1,
+                      },
+                    ],
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { position: "top" },
+                      tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            return `${context.label}: ${context.parsed} người`;
+                          },
+                        },
+                      },
                     },
                   },
-                },
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  ticks: {
-                    stepSize: 1,
+                });
+              } catch (error) {
+                console.error("Error loading booking data:", error);
+              }
+            }
+
+            // Hàm vẽ biểu đồ khách hàng (bar chart) - sử dụng API marketing
+            async function loadCustomerData() {
+              try {
+                const response = await fetch("/nhanvien/report/api/marketing");
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // Xử lý dữ liệu marketing cho khách hàng
+                const labels = Object.keys(data).map((key) => {
+                  const sourceMapping = {
+                    friend: "Người quen giới thiệu",
+                    facebook: "Facebook",
+                    tiktok: "Tiktok",
+                    google: "Tìm kiếm trên Google",
+                    youtube: "Quảng cáo Youtube",
+                    website: "Website/Blog khác",
+                  };
+                  return sourceMapping[key] || "Khác";
+                });
+                const values = Object.values(data);
+
+                if (reportChart) {
+                  reportChart.destroy();
+                }
+
+                reportChart = new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [
+                      {
+                        label: "Nguồn khách hàng",
+                        data: values,
+                        backgroundColor: "rgba(16, 185, 129, 0.7)",
+                        borderColor: "rgba(16, 185, 129, 1)",
+                        borderWidth: 1,
+                      },
+                    ],
                   },
-                },
-              },
-            },
-          });
-        } catch (error) {
-          console.error("Error loading customer data:", error);
-          alert("Có lỗi khi tải dữ liệu khách hàng: " + error.message);
-        }
-      }
-
-      // Hàm vẽ biểu đồ doanh thu (line chart)
-      async function loadRevenueData() {
-        try {
-          const dateRange = document.getElementById("date-range").value;
-          let year, month;
-
-          if (dateRange) {
-            [year, month] = dateRange.split("-").map(Number);
-          } else {
-            const now = new Date();
-            year = now.getFullYear();
-            month = now.getMonth() + 1;
-          }
-
-          const response = await fetch(
-            `/nhanvien/report/api/expense?year=${year}&month=${month}`
-          );
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-
-          // Sắp xếp dữ liệu theo ngày
-          const sortedEntries = Object.entries(data).sort((a, b) =>
-            a[0].localeCompare(b[0])
-          );
-          const labels = sortedEntries.map(([date]) => formatDate(date));
-          const values = sortedEntries.map(([_, amount]) => amount);
-
-          if (reportChart) {
-            reportChart.destroy();
-          }
-
-          reportChart = new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: "Doanh thu (VNĐ)",
-                  data: values,
-                  backgroundColor: "rgba(59, 130, 246, 0.1)",
-                  borderColor: "rgba(59, 130, 246, 1)",
-                  borderWidth: 2,
-                  fill: true,
-                  tension: 0.4,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: "top" },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      return new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                        maximumFractionDigits: 0,
-                      }).format(context.parsed.y);
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { position: "top" },
+                      tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            return `${context.parsed.y} người`;
+                          },
+                        },
+                      },
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          stepSize: 1,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  ticks: {
-                    callback: function (value) {
-                      return new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                        notation: "compact",
-                        maximumFractionDigits: 0,
-                      }).format(value);
+                });
+              } catch (error) {
+                console.error("Error loading customer data:", error);
+                alert("Có lỗi khi tải dữ liệu khách hàng: " + error.message);
+              }
+            }
+
+            // Hàm vẽ biểu đồ doanh thu (line chart)
+            async function loadRevenueData() {
+              try {
+                const dateRange = document.getElementById("date-range").value;
+                let year, month;
+
+                if (dateRange) {
+                  [year, month] = dateRange.split("-").map(Number);
+                } else {
+                  const now = new Date();
+                  year = now.getFullYear();
+                  month = now.getMonth() + 1;
+                }
+
+                const response = await fetch(
+                  `/nhanvien/report/api/expense?year=${year}&month=${month}`
+                );
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // Sắp xếp dữ liệu theo ngày
+                const sortedEntries = Object.entries(data).sort((a, b) =>
+                  a[0].localeCompare(b[0])
+                );
+                const labels = sortedEntries.map(([date]) => formatDate(date));
+                const values = sortedEntries.map(([_, amount]) => amount);
+
+                if (reportChart) {
+                  reportChart.destroy();
+                }
+
+                reportChart = new Chart(ctx, {
+                  type: "line",
+                  data: {
+                    labels: labels,
+                    datasets: [
+                      {
+                        label: "Doanh thu (VNĐ)",
+                        data: values,
+                        backgroundColor: "rgba(59, 130, 246, 0.1)",
+                        borderColor: "rgba(59, 130, 246, 1)",
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                      },
+                    ],
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { position: "top" },
+                      tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            return new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                              maximumFractionDigits: 0,
+                            }).format(context.parsed.y);
+                          },
+                        },
+                      },
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          callback: function (value) {
+                            return new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                              notation: "compact",
+                              maximumFractionDigits: 0,
+                            }).format(value);
+                          },
+                        },
+                      },
                     },
                   },
+                });
+              } catch (error) {
+                console.error("Error loading revenue data:", error);
+                alert("Có lỗi khi tải dữ liệu doanh thu: " + error.message);
+              }
+            }
+
+            async function loadTourPopularityChart() {
+              try {
+                const res = await fetch("/nhanvien/report/api/tour-popularity");
+                const data = await res.json();
+                drawChart(
+                  "bar",
+                  "Số lượt đặt",
+                  data.map((i) => i.tenTour),
+                  data.map((i) => i.soLuotDat)
+                );
+              } catch (e) {
+                console.error("Lỗi tải Tour Popularity:", e);
+              }
+            }
+
+            // Hàm vẽ bảng Thống kê Địa điểm
+            async function loadLocationStatsTable() {
+              try {
+                document.getElementById(
+                  "table-header"
+                ).innerHTML = `<th class="px-6 py-3">Tên Địa điểm</th><th class="px-6 py-3 text-right">Số Lần Sử Dụng</th>`;
+                const res = await fetch("/nhanvien/report/api/location-stats");
+                const data = await res.json();
+                const tableBody = document.getElementById("table-body");
+                tableBody.innerHTML = "";
+                data.forEach((item) => {
+                  tableBody.innerHTML += `<tr class="border-b"><td class="px-6 py-4 font-medium">${item.tenDiaDiem}</td><td class="px-6 py-4 text-right">${item.soLan}</td></tr>`;
+                });
+              } catch (e) {
+                console.error("Lỗi tải Location Stats:", e);
+              }
+            }
+
+
+
+            let monthlyRevenueChart; // Biểu đồ mới
+            async function loadMonthlyReport() {
+                    const dateValue = document.getElementById('date-range').value;
+                    if (!dateValue) { alert('Vui lòng chọn tháng.'); return; }
+                    const [year, month] = dateValue.split('-');
+
+                    const [revenueRes, tripsRes] = await Promise.all([
+                        fetch(`/nhanvien/report/api/monthly-daily-revenue?year=${year}&month=${month}`),
+                        fetch(`/nhanvien/report/api/monthly-trip-list?year=${year}&month=${month}`)
+                    ]);
+                    const revenueData = await revenueRes.json();
+                    const tripList = await tripsRes.json();
+                    
+                    drawChart('line', `Doanh thu (Tháng ${month}/${year})`, Object.keys(revenueData), Object.values(revenueData));
+                    renderTripTable(tripList);
+                }
+
+                function drawChart(type, label, labels, data) {
+                if (reportChart) {
+                    reportChart.destroy();
+                }
+                reportChart = new Chart(ctx, {
+                    type: type,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: data,
+                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(239, 68, 68, 0.7)', 'rgba(139, 92, 246, 0.7)'],
+                            borderColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', display: type === 'doughnut' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let value = context.parsed;
+                                        if (context.parsed.y !== undefined) value = context.parsed.y;
+                                        return `${context.label}: ${value}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: (type === 'bar' || type === 'line') ? { y: { beginAtZero: true } } : {}
+                    }
+                });
+            }
+
+                async function renderTripTable(trips) {
+                    const tableBody = document.getElementById('trip-list-body');
+                    tableBody.innerHTML = '';
+                    if (trips.length === 0) {
+                        tableBody.innerHTML = `<tr><td colspan="4" class="text-center p-4">Không có chuyến đi nào.</td></tr>`;
+                        return;
+                    }
+                    for (const trip of trips) {
+                        const financeRes = await fetch(`/nhanvien/report/api/trip-finance/${trip.maChuyen}`);
+                        const financeData = await financeRes.json();
+                        const profitClass = financeData.loiNhuan >= 0 ? 'text-green-600' : 'text-red-600';
+                        tableBody.innerHTML += `<tr class="border-b"><td class="px-6 py-4">${trip.tour.tenTour} <span class="text-xs text-gray-500">(${formatDate(trip.ngayBatDau)})</span></td><td class="px-6 py-4 text-right">${formatCurrency(financeData.doanhThu)}</td><td class="px-6 py-4 text-right">${formatCurrency(financeData.tongChiPhi)}</td><td class="px-6 py-4 text-right ${profitClass}">${formatCurrency(financeData.loiNhuan)}</td></tr>`;
+                    }
+                }
+            function drawRevenueChart(data, year, month) {
+              const chartCtx = document
+                .getElementById("monthlyRevenueChart")
+                .getContext("2d");
+              if (monthlyRevenueChart) monthlyRevenueChart.destroy();
+              const daysInMonth = new Date(year, month, 0).getDate();
+              const labels = Array.from(
+                { length: daysInMonth },
+                (_, i) => `${i + 1}`
+              );
+              const chartData = Array(daysInMonth).fill(0);
+              for (const [date, revenue] of Object.entries(data)) {
+                chartData[new Date(date).getDate() - 1] = revenue;
+              }
+              monthlyRevenueChart = new Chart(chartCtx, {
+                type: "line",
+                data: {
+                  labels: labels,
+                  datasets: [
+                    {
+                      label: `Doanh thu (Tháng ${month}/${year})`,
+                      data: chartData,
+                      borderColor: "#3B82F6",
+                      fill: true,
+                    },
+                  ],
                 },
-              },
-            },
-          });
-        } catch (error) {
-          console.error("Error loading revenue data:", error);
-          alert("Có lỗi khi tải dữ liệu doanh thu: " + error.message);
-        }
-      }
+                options: { responsive: true, maintainAspectRatio: false },
+              });
+            }
+            async function showTripDetails(maChuyen, tenTour) {
+              const modal = document.getElementById("trip-detail-modal");
+              document.getElementById(
+                "modal-title"
+              ).textContent = `Thu/Chi: ${tenTour}`;
+              const modalBody = document.getElementById("modal-body");
+              modalBody.innerHTML = "<p>Đang tải...</p>";
+              modal.classList.remove("hidden");
+              const res = await fetch(
+                `/nhanvien/report/api/trip-finance/${maChuyen}`
+              );
+              const data = await res.json();
+              modalBody.innerHTML = `<p><strong>Doanh thu:</strong> <span class="text-green-600">${formatCurrency(
+                data.doanhThu
+              )}</span></p><p><strong>Chi phí:</strong> <span class="text-red-600">${formatCurrency(
+                data.tongChiPhi
+              )}</span></p><p class="font-bold text-lg border-t pt-2 mt-2"><strong>Lợi nhuận:</strong> <span class="text-blue-700">${formatCurrency(
+                data.loiNhuan
+              )}</span></p>`;
+            }
+            function closeModal() {
+              document
+                .getElementById("trip-detail-modal")
+                .classList.add("hidden");
+            }
 
-      // Khởi tạo giá trị mặc định cho date-range là tháng hiện tại
-      const today = new Date();
-      const defaultMonth =
-        today.getFullYear() +
-        "-" +
-        String(today.getMonth() + 1).padStart(2, "0");
-      document.getElementById("date-range").value = defaultMonth;
+            // === LOGIC ĐIỀU KHIỂN CHÍNH (ĐÃ CẬP NHẬT) ===
+            const reportTypeSelect = document.getElementById("report-type");
+                const createReportBtn = document.getElementById("create-report");
+                const dateRangeInput = document.getElementById("date-range");
+                const chartArea = document.getElementById('chart-area');
+                const tableArea = document.getElementById('table-area');
+                const monthlySection = document.getElementById('monthly-finance-section');
 
-      // Bắt sự kiện đổi loại report
-      const reportTypeSelect = document.getElementById("report-type");
-      const createReportBtn = document.getElementById("create-report");
+                function updateUI() {
+                    const type = reportTypeSelect.value;
+                    dateRangeInput.style.display = 'none'; // Ẩn mặc định
+                    monthlySection.style.display = 'none'; // Ẩn mặc định
+                    chartArea.style.display = 'block'; // Hiện mặc định
+                    tableArea.style.display = 'none'; // Ẩn mặc định
 
-      reportTypeSelect.addEventListener("change", (e) => {
-        const type = e.target.value;
-        const chartTitle = document.getElementById("chart-title");
-        const dateRangeInput = document.getElementById("date-range");
+                    if (type === 'revenue') {
+                        dateRangeInput.style.display = 'block';
+                    } else if (type === 'locationStats') {
+                        chartArea.style.display = 'none';
+                        tableArea.style.display = 'block';
+                    } else if (type === 'tripFinance') {
+                        dateRangeInput.style.display = 'block';
+                        monthlySection.style.display = 'block';
+                    }
+                }
 
-        switch (type) {
-          case "bookings":
-            chartTitle.textContent = "Biểu đồ thống kê nguồn khách hàng";
-            dateRangeInput.disabled = true;
-            break;
-          case "customers":
-            chartTitle.textContent = "Biểu đồ thống kê nguồn khách hàng";
-            dateRangeInput.disabled = true;
-            break;
-          case "revenue":
-            chartTitle.textContent = "Biểu đồ thống kê doanh thu theo ngày";
-            dateRangeInput.disabled = false;
-            break;
-        }
-      });
-
-      // Load mặc định khi vào trang
-      window.addEventListener("DOMContentLoaded", () => {
-        const type = reportTypeSelect.value;
-        loadReportData(type);
-      });
-
-      // Hàm load dữ liệu theo loại báo cáo
-      function loadReportData(type) {
-        switch (type) {
-          case "bookings":
-            loadBookingData();
-            break;
-          case "customers":
-            loadCustomerData();
-            break;
-          case "revenue":
-            loadRevenueData();
-            break;
-        }
-      }
-
-      // Xử lý sự kiện nút Tạo
-      createReportBtn.addEventListener("click", () => {
-        const type = reportTypeSelect.value;
-        loadReportData(type);
-      });
-
-      // Handle export buttons
-      document.getElementById("export-excel").addEventListener("click", () => {
-        const reportType = document.getElementById("report-type").value;
-        const dateRange = document.getElementById("date-range").value;
-
-        let url = `/nhanvien/report/export/excel?reportType=${reportType}`;
-        if (dateRange) {
-          url += `&fromDate=${dateRange}`;
-        }
-
-        window.location.href = url;
-      });
-
-      document.getElementById("export-pdf").addEventListener("click", () => {
-        const reportType = document.getElementById("report-type").value;
-        const dateRange = document.getElementById("date-range").value;
-
-        let url = `/nhanvien/report/export/pdf?reportType=${reportType}`;
-        if (dateRange) {
-          url += `&fromDate=${dateRange}`;
-        }
-
-        window.location.href = url;
-      });
-    </script>
-      </main>
+                function loadReportData() {
+                    const type = reportTypeSelect.value;
+                    switch (type) {
+                        case "bookings": loadBookingData(); break;
+                        case "customers": loadCustomerData(); break;
+                        case "revenue": loadRevenueData(); break;
+                        case "tourPopularity": loadTourPopularityChart(); break;
+                        case "locationStats": loadLocationStatsTable(); break;
+                        case "tripFinance": loadMonthlyReport(); break;
+                    }
+                }
+                
+                function drawChart(type, label, labels, data) { /* ... code cũ của bạn ... */ }
+                
+                // GẮN SỰ KIỆN
+                reportTypeSelect.addEventListener("change", updateUI);
+                createReportBtn.addEventListener("click", loadReportData);
+                
+                // KHỞI TẠO
+                window.addEventListener("DOMContentLoaded", () => {
+                    const today = new Date();
+                    document.getElementById("date-range").value = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0");
+                    updateUI();
+                    loadReportData();
+                });
+          </script>
+        </main>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

@@ -60,6 +60,10 @@ public class ChuyenDuLichService {
         return chuyenDuLichRepository.findAll(pageable);
     }
 
+    public List<ChuyenDuLich> findAlltrips() {
+        return chuyenDuLichRepository.findAllWithTour();
+    }
+
     public List<ChuyenDuLich> findByTrangThai(String trangThai) {
         return chuyenDuLichRepository.findByTrangThai(trangThai);
     }

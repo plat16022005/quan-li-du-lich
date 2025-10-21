@@ -13,4 +13,8 @@ import com.example.layout.entity.ChiTietDatCho;
 public interface ChiTietDatChoRepository extends JpaRepository<ChiTietDatCho, Integer> {
     @Query("SELECT COALESCE(SUM(ct.thanhTien), 0) FROM ChiTietDatCho ct WHERE ct.datCho.maDatCho = :maDatCho")
     BigDecimal findTotalAmountByDatCho_MaDatCho(@Param("maDatCho") Integer maDatCho);
+
+    // tính tổng doanh thu từ chi tiết đặt chỗ theo mã chuyến
+    @Query("SELECT COALESCE(SUM(ct.thanhTien), 0) FROM ChiTietDatCho ct WHERE ct.datCho.chuyenDuLich.maChuyen = :maChuyen")
+    BigDecimal findTotalRevenueByChuyenId(@Param("maChuyen") Integer maChuyen);
 }
