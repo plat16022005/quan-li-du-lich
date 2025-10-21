@@ -2,6 +2,7 @@ D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\manager\to
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\KhachHangService.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\NhanVienService.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\ThanhToanService.java
+D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\NhanVienDashboardController.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\PhuongTien.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\exception\GlobalExceptionHandler.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\manager\tour\PhuongTienController.java
@@ -54,6 +55,7 @@ D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\Nhanvien.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\UserService.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\GiaoDich.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\VaiTroRepository.java
+D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\NhanVienDashboardService.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\config\WebConfig.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\LichTrinhService.java
 D:\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\ChiTietDatCho.java
