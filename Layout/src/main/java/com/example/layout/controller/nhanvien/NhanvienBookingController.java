@@ -148,9 +148,7 @@ public class NhanvienBookingController {
         }
     }
 
-    /**
-     * GET MAPPING: Xử lý việc xác nhận một đơn đặt chỗ.
-     */
+
     @GetMapping("/confirm/{id}")
     public String confirmBooking(@PathVariable("id") Integer bookingId, RedirectAttributes redirectAttributes) {
         try {

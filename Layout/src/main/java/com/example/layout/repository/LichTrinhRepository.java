@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface LichTrinhRepository extends JpaRepository<LichTrinh, Integer> {
@@ -22,5 +23,11 @@ public interface LichTrinhRepository extends JpaRepository<LichTrinh, Integer> {
     
     List<LichTrinh> findByTour(Tour tour);
 
+    // tính toán số lần sử dụng địa điểm trong lịch trình
+   // Code đã sửa
+    @Query("SELECT dd.tenDiaDiem as tenDiaDiem, COUNT(lt.diaDiem) as soLan " +
+        "FROM LichTrinh lt JOIN lt.diaDiem dd " +
+        "GROUP BY lt.diaDiem, dd.tenDiaDiem ORDER BY soLan DESC")
+    List<Map<String, Object>> findLocationUsageStatistics();
 }
 

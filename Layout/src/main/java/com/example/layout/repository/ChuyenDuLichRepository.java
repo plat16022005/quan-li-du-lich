@@ -169,4 +169,11 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
     	    		    @Param("staffId") Integer staffId
     	    		);
         List<ChuyenDuLich> findByTour(Tour tour);
+
+	@Query("SELECT c FROM ChuyenDuLich c WHERE YEAR(c.ngayBatDau) = :year AND MONTH(c.ngayBatDau) = :month")
+    List<ChuyenDuLich> findByYearAndMonth(@Param("year") int year, @Param("month") int month);
+
+	@Query("SELECT c FROM ChuyenDuLich c JOIN FETCH c.tour")
+    List<ChuyenDuLich> findAllWithTour();
 }
+
