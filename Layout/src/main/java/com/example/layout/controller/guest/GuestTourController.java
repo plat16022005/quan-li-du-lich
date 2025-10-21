@@ -36,6 +36,10 @@ public class GuestTourController {
     @GetMapping("home/tour/{id}")
     public String getTourDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {
     	User user = (User) session.getAttribute("user");
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
         Tour tour = tourRepository.findTourWithLichTrinhs(id)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy Tour ID: " + id));
 
@@ -72,12 +76,17 @@ public class GuestTourController {
     @GetMapping("/home/tour/{id}/list")
     public String getChuyenDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {
     	User user = (User) session.getAttribute("user");
+    	
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
         // Lấy thông tin Tour
         Tour tour = tourRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Tour ID: " + id));
 
         // Lấy danh sách chuyến của tour này
-        List<ChuyenDuLich> danhSachChuyen = chuyenDuLichRepository.findByTour(tour);
+        List<ChuyenDuLich> danhSachChuyen = chuyenDuLichRepository.findUpcomingTripsByTour(tour);
 
         // Tính số lượng vé đã đặt cho từng chuyến
         danhSachChuyen.forEach(ch -> {

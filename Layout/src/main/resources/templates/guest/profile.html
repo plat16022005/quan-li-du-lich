@@ -55,7 +55,9 @@
                 <aside class="lg:col-span-1">
                     <div class="bg-white p-6 rounded-lg shadow-md">
                         <div class="flex flex-col items-center">
-                            <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=AVT" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-blue-200">
+							<div id="user-avatar" 
+							     class="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white border-4 border-blue-200">
+							</div>
                             <h2 th:text="${user.hoTen}" class="text-xl font-bold mt-4">Nguyễn Văn An</h2>
                             <p th:text="${user.email}" class="text-gray-500">an.nguyen@email.com</p>
                         </div>
@@ -125,6 +127,7 @@
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                                 <a href="#" id="completed-trips-btn" class="border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Chuyến đã đi</a>
                                 <a href="#" id="upcoming-trips-btn" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Sắp đi</a>
+                                <a href="#" id="unpaid-trips-btn" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Chưa thanh toán</a>
                             </nav>
                         </div>
 
@@ -161,26 +164,56 @@
 
                          <!-- Upcoming Trips Content -->
 						<div id="upcoming-trips-content" class="hidden space-y-6">
-						    <div th:each="chuyen : ${upcomingTrips}" 
+						    <div th:each="cho : ${upcomingTrips}" 
 						         class="flex flex-col md:flex-row items-center bg-gray-50 p-4 rounded-lg">
-						        <img th:src="${chuyen.tour.hinhAnh}" 
+						        <img th:src="${cho.chuyenDuLich.tour.hinhAnh}" 
 						             alt="Ảnh tour" 
 						             class="w-full md:w-48 h-32 object-cover rounded-md">
 						        <div class="flex-1 md:ml-6 mt-4 md:mt-0">
-						            <h3 class="text-lg font-bold" th:text="${chuyen.tour.tenTour}">Tên tour</h3>
+						            <h3 class="text-lg font-bold" th:text="${cho.chuyenDuLich.tour.tenTour}">Tên tour</h3>
 						            <p class="text-sm text-gray-500">
-						                Khởi hành: <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+						                Khởi hành: <span th:text="${#temporals.format(cho.chuyenDuLich.ngayBatDau, 'dd/MM/yyyy')}"></span>
 						            </p>
 						            <p class="text-sm text-blue-600 font-semibold">Trạng thái: Sắp khởi hành</p>
 						        </div>
 						        <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
-								<a th:href="@{'/ticket/detail/' + ${chuyen.maDatCho}}"
+								<a th:href="@{'/ticket/detail/' + ${cho.maDatCho}}"
 								   class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition">
 								   Xem Chi Tiết Vé
 								</a>
 						        </div>
 						    </div>
 						</div>
+
+                        <!-- Unpaid Trips Content -->
+                        <div id="unpaid-trips-content" class="hidden space-y-6">
+							<div th:each="datCho : ${unpaidBookings}" 
+							     class="flex flex-col md:flex-row items-center bg-red-50 p-4 rounded-lg border border-red-200 shadow-sm">
+							    <img th:src="${datCho.chuyenDuLich.tour.hinhAnh}"
+							         alt="Ảnh tour"
+							         class="w-full md:w-48 h-32 object-cover rounded-md">
+							    <div class="flex-1 md:ml-6 mt-4 md:mt-0">
+							        <h3 class="text-lg font-bold" th:text="${datCho.chuyenDuLich.tour.tenTour}">Tên tour</h3>
+							        <p class="text-sm text-gray-500">
+							            Khởi hành:
+							            <span th:text="${#temporals.format(datCho.chuyenDuLich.ngayBatDau, 'dd/MM/yyyy')}"></span>
+							        </p>
+							        <p class="text-sm text-red-600 font-semibold">Trạng thái: Chưa thanh toán</p>
+							    </div>
+							    <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+							        <button type="button"
+							            class="bg-red-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition"
+							            th:attr="data-id=${datCho.maDatCho}, 
+							                     data-tour=${datCho.chuyenDuLich.tour.tenTour},
+							                     data-date=${#temporals.format(datCho.chuyenDuLich.ngayBatDau, 'dd/MM/yyyy')},
+							                     data-price=${datCho.chuyenDuLich.tour.giaCoBan}"
+							            onclick="openPaymentModal(this)">
+							            Thanh toán ngay
+							        </button>
+							    </div>
+							</div>
+
+                        </div>
 
                     </div>
 
@@ -216,6 +249,79 @@
                 </div>
             </div>
         </div>
+<!-- MODAL THANH TOÁN -->
+<!-- MODAL THANH TOÁN (RÚT GỌN KHÔNG BẢNG) -->
+<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 overflow-hidden">
+    <!-- Header -->
+    <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+      <h2 class="text-xl font-bold">Thanh Toán Đơn Hàng</h2>
+      <button onclick="closePaymentModal()" class="text-white text-2xl">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left: Payment Method -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">Chọn phương thức thanh toán</h3>
+        <div class="space-y-4">
+          <label class="payment-option border-2 border-gray-200 p-4 rounded-lg flex items-center cursor-pointer transition">
+            <input type="radio" name="paymentMethod" value="bank" class="h-5 w-5 text-blue-600 focus:ring-blue-500" checked>
+            <div class="ml-4">
+              <p class="font-bold text-lg">Chuyển khoản ngân hàng</p>
+              <p class="text-sm text-gray-600">Quét mã QR hoặc chuyển khoản thủ công.</p>
+            </div>
+          </label>
+
+          <label class="payment-option border-2 border-gray-200 p-4 rounded-lg flex items-center cursor-pointer transition">
+            <input type="radio" name="paymentMethod" value="ewallet" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+            <div class="ml-4 flex-grow">
+              <p class="font-bold text-lg">Ví điện tử</p>
+              <p class="text-sm text-gray-600">MoMo, ZaloPay...</p>
+            </div>
+            <div class="flex space-x-2">
+              <img src="https://placehold.co/40x25/FFFFFF/000000?text=MoMo" class="h-6">
+              <img src="https://placehold.co/40x25/FFFFFF/000000?text=ZaloPay" class="h-6">
+            </div>
+          </label>
+
+          <label class="payment-option border-2 border-gray-200 p-4 rounded-lg flex items-center cursor-pointer transition">
+            <input type="radio" name="paymentMethod" value="credit" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+            <div class="ml-4 flex-grow">
+              <p class="font-bold text-lg">Thẻ tín dụng / ghi nợ</p>
+              <p class="text-sm text-gray-600">Visa, Mastercard, JCB.</p>
+            </div>
+            <div class="flex space-x-2">
+              <i class="fab fa-cc-visa text-3xl text-blue-800"></i>
+              <i class="fab fa-cc-mastercard text-3xl text-red-600"></i>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Right: Summary -->
+      <div>
+        <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+          <h4 class="text-lg font-bold mb-3">Tóm tắt đơn hàng</h4>
+          <p class="text-sm text-gray-600 mb-2"><strong>Tên tour:</strong> <span id="modalTourName"></span></p>
+          <p class="text-sm text-gray-600 mb-2"><strong>Ngày khởi hành:</strong> <span id="modalTourDate"></span></p>
+          <p class="text-lg font-bold text-blue-600 mt-3 pt-3 border-t">
+            Tổng tiền: <span id="modalTotal"></span>₫
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-4 border-t flex justify-end space-x-3">
+      <button onclick="closePaymentModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Hủy</button>
+      <button id="confirmPayment" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+
+        
     </main>
     
     <footer class="bg-gray-800 text-white py-10 mt-12">
@@ -270,99 +376,185 @@
 			const profileFieldsContainer = document.getElementById('profile-fields');
 			let isEditing = false;
 			
-			editProfileBtn.addEventListener('click', () => {
-			    isEditing = !isEditing;
+			if (editProfileBtn) {
+			    editProfileBtn.addEventListener('click', () => {
+			        isEditing = !isEditing;
 			
-			    if (isEditing) {
-			        // 📝 Chế độ chỉnh sửa
-			        editProfileBtn.innerHTML = `<i class="fas fa-save mr-2"></i>Lưu Thay Đổi`;
-			        editProfileBtn.classList.remove('bg-blue-100', 'text-blue-600');
-			        editProfileBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+			        if (isEditing) {
+			            // 📝 Chế độ chỉnh sửa
+			            editProfileBtn.innerHTML = `<i class="fas fa-save mr-2"></i>Lưu Thay Đổi`;
+			            editProfileBtn.classList.remove('bg-blue-100', 'text-blue-600');
+			            editProfileBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
 			
-			        const fields = profileFieldsContainer.querySelectorAll('p');
-			        fields.forEach(p => {
-			            const currentValue = p.textContent;
-			            const fieldName = p.getAttribute('data-field');
+			            const fields = profileFieldsContainer.querySelectorAll('p');
+			            fields.forEach(p => {
+			                const currentValue = p.textContent;
+			                const fieldName = p.getAttribute('data-field');
 			
-			            const input = document.createElement('input');
-			            input.name = fieldName;
-			            input.value = currentValue;
-			            input.className = 'block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500';
+			                const input = document.createElement('input');
+			                input.name = fieldName;
+			                input.value = currentValue;
+			                input.className = 'block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500';
 			
-			            if (fieldName === 'ngaySinh') input.type = 'date';
-			            else input.type = 'text';
+			                if (fieldName === 'ngaySinh') input.type = 'date';
+			                else input.type = 'text';
 			
-			            p.parentNode.replaceChild(input, p);
-			        });
-			
-			    } else {
-			        // 💾 Lưu thông tin
-			        const inputs = profileFieldsContainer.querySelectorAll('input');
-			        const data = {};
-			        inputs.forEach(input => data[input.name] = input.value);
-			
-			        fetch('/profile/update', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(data)
-			        })
-			        .then(res => {
-			            if (!res.ok) throw new Error('Lỗi khi cập nhật');
-			            return res.text();
-			        })
-			        .then(() => {
-			            // ✅ Cập nhật UI
-			            inputs.forEach(input => {
-			                const p = document.createElement('p');
-			                p.setAttribute('data-field', input.name);
-			                p.textContent = input.value;
-			                input.parentNode.replaceChild(p, input);
+			                p.parentNode.replaceChild(input, p);
 			            });
 			
-			            editProfileBtn.innerHTML = `<i class="fas fa-pencil-alt mr-2"></i>Chỉnh sửa`;
-			            editProfileBtn.classList.add('bg-blue-100', 'text-blue-600');
-			            editProfileBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
-			            alert('✅ Cập nhật thông tin thành công!');
-			        })
-			        .catch(err => {
-			            console.error(err);
-			            alert('❌ Có lỗi khi lưu thông tin!');
-			        });
-			    }
-			});
-
+			        } else {
+			            // 💾 Lưu thông tin
+			            const inputs = profileFieldsContainer.querySelectorAll('input');
+			            const data = {};
+			            inputs.forEach(input => data[input.name] = input.value);
+			
+			            fetch('/profile/update', {
+			                method: 'POST',
+			                headers: { 'Content-Type': 'application/json' },
+			                body: JSON.stringify(data)
+			            })
+			            .then(res => {
+			                if (!res.ok) throw new Error('Lỗi khi cập nhật');
+			                return res.text();
+			            })
+			            .then(() => {
+			                // ✅ Cập nhật UI
+			                inputs.forEach(input => {
+			                    const p = document.createElement('p');
+			                    p.setAttribute('data-field', input.name);
+			                    p.textContent = input.value;
+			                    input.parentNode.replaceChild(p, input);
+			                });
+			
+			                editProfileBtn.innerHTML = `<i class="fas fa-pencil-alt mr-2"></i>Chỉnh sửa`;
+			                editProfileBtn.classList.add('bg-blue-100', 'text-blue-600');
+			                editProfileBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+			                alert('✅ Cập nhật thông tin thành công!');
+			            })
+			            .catch(err => {
+			                console.error(err);
+			                alert('❌ Có lỗi khi lưu thông tin!');
+			            });
+			        }
+			    });
+			}
 
             // History Tabs Functionality
             const completedTripsBtn = document.getElementById('completed-trips-btn');
             const upcomingTripsBtn = document.getElementById('upcoming-trips-btn');
+            const unpaidTripsBtn = document.getElementById('unpaid-trips-btn');
             const completedTripsContent = document.getElementById('completed-trips-content');
             const upcomingTripsContent = document.getElementById('upcoming-trips-content');
+            const unpaidTripsContent = document.getElementById('unpaid-trips-content');
 
-            completedTripsBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                upcomingTripsContent.classList.add('hidden');
-                completedTripsContent.classList.remove('hidden');
+            const historyTabs = [
+                { btn: completedTripsBtn, content: completedTripsContent },
+                { btn: upcomingTripsBtn, content: upcomingTripsContent },
+                { btn: unpaidTripsBtn, content: unpaidTripsContent }
+            ];
+            
+            function setActiveHistoryTab(selectedTab) {
+                historyTabs.forEach(tab => {
+                    if (tab.btn === selectedTab.btn) {
+                        tab.content.classList.remove('hidden');
+                        tab.btn.classList.add('border-blue-600', 'text-blue-600');
+                        tab.btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    } else {
+                        tab.content.classList.add('hidden');
+                        tab.btn.classList.remove('border-blue-600', 'text-blue-600');
+                        tab.btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    }
+                });
+            }
 
-                completedTripsBtn.classList.add('border-blue-600', 'text-blue-600');
-                completedTripsBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-
-                upcomingTripsBtn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                upcomingTripsBtn.classList.remove('border-blue-600', 'text-blue-600');
-            });
-
-            upcomingTripsBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                completedTripsContent.classList.add('hidden');
-                upcomingTripsContent.classList.remove('hidden');
-
-                upcomingTripsBtn.classList.add('border-blue-600', 'text-blue-600');
-                upcomingTripsBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-
-                completedTripsBtn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                completedTripsBtn.classList.remove('border-blue-600', 'text-blue-600');
+            historyTabs.forEach(tab => {
+                if (tab.btn) {
+                    tab.btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        setActiveHistoryTab(tab);
+                    });
+                }
             });
         });
     </script>
+<script>
+const modal = document.getElementById('paymentModal');
+let currentBookingId = null;
+
+function openPaymentModal(btn) {
+  const bookingId = btn.getAttribute('data-id');
+  currentBookingId = bookingId;
+  modal.classList.remove('hidden');
+
+  // 🧾 Gọi API lấy dữ liệu đặt chỗ
+  fetch(`/api/booking/${bookingId}`)
+    .then(res => {
+      if (!res.ok) throw new Error('Không thể lấy dữ liệu');
+      return res.json();
+    })
+    .then(data => {
+      // ✅ Gán dữ liệu vào modal rút gọn
+      document.getElementById('modalTourName').textContent = data.tenTour;
+      document.getElementById('modalTourDate').textContent = data.ngayKhoiHanh;
+      document.getElementById('modalTotal').textContent = Number(data.tongTien).toLocaleString('vi-VN');
+    })
+    .catch((err) => {
+      console.error(err);
+      alert('❌ Không thể tải dữ liệu đặt chỗ!');
+      closePaymentModal();
+    });
+}
+
+function closePaymentModal() {
+  modal.classList.add('hidden');
+  currentBookingId = null;
+}
+
+
+const confirmPaymentBtn = document.getElementById('confirmPayment');
+
+confirmPaymentBtn.addEventListener('click', () => {
+	  if (!currentBookingId) return;
+
+	  const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+	  fetch(`/api/booking/${currentBookingId}/pay`, {
+	    method: 'PUT',
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify({ phuongThuc: selectedMethod })
+	  })
+	    .then(res => {
+	      if (!res.ok) throw new Error('Không thể cập nhật trạng thái');
+	      return res.text();
+	    })
+	    .then(msg => {
+	      alert('✅ Thanh toán thành công!');
+	      closePaymentModal();
+	      location.reload();
+	    })
+	    .catch(err => {
+	      console.error(err);
+	      alert('❌ Có lỗi khi thanh toán!');
+	    });
+	});
+document.addEventListener('DOMContentLoaded', () => {
+	  const avatarEl = document.getElementById('user-avatar');
+	  const fullName = avatarEl.getAttribute('data-name') || document.querySelector('[th\\:text="${user.hoTen}"]')?.innerText || 'A';
+	  
+	  // ✅ Lấy chữ cái đầu
+	  const initials = fullName.trim().charAt(0).toUpperCase();
+
+	  // ✅ Danh sách màu nền (hoặc bạn có thể random)
+	  const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+	  const color = colors[fullName.length % colors.length]; // cố định theo tên
+
+	  avatarEl.style.backgroundColor = color;
+	  avatarEl.textContent = initials;
+	});
+
+</script>
+
+    
 </body>
 </html>
 

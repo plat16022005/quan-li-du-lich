@@ -17,4 +17,11 @@ public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai, Integer> {
     
     @Query(value = "SELECT COALESCE(TiLeGiam, 0) FROM KhuyenMai WHERE MaCode = :maCode", nativeQuery = true)
     BigDecimal findTiLeGiamByMaCode(@Param("maCode") String maCode);
+    
+    @Query("""
+            SELECT k FROM KhuyenMai k
+            WHERE CURRENT_DATE BETWEEN k.ngayBatDau AND k.ngayKetThuc
+            ORDER BY k.ngayKetThuc ASC
+        """)
+        List<KhuyenMai> findKhuyenMaiDangHieuLuc();
 }

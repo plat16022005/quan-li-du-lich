@@ -16,6 +16,7 @@ import com.example.layout.entity.ChiTietDatCho;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
+import com.example.layout.entity.ThanhToan;
 import com.example.layout.entity.Tour;
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChiTietDatChoRepository;
@@ -23,6 +24,7 @@ import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.KhuyenMaiRepository;
+import com.example.layout.repository.ThanhToanRepository;
 import com.example.layout.repository.TourRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -48,9 +50,16 @@ public class GuestBookingController {
 	@Autowired
 	private DatChoRepository datChoRepository;
 	
+	@Autowired
+	private ThanhToanRepository thanhToanRepository;
+	
 	@GetMapping("/tour/booking/{maChuyen}")
 	public String bookingPage(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {
 		User user = (User) session.getAttribute("user");
+		if (user == null)
+		{
+			return "redirect:/access_denied";
+		}
 	    // Tìm chuyến
 	    ChuyenDuLich chuyen = chuyenDuLichRepository.findById(maChuyen)
 	        .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến ID: " + maChuyen));
@@ -77,7 +86,11 @@ public class GuestBookingController {
 	                         @RequestParam int children,
 	                         @RequestParam(required = false) String discountCode) {
 
-	    User user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("user");
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
 
 	    ChuyenDuLich chuyen = chuyenDuLichRepository.findById(maChuyen)
 	        .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến ID: " + maChuyen));
@@ -126,7 +139,12 @@ public class GuestBookingController {
 	    return "guest/thanhtoan";
 	}
 	@GetMapping("/tour/booking/{maChuyen}/submit/payment")
-	public String choosePayment(@RequestParam String paymentMethod, @PathVariable("maChuyen") Integer maChuyen) {
+	public String choosePayment(@RequestParam String paymentMethod, @PathVariable("maChuyen") Integer maChuyen, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
 	    switch (paymentMethod) {
 	        case "bank":
 	            return "guest/payment1";
@@ -143,6 +161,7 @@ public class GuestBookingController {
 							@RequestParam BigDecimal tiLeGiam,
 							@RequestParam String submitType,
 							@RequestParam BigDecimal thanhTien,
+							@RequestParam String paymentMethod,
 							@RequestParam Integer adults,
 							@RequestParam Integer children,
 							@RequestParam String notes,
@@ -170,7 +189,7 @@ public class GuestBookingController {
 		if (submitType.equals("paid"))
 			ctdc.setThanhTien(thanhTien);
 		else
-			ctdc.setThanhTien(thanhTien.multiply(new BigDecimal(105.0)));
+			ctdc.setThanhTien(thanhTien.multiply(new BigDecimal(1.05)));
 		ctdc.setLoaiVe("Thường");
 		ctdc.setNguoiLon(adults);
 		ctdc.setTreCon(children);
@@ -179,6 +198,14 @@ public class GuestBookingController {
 		if (!submitType.equals("paid"))
 			return "redirect:/home";
 		else
+		{
+			ThanhToan tt = new ThanhToan();
+			tt.setDatCho(dt);
+			tt.setSoTien(thanhTien);
+			tt.setHinhThuc(paymentMethod);
+			tt.setNgayThanhToan(LocalDate.now());
+			thanhToanRepository.save(tt);
 			return "redirect:/profile";
+		}
 	}
 }

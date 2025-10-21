@@ -10,26 +10,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+
         .hero-section {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
         }
+
         .tour-card:hover .tour-image {
             transform: scale(1.05);
+        }
+
+        .promotion-section {
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('https://images.unsplash.com/photo-1522165078649-823cf4dbaf46?q=80&w=1935&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Header blur */
+        header.sticky-active {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease;
         }
     </style>
 </head>
 <body class="bg-gray-50" id="home">
 
     <!-- Header -->
-    <header class="bg-white shadow-md fixed w-full z-20 top-0">
+    <header class="bg-white shadow-md fixed w-full z-20 top-0 transition">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#home" class="flex items-center">
                 <i class="fas fa-route text-3xl text-blue-600"></i>
@@ -38,6 +52,7 @@
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
                 <a href="#tours" class="text-gray-600 hover:text-blue-600">Tour Du Lịch</a>
+                <a href="#promotions" class="text-gray-600 hover:text-blue-600 font-semibold">Ưu Đãi</a>
                 <a href="#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
                 <a href="#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
             </div>
@@ -58,15 +73,12 @@
             <div class="text-center">
                 <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Khám Phá Thế Giới, Mở Lối Ước Mơ</h1>
                 <p class="mt-4 text-lg md:text-xl text-gray-200">Tìm kiếm chuyến đi hoàn hảo của bạn với TravelGO</p>
-                
                 <form action="home/tour" method="get">
-	                <!-- Search Bar -->
-	                <div class="mt-8 bg-white p-4 rounded-full shadow-lg max-w-3xl mx-auto flex items-center space-x-2">
+	                <div class="mt-8 bg-white p-4 rounded-full shadow-xl max-w-3xl mx-auto flex items-center space-x-2 hover:shadow-2xl transition">
 	                    <div class="flex-grow flex items-center">
 	                        <i class="fas fa-map-marker-alt text-gray-400 mx-3"></i>
 	                        <input name="destination" type="text" placeholder="Bạn muốn đi đâu?" class="w-full focus:outline-none text-gray-700">
 	                    </div>
-	
 	                    <button class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition">
 	                        <i class="fas fa-search"></i>
 	                    </button>
@@ -76,7 +88,7 @@
         </section>
 
         <!-- All Tours Section -->
-		<section id="tours" class="py-16">
+		<section id="tours" class="py-16 relative">
 		    <div class="container mx-auto px-6">
 				<div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between">
 				    <div>
@@ -89,8 +101,15 @@
 				    </a>
 				</div>
 
-	
-		        <div id="tour-slider" class="flex overflow-x-auto space-x-8 pb-4">
+				<!-- Slider Controls -->
+				<button id="prevBtn" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow hover:bg-gray-100">
+				    <i class="fas fa-chevron-left"></i>
+				</button>
+				<button id="nextBtn" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow hover:bg-gray-100">
+				    <i class="fas fa-chevron-right"></i>
+				</button>
+
+		        <div id="tour-slider" class="flex overflow-x-auto space-x-8 pb-4 scroll-smooth">
 		            <div th:each="tour : ${tours}" class="tour-card bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 flex-shrink-0 w-80 md:w-96">
 		                <div class="overflow-hidden h-56">
 		                    <img th:src="${tour.hinhAnh}" alt="Ảnh tour" class="tour-image w-full h-full object-cover transition duration-300">
@@ -114,7 +133,31 @@
 		    </div>
 		</section>
 
-
+        <!-- Promotions Section -->
+        <section id="promotions" class="py-16 promotion-section">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold text-white mb-2">Ưu Đãi Hấp Dẫn</h2>
+                <p class="text-gray-300 mb-10">Đừng bỏ lỡ các mã giảm giá độc quyền từ TravelGO!</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div th:each="khuyenMai : ${khuyenMais}" class="bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20 text-white transform hover:scale-105 transition-transform duration-300">
+                        <div class="mb-4">
+                            <span class="bg-yellow-400 text-gray-900 text-sm font-bold px-3 py-1 rounded-full" 
+                                  th:text="${'GIẢM ' + #numbers.formatDecimal(khuyenMai.tiLeGiam , 0, 'COMMA', 0, 'POINT') + '%'}">GIẢM 15%</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2" th:text="${khuyenMai.tenKM}">Ưu Đãi Mùa Hè</h3>
+                        <p class="text-gray-300 mb-6" th:text="${khuyenMai.moTa}">Giảm giá cho tất cả các tour biển trong tháng 6.</p>
+                        <div class="bg-white/10 border-2 border-dashed border-white/30 rounded-lg p-3 flex justify-between items-center">
+                            <span class="text-lg font-mono tracking-widest" th:text="${khuyenMai.maCode}">SUMMER15</span>
+							<button class="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded hover:bg-yellow-300 transition"
+							        th:attr="data-code=${khuyenMai.maCode}"
+							        onclick="copyCode(this)">
+							    SAO CHÉP
+							</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         
         <!-- Why Choose Us Section -->
         <section id="about-us" class="bg-white py-16">
@@ -188,6 +231,39 @@
         </div>
     </footer>
     
+<script>
+  // ✅ Copy mã khuyến mãi có hiệu ứng
+  function copyCode(btn) {
+    const code = btn.getAttribute('data-code');
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Đã sao chép ✅';
+      btn.classList.remove('bg-yellow-400', 'text-gray-900');
+      btn.classList.add('bg-green-500', 'text-white');
+
+      setTimeout(() => {
+        btn.textContent = 'SAO CHÉP';
+        btn.classList.remove('bg-green-500', 'text-white');
+        btn.classList.add('bg-yellow-400', 'text-gray-900');
+      }, 2000);
+    }).catch(err => console.error('Lỗi khi sao chép mã:', err));
+  }
+
+  // 🧭 Scroll blur Header
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) header.classList.add('sticky-active');
+    else header.classList.remove('sticky-active');
+  });
+
+  // 🖱 Điều hướng Slider
+  const slider = document.getElementById('tour-slider');
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    slider.scrollBy({ left: 400, behavior: 'smooth' });
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    slider.scrollBy({ left: -400, behavior: 'smooth' });
+  });
+</script>
+
 </body>
 </html>
-

@@ -215,4 +215,5 @@ public class UserController {
     	khachHangRepository.save(kh);
     	return "redirect:/home";
     }
+
 }

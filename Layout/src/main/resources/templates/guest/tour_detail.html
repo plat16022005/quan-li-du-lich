@@ -1,209 +1,274 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi Tiết Tour - TravelGO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .timeline-item:before {
-            content: '';
-            position: absolute;
-            left: 1rem;
-            top: 2rem;
-            bottom: -2rem;
-            width: 2px;
-            background-color: #e5e7eb;
-        }
-         .sticky-sidebar {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 100px; /* Adjust this value based on your header's height */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chi Tiết Tour - TravelGO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 2rem;
+      bottom: -2rem;
+      width: 2px;
+      background-color: #e5e7eb;
+    }
+    .timeline-dot {
+      background-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    }
+    .sticky-sidebar {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 100px;
+    }
+    .hero {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 
-    <!-- Header -->
-    <header class="bg-white shadow-md fixed w-full z-20 top-0">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/home" class="flex items-center">
-                <i class="fas fa-route text-3xl text-blue-600"></i>
-                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
-            </a>
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full z-30 bg-white/90 backdrop-blur-md shadow-sm">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/home" class="flex items-center">
+        <i class="fas fa-route text-3xl text-blue-600"></i>
+        <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="/profile" class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition">
+          <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+        </a>
+      </div>
+      <button class="md:hidden text-gray-600 text-2xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+  </header>
 
-            <div class="hidden md:flex items-center space-x-4">
-                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
-                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
-                </a>
-            </div>
-            <button class="md:hidden text-gray-600 text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
+  <!-- Hero -->
+  <section class="hero h-[400px] relative mt-0"
+           th:style="'background-image: url(' + ${tour.hinhAnh} + ')'">
+    <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-center text-white px-6">
+      <div>
+        <h1 th:text="${tour.tenTour}" class="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-3">
+          Khám phá Vịnh Hạ Long
+        </h1>
+        <p class="text-lg opacity-90">
+          <i class="fas fa-map-marker-alt text-yellow-400 mr-2"></i>
+          <span th:text="${tour.moTa}">Quảng Ninh, Việt Nam</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="py-14">
+    <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+      <!-- Left content -->
+      <div class="lg:col-span-2">
+
+        <!-- Breadcrumb -->
+        <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+          <ol class="list-none p-0 inline-flex text-gray-500">
+            <li class="flex items-center">
+              <a href="/home/tour" class="hover:text-blue-600">Tất cả tour</a>
+              <i class="fas fa-chevron-right mx-3 text-xs"></i>
+            </li>
+            <li class="flex items-center text-gray-800" th:text="${tour.tenTour}">Tên Tour Chi Tiết</li>
+          </ol>
         </nav>
-    </header>
 
-    <main class="pt-24 pb-12 bg-white">
-        <div class="container mx-auto px-6">
-            <!-- Breadcrumb -->
-            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex">
-                    <li class="flex items-center">
-                        <a href="/home/tour" class="text-gray-500 hover:text-blue-600">Tất cả tour</a>
-                        <i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center text-gray-800">
-                        <span th:text="${tour.tenTour}">Tên Tour Chi Tiết</span>
-                    </li>
-                </ol>
-            </nav>
-
-            <!-- Main Image -->
-            <div class="max-w-5xl mx-auto rounded-lg overflow-hidden">
-                 <img th:src="${tour.hinhAnh}" src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop" alt="Main tour image" class="w-full h-auto">
+        <!-- Key Info -->
+        <div class="grid sm:grid-cols-2 gap-6 bg-white p-6 rounded-xl shadow mb-10 border">
+          <div class="flex items-center space-x-4">
+            <i class="fas fa-clock text-blue-500 text-3xl"></i>
+            <div>
+              <p class="font-semibold text-gray-700">Thời gian</p>
+              <p class="text-gray-600" th:text="${tour.soNgay} + ' ngày'">3 ngày 2 đêm</p>
             </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <i class="fas fa-map-marker-alt text-blue-500 text-3xl"></i>
+            <div>
+              <p class="font-semibold text-gray-700">Địa điểm</p>
+              <p class="text-gray-600" th:text="${tour.moTa}">Quảng Ninh</p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Main Content -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-8">
-                <!-- Left Column: Tour Info & Itinerary -->
-                <div class="lg:col-span-2">
-                    <h1 th:text="${tour.tenTour}" class="text-4xl font-bold text-gray-800">Khám phá Vịnh Hạ Long - Kỳ Quan Thế Giới</h1>
-                    
-                    <!-- Key Info -->
-                    <div class="flex items-center space-x-8 text-gray-600 border-y py-4 my-6">
-                        <div class="flex items-center">
-                            <i class="fas fa-clock text-blue-500 text-2xl mr-3"></i>
-                            <div>
-                                <p class="font-semibold">Thời gian</p>
-                                <p th:text="${tour.soNgay} + ' ngày'">3 ngày 2 đêm</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-map-marker-alt text-blue-500 text-2xl mr-3"></i>
-                            <div>
-                                <p class="font-semibold">Địa điểm</p>
-                                <p th:text="${tour.moTa}">Quảng Ninh</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-
-                    <!-- Itinerary -->
- <div class="mt-10">
-    <h2 class="text-2xl font-bold mb-6">Lịch trình chi tiết</h2>
-    <div class="relative">
-
-        <!-- Vòng lặp theo ngày -->
-        <div th:each="ngay : ${danhSachNgay}" class="timeline-item relative pl-8 pb-8">
-            <!-- Nút tròn hiển thị ngày -->
-            <div class="absolute left-0 top-0 flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full text-white font-bold">
+        <!-- Timeline -->
+        <div>
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Lịch trình chi tiết</h2>
+          <div class="relative">
+            <div th:each="ngay : ${danhSachNgay}" class="timeline-item relative pl-10 pb-8">
+              <div class="timeline-dot absolute left-0 top-0 w-8 h-8 flex items-center justify-center rounded-full text-white font-bold">
                 <span th:text="${ngay}">1</span>
-            </div>
-
-            <!-- Tiêu đề ngày -->
-            <h3 th:text="'Ngày ' + ${ngay}" class="text-lg font-bold text-gray-800"></h3>
-
-            <!-- Danh sách các lịch trình của ngày này -->
-            <ul>
-                <li th:each="item : ${lichTrinhs}"
-                    th:if="${item.thuTuNgay} == ${ngay}">
-                    <p th:text="${item.hoatDong}" class="mt-2 text-gray-600"></p>
+              </div>
+              <h3 th:text="'Ngày ' + ${ngay}" class="text-lg font-bold text-gray-800 mb-2"></h3>
+              <ul>
+                <li th:each="item : ${lichTrinhs}" th:if="${item.thuTuNgay} == ${ngay}">
+                  <p th:text="${item.hoatDong}" class="mt-1 text-gray-600"></p>
                 </li>
-            </ul>
-        </div>
-
-    </div>
-</div>
-
-                </div>
-
-                <!-- Right Column: Booking Widget -->
-                <div class="lg:col-span-1">
-                    <div class="sticky-sidebar bg-white p-6 rounded-lg shadow-lg border">
-                        <p class="text-lg">Giá chỉ từ</p>
-                        <p class="text-4xl font-extrabold text-blue-600 my-2">
-                            <span th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')}">2,990,000</span>₫
-                            <span class="text-lg font-normal text-gray-500">/ người</span>
-                        </p>
-                        <p class="text-gray-500 text-sm mb-6">Giá cuối cùng có thể thay đổi tùy vào ngày khởi hành.</p>
-                        
-                        <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="w-full block text-center bg-blue-600 text-white text-lg font-bold py-4 rounded-lg hover:bg-blue-700 transition duration-300">
-                            Xem các ngày khởi hành
-                        </a>
-						<button 
-						    onclick="openReviewModal()" 
-						    class="w-full mt-4 block text-center bg-gray-200 text-gray-800 text-lg font-bold py-4 rounded-lg hover:bg-gray-300 transition duration-300">
-						    Xem đánh giá
-						</button>
-
-                        <div class="mt-6 text-sm text-gray-600 space-y-3">
-                           <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Bảo hiểm du lịch</p>
-                           <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Hướng dẫn viên suốt tuyến</p>
-                           <p><i class="fas fa-times-circle text-red-500 mr-2"></i>Chi phí cá nhân</p>
-                        </div>
-                    </div>
-                </div>
+              </ul>
             </div>
+          </div>
         </div>
-    </main>
-<div id="review-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+
+      </div>
+
+      <!-- Booking Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="sticky-sidebar bg-white p-6 rounded-2xl shadow-lg border">
+          <p class="text-lg text-gray-600">Giá chỉ từ</p>
+          <p class="text-4xl font-extrabold text-blue-600 my-2">
+            <span th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')}">2,990,000</span>₫
+            <span class="text-lg font-normal text-gray-500">/ người</span>
+          </p>
+          <p class="text-gray-500 text-sm mb-6">Giá có thể thay đổi tùy vào ngày khởi hành.</p>
+
+          <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="w-full block text-center bg-blue-600 text-white text-lg font-bold py-4 rounded-lg hover:bg-blue-700 transition">
+            Xem các ngày khởi hành
+          </a>
+          <button onclick="openReviewModal()" class="w-full mt-4 block text-center bg-gray-200 text-gray-800 text-lg font-bold py-4 rounded-lg hover:bg-gray-300 transition">
+            Xem đánh giá
+          </button>
+
+          <div class="mt-6 text-sm text-gray-600 space-y-3">
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Bảo hiểm du lịch</p>
+            <p><i class="fas fa-check-circle text-green-500 mr-2"></i>Hướng dẫn viên suốt tuyến</p>
+            <p><i class="fas fa-times-circle text-red-500 mr-2"></i>Chi phí cá nhân</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<!-- Review Modal -->
+<div id="review-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-fade-in">
+    <!-- Header -->
     <div class="flex justify-between items-center p-5 border-b">
-      <h2 class="text-xl font-bold text-gray-800">Đánh giá từ khách hàng</h2>
-      <button onclick="closeReviewModal()" class="text-gray-500 text-2xl hover:text-gray-800">&times;</button>
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fas fa-star text-yellow-400"></i>
+        Đánh giá từ khách hàng
+      </h2>
+      <button onclick="closeReviewModal()" class="text-gray-500 text-2xl hover:text-gray-800 transition">
+        &times;
+      </button>
     </div>
-    <div class="p-6 space-y-6">
+
+    <!-- Body -->
+    <div class="p-6 space-y-5">
+      <!-- Không có đánh giá -->
       <div th:if="${#lists.isEmpty(danhGiaList)}" class="text-center text-gray-500">
-        <i class="fas fa-comment-slash text-3xl mb-2"></i>
-        <p>Chưa có đánh giá nào cho tour này.</p>
+        <i class="fas fa-comment-slash text-4xl mb-2"></i>
+        <p class="text-lg">Chưa có đánh giá nào cho tour này.</p>
       </div>
-      <div th:each="dg : ${danhGiaList}" class="border-b pb-4">
+
+      <!-- Danh sách đánh giá -->
+      <div th:each="dg : ${danhGiaList}" class="group p-5 rounded-xl bg-gray-50 hover:bg-gray-100 border transition">
         <div class="flex justify-between items-center mb-2">
-          <h5 th:text="${dg.khachHang.taiKhoan.hoTen}" class="font-semibold text-gray-800">Khách A</h5>
-          <span th:text="${#temporals.format(dg.ngayTao, 'dd/MM/yyyy HH:mm')}" class="text-xs text-gray-500"></span>
+          <div class="flex items-center gap-3">
+            <!-- Avatar -->
+            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold uppercase">
+              <span th:text="${dg.khachHang.taiKhoan.hoTen.substring(0,1)}">P</span>
+            </div>
+            <div>
+              <h5 th:text="${dg.khachHang.taiKhoan.hoTen}" class="font-semibold text-gray-800">Phạm Lê Anh Tuấn</h5>
+              <span th:text="${#temporals.format(dg.ngayTao, 'dd/MM/yyyy HH:mm')}" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
         </div>
+
+        <!-- Số sao -->
         <div class="flex items-center mb-2">
-          <span class="text-yellow-400">
-            <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, dg.danhGia)}"></i>
-            <i class="far fa-star" th:each="i : ${#numbers.sequence(1, 5 - dg.danhGia)}"></i>
-          </span>
-          <span class="ml-2 text-sm font-semibold text-gray-600" th:text="${dg.danhGia + '/5'}">5/5</span>
+          <div class="flex text-yellow-400 text-lg">
+            <!-- Sao vàng -->
+            <span th:each="i : ${#numbers.sequence(1, dg.danhGia)}">
+              <i class="fas fa-star"></i>
+            </span>
+
+            <!-- Sao trống (chỉ render nếu < 5) -->
+            <span th:if="${dg.danhGia < 5}" th:each="i : ${#numbers.sequence(1, 5 - dg.danhGia)}">
+              <i class="far fa-star"></i>
+            </span>
+          </div>
+          <span class="ml-3 text-sm font-semibold text-gray-600" th:text="${dg.danhGia + '/5'}">5/5</span>
         </div>
-        <p class="text-gray-600 text-sm" th:text="${dg.noiDung}">Chuyến đi tuyệt vời!</p>
+
+        <!-- Nội dung -->
+        <p class="text-gray-700 text-sm leading-relaxed" th:text="${dg.noiDung}">
+          Chuyến đi tuyệt vời, hướng dẫn viên thân thiện!
+        </p>
       </div>
     </div>
+
+    <!-- Footer -->
     <div class="p-4 text-right border-t">
-      <button onclick="closeReviewModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+      <button onclick="closeReviewModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
         Đóng
       </button>
     </div>
   </div>
 </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10 mt-12">
-        <div class="container mx-auto px-6">
-            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
-                <p>&copy; 2025 TravelGO. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-<script>
-  function openReviewModal() {
-    document.getElementById('review-modal').classList.remove('hidden');
-  }
-  function closeReviewModal() {
-    document.getElementById('review-modal').classList.add('hidden');
-  }
-</script>
 
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+      <div>
+        <h3 class="text-white font-bold text-xl mb-3">TravelGO</h3>
+        <p class="text-sm opacity-80">Cùng bạn khám phá thế giới với những hành trình đáng nhớ.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Liên hệ</h4>
+        <p>Email: support@travelgo.com</p>
+        <p>Hotline: 1900 1234</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Theo dõi chúng tôi</h4>
+        <div class="flex justify-center md:justify-start space-x-4 text-xl">
+          <a href="#"><i class="fab fa-facebook hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-instagram hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-youtube hover:text-white"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+      © 2025 TravelGO. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    function openReviewModal() {
+      document.getElementById('review-modal').classList.remove('hidden');
+    }
+    function closeReviewModal() {
+      document.getElementById('review-modal').classList.add('hidden');
+    }
+  </script>
+  <!-- Hiệu ứng mở modal -->
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 </body>
 </html>
-

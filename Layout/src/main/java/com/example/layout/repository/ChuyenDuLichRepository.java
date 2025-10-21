@@ -170,6 +170,14 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
     	    		);
         List<ChuyenDuLich> findByTour(Tour tour);
         @Query("""
+        	    SELECT c 
+        	    FROM ChuyenDuLich c
+        	    WHERE c.tour = :tour
+        	      AND c.trangThai = 'Sắp diễn ra'
+        	""")
+        	List<ChuyenDuLich> findUpcomingTripsByTour(@Param("tour") Tour tour);
+
+        @Query("""
         	    SELECT c FROM DatCho d
         	    JOIN d.chuyenDuLich c
         	    JOIN c.tour t
@@ -179,15 +187,16 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
         	""")
         	List<ChuyenDuLich> findChuyenDaHoanThanh(@Param("maKH") Integer maKH);
 
-        	@Query("""
-        	    SELECT c FROM DatCho d
-        	    JOIN d.chuyenDuLich c
-        	    JOIN c.tour t
-        	    WHERE d.khachHang.maKhachHang = :maKH
-        	    AND c.trangThai = 'Sắp diễn ra' or c.trangThai = 'Đang diễn ra'
-        	    AND d.trangThai = 'Đã thanh toán'
-        	""")
-        	List<ChuyenDuLich> findChuyenSapDienRa(@Param("maKH") Integer maKH);
+//        @Query("""
+//        	    SELECT DISTINCT c FROM DatCho d
+//        	    JOIN d.chuyenDuLich c
+//        	    JOIN c.tour t
+//        	    WHERE d.khachHang.maKhachHang = :maKH
+//        	    AND (c.trangThai = 'Sắp diễn ra' OR c.trangThai = 'Đang diễn ra')
+//        	    AND d.trangThai = 'Đã thanh toán'
+//        	""")
+//        	List<ChuyenDuLich> findChuyenSapDienRa(@Param("maKH") Integer maKH);
+
 
         	@Query("""
         		    SELECT c FROM DatCho d
@@ -203,5 +212,14 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
         		Integer findMaDatChoByKhachHangAndChuyen(
         		        @Param("maKH") Integer maKH,
         		        @Param("maChuyen") Integer maChuyen
-        		);      
+        		);
+        	@Query("""
+            	    SELECT c FROM DatCho d
+            	    JOIN d.chuyenDuLich c
+            	    JOIN c.tour t
+            	    WHERE d.khachHang.maKhachHang = :maKH
+            	    AND c.trangThai = 'Sắp diễn ra'
+            	    AND d.trangThai = 'Chưa thanh toán'
+            	""")
+            	List<ChuyenDuLich> findChuyenSapDienRaChuaThanhToan(@Param("maKH") Integer maKH);        	
 }

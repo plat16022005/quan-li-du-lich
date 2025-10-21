@@ -1,158 +1,192 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Chuyến Đi - TravelGO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .sticky-summary {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 100px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt Chuyến Đi - TravelGO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .header-glass {
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+    }
+    .sticky-summary {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 100px;
+    }
+    input[readonly] {
+      background-color: #f9fafb;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 
-    <!-- Header -->
-    <header class="bg-white shadow-md fixed w-full z-20 top-0">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/home" class="flex items-center">
-                <i class="fas fa-route text-3xl text-blue-600"></i>
-                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
-            </a>
+  <!-- Header -->
+  <header class="header-glass fixed w-full z-20 top-0 shadow-sm">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/home" class="flex items-center">
+        <i class="fas fa-route text-3xl text-blue-600"></i>
+        <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="/profile" class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition">
+          <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+        </a>
+      </div>
+      <button class="md:hidden text-gray-600 text-2xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+  </header>
 
-            <div class="hidden md:flex items-center space-x-4">
-                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
-                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
-                </a>
+  <main class="pt-28 pb-12">
+    <div class="container mx-auto px-6">
+      <!-- Breadcrumb -->
+      <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex text-gray-500">
+          <li class="flex items-center">
+            <a th:href="@{/home/tour}" class="hover:text-blue-600">Tất cả tour</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center">
+            <a th:href="@{/home/tour/{maTour}(maTour=${tour.maTour})}" th:text="${tour.tenTour}" class="hover:text-blue-600">Tên Tour</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center">
+            <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="hover:text-blue-600">Chọn chuyến</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center text-gray-800">Đặt chuyến</li>
+        </ol>
+      </nav>
+
+      <!-- Booking Form -->
+      <form th:action="@{/tour/booking/{maChuyen}/submit(maChuyen=${chuyen.maChuyen})}" method="get" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- LEFT COLUMN -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Thông tin liên lạc -->
+          <div class="bg-white p-8 rounded-2xl shadow-md border">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <i class="fas fa-user-circle text-blue-600"></i>
+              Thông Tin Liên Lạc
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Họ và Tên</label>
+                <input readonly th:value="${user.hoTen}" name="fullName" type="text" id="fullName"
+                       class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input readonly th:value="${user.email}" name="email" type="email" id="email"
+                       class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Số Điện Thoại</label>
+                <input readonly th:value="${user.soDienThoai}" name="phone" type="tel" id="phone"
+                       class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Địa Chỉ</label>
+                <input readonly th:value="${khachhang.diaChi}" name="address" type="text" id="address"
+                       class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+              </div>
             </div>
-            <button class="md:hidden text-gray-600 text-2xl">
-                <i class="fas fa-bars"></i>
+            <div class="mt-6">
+              <label for="notes" class="block text-sm font-medium text-gray-700">Yêu cầu đặc biệt</label>
+              <textarea id="notes" name="notes" rows="4"
+                        class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ví dụ: Ăn chay, phòng tầng cao..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="lg:col-span-1">
+          <div class="sticky-summary bg-white p-6 rounded-2xl shadow-lg border">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-4 flex items-center gap-2">
+              <i class="fas fa-clipboard-list text-blue-600"></i>
+              Tóm Tắt Chuyến Đi
+            </h3>
+            <div class="mt-4">
+              <img th:src="${tour.hinhAnh}" alt="Tour Image" class="rounded-lg w-full h-40 object-cover">
+              <h4 th:text="${tour.tenTour}" class="font-bold text-lg mt-4">Tên tour</h4>
+              <div class="text-sm text-gray-600 mt-2 space-y-2">
+                <p><strong>Khởi hành:</strong> 
+                  <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+                </p>
+                <p><strong>Ngày về:</strong> 
+                  <span th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Số lượng -->
+            <div class="border-y my-4 py-4 space-y-3">
+              <h4 class="font-bold text-lg">Số lượng</h4>
+              <div class="flex justify-between items-center text-gray-700">
+                <label for="adults">Người lớn</label>
+                <input type="number" id="adults" name="adults" value="1" min="1"
+                       class="w-20 text-center border rounded-md">
+              </div>
+              <div class="flex justify-between items-center text-gray-700">
+                <label for="children">Trẻ em</label>
+                <input type="number" id="children" name="children" value="0" min="0"
+                       class="w-20 text-center border rounded-md">
+              </div>
+            </div>
+
+            <!-- Mã giảm giá -->
+            <div>
+              <label for="discountCode" class="block text-sm font-medium text-gray-700">Mã giảm giá</label>
+              <input type="text" id="discountCode" name="discountCode"
+                     class="mt-1 block w-full border rounded-md py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+                     placeholder="Nhập mã ở đây">
+            </div>
+
+            <!-- Button -->
+            <button type="submit" class="w-full mt-6 bg-blue-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
+              Tiến hành thanh toán
             </button>
-        </nav>
-    </header>
-
-    <main class="pt-24 pb-12">
-        <div class="container mx-auto px-6">
-            <!-- Breadcrumb -->
-            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex">
-                    <li class="flex items-center">
-                        <a th:href="@{/home/tour}" class="text-gray-500 hover:text-blue-600">Tất cả tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center">
-                        <a th:href="@{/home/tour/{maTour}(maTour=${tour.maTour})}" th:text="${tour.tenTour}" class="text-gray-500 hover:text-blue-600">Tên Tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center">
-                        <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="text-gray-500 hover:text-blue-600">Chọn chuyến</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center text-gray-800">
-                        Đặt chuyến
-                    </li>
-                </ol>
-            </nav>
-
-				<form th:action="@{/tour/booking/{maChuyen}/submit(maChuyen=${chuyen.maChuyen})}" method="get" class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-				    <!-- LEFT COLUMN -->
-				    <div class="lg:col-span-2">
-				        <div class="bg-white p-8 rounded-lg shadow-md">
-				            <h2 class="text-2xl font-bold text-gray-800 mb-6">Thông Tin Liên Lạc</h2>
-				            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-				                <div>
-				                    <label for="fullName" class="block text-sm font-medium text-gray-700">Họ và Tên</label>
-				                    <input readonly th:value="${user.hoTen}" name="fullName" type="text" id="fullName"
-				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-				                </div>
-				                <div>
-				                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-				                    <input readonly th:value="${user.email}" name="email" type="email" id="email"
-				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-				                </div>
-				                <div>
-				                    <label for="phone" class="block text-sm font-medium text-gray-700">Số Điện Thoại</label>
-				                    <input readonly th:value="${user.soDienThoai}" name="phone" type="tel" id="phone"
-				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-				                </div>
-				                <div>
-				                    <label for="address" class="block text-sm font-medium text-gray-700">Địa Chỉ</label>
-				                    <input readonly th:value="${khachhang.diaChi}" name="address" type="text" id="address"
-				                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-				                </div>
-				            </div>
-				            <div class="mt-6">
-				                <label for="notes" class="block text-sm font-medium text-gray-700">Yêu cầu đặc biệt</label>
-				                <textarea id="notes" name="notes" rows="4"
-				                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-				                          placeholder="Ví dụ: Ăn chay, phòng tầng cao..."></textarea>
-				            </div>
-				        </div>
-				    </div>
-				
-				    <!-- RIGHT COLUMN -->
-				    <div class="lg:col-span-1">
-				        <div class="sticky-summary bg-white p-6 rounded-lg shadow-md">
-				            <h3 class="text-xl font-bold text-gray-800 border-b pb-4">Tóm Tắt Chuyến Đi</h3>
-				            <div class="mt-4">
-				                <img th:src="${tour.hinhAnh}" alt="Tour Image" class="rounded-lg w-full h-40 object-cover">
-				                <h4 th:text="${tour.tenTour}" class="font-bold text-lg mt-4">Tên tour</h4>
-				                <div class="text-sm text-gray-600 mt-2 space-y-2">
-				                    <p><strong>Khởi hành:</strong> 
-				                       <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
-				                    </p>
-				                    <p><strong>Ngày về:</strong> 
-				                       <span th:text="${#temporals.format(chuyen.ngayKetThuc, 'dd/MM/yyyy')}"></span>
-				                    </p>
-				                </div>
-				            </div>
-				            <div class="border-y my-4 py-4">
-				                <h4 class="font-bold text-lg mb-2">Số lượng</h4>
-				                <div class="flex justify-between items-center text-gray-700">
-				                    <label for="adults">Người lớn</label>
-				                    <input type="number" id="adults" name="adults" value="1" min="1"
-				                           class="w-20 text-center border border-gray-300 rounded-md">
-				                </div>
-				                <div class="flex justify-between items-center text-gray-700 mt-2">
-				                    <label for="children">Trẻ em</label>
-				                    <input type="number" id="children" name="children" value="0" min="0"
-				                           class="w-20 text-center border border-gray-300 rounded-md">
-				                </div>
-				            </div>
-				            <div class="mt-4">
-				                <label for="discountCode" class="block text-sm font-medium text-gray-700">Mã giảm giá</label>
-				                <input type="text" id="discountCode" name="discountCode"
-				                       class="flex-1 block w-full border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-				                       placeholder="Nhập mã ở đây">
-				            </div>
-				
-				            <button type="submit" class="w-full mt-6 bg-blue-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
-				                Tiến hành thanh toán
-				            </button>
-				        </div>
-				    </div>
-				</form>
-
-            </div>
+          </div>
         </div>
-    </main>
+      </form>
+    </div>
+  </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10 mt-12">
-        <div class="container mx-auto px-6">
-            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
-                <p>&copy; 2025 TravelGO. All rights reserved.</p>
-            </div>
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+      <div>
+        <h3 class="text-white font-bold text-xl mb-3">TravelGO</h3>
+        <p class="text-sm opacity-80">Cùng bạn khám phá thế giới với những hành trình đáng nhớ.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Liên hệ</h4>
+        <p>Email: support@travelgo.com</p>
+        <p>Hotline: 1900 1234</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Theo dõi chúng tôi</h4>
+        <div class="flex justify-center md:justify-start space-x-4 text-xl">
+          <a href="#"><i class="fab fa-facebook hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-instagram hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-youtube hover:text-white"></i></a>
         </div>
-    </footer>
-
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+      © 2025 TravelGO. All rights reserved.
+    </div>
+  </footer>
 </body>
 </html>
-

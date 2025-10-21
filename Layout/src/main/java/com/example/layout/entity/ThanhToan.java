@@ -2,6 +2,7 @@ package com.example.layout.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -17,8 +18,7 @@ public class ThanhToan {
     private DatCho datCho;
 
     @Column(name = "NgayThanhToan")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date ngayThanhToan;
+    private LocalDate ngayThanhToan;
 
     @Column(name = "SoTien", precision = 18, scale = 2)
     private BigDecimal soTien;
@@ -42,11 +42,11 @@ public class ThanhToan {
 		this.datCho = datCho;
 	}
 
-	public Date getNgayThanhToan() {
+	public LocalDate getNgayThanhToan() {
 		return ngayThanhToan;
 	}
 
-	public void setNgayThanhToan(Date ngayThanhToan) {
+	public void setNgayThanhToan(LocalDate ngayThanhToan) {
 		this.ngayThanhToan = ngayThanhToan;
 	}
 

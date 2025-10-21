@@ -27,10 +27,12 @@ import com.example.layout.entity.ChiTietDatCho;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
+import com.example.layout.entity.KhuyenMai;
 import com.example.layout.entity.PhanHoi;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.KhachHangRepository;
+import com.example.layout.repository.KhuyenMaiRepository;
 import com.example.layout.repository.PhanHoiRepository;
 import com.example.layout.repository.TourRepository;
 import com.example.layout.repository.UserRepository;
@@ -50,6 +52,8 @@ public class GuestHomeController {
 	@Autowired
 	private ChuyenDuLichRepository chuyenDuLichRepository;
 	@Autowired
+	private KhuyenMaiRepository khuyenMaiRepository;
+	@Autowired
 	private DatChoRepository datChoRepository;
 	@Autowired
 	private PhanHoiRepository phanHoiRepository;
@@ -64,9 +68,11 @@ public class GuestHomeController {
 		{
 			return "redirect:/access_denied";
 		}
+		List<KhuyenMai> khuyenMais = khuyenMaiRepository.findKhuyenMaiDangHieuLuc();
         List<Tour> tours = tourRepository.findAll();
         model.addAttribute("tours", tours);
         model.addAttribute("user", user);
+        model.addAttribute("khuyenMais", khuyenMais);
         return "guest/home";
     }
 	
@@ -81,6 +87,10 @@ public class GuestHomeController {
 	        Model model, HttpSession session
 	) {
 		User user = (User) session.getAttribute("user");
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
 	    Pageable pageable = PageRequest.of(page, 6);
 
 	    Page<Tour> tours = tourRepository.findToursByFilters(
@@ -118,17 +128,16 @@ public class GuestHomeController {
 			return "redirect:/access_denied";
 		}
 		List<ChuyenDuLich> completedTrips = chuyenDuLichRepository.findChuyenDaHoanThanh(kh.getMaKhachHang());
-		List<ChuyenDuLich> upcomingTrips = chuyenDuLichRepository.findChuyenSapDienRa(kh.getMaKhachHang());
-		for (ChuyenDuLich chuyen : upcomingTrips) {
-		    Integer maDatCho = chuyenDuLichRepository.findMaDatChoByKhachHangAndChuyen(
-		        kh.getMaKhachHang(), chuyen.getMaChuyen()
-		    );
-		    chuyen.setMaDatCho(maDatCho);  // 👈 tạo thêm field tạm trong entity hoặc DTO
-		}
+		List<DatCho> upcomingTrips = datChoRepository.findVeSapDienRa(kh.getMaKhachHang());
+		List<ChuyenDuLich> upcomingTripsNotPaid = chuyenDuLichRepository.findChuyenSapDienRaChuaThanhToan(kh.getMaKhachHang());
+		List<DatCho> unpaidBookings = datChoRepository.findDatChoSapDienRaChuaThanhToan(kh.getMaKhachHang());
+
 		List<Integer> ratedTripIds = phanHoiRepository.findMaChuyenDaDanhGia(kh.getMaKhachHang());
 	    model.addAttribute("ratedTripIds", ratedTripIds);
         model.addAttribute("completedTrips", completedTrips);
         model.addAttribute("upcomingTrips", upcomingTrips);
+        model.addAttribute("upcomingTripsNotPaid", upcomingTripsNotPaid);
+        model.addAttribute("unpaidBookings", unpaidBookings);
 		model.addAttribute("kh", kh);
         model.addAttribute("user", user);
         return "guest/profile";

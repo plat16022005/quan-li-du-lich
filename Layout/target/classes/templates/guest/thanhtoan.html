@@ -1,231 +1,272 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh Toán - TravelGO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .sticky-summary {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 100px;
-        }
-        /* Custom radio button style */
-        .payment-option:has(input:checked) {
-            border-color: #3B82F6; /* blue-600 */
-            background-color: #EFF6FF; /* blue-50 */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh Toán - TravelGO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .header-glass { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+    .sticky-summary { position: -webkit-sticky; position: sticky; top: 100px; }
+    .payment-option { transition: all 0.25s ease; }
+    .payment-option:has(input:checked) {
+      border-color: #3B82F6;
+      background-color: #EFF6FF;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 
-    <!-- Header -->
-    <header class="bg-white shadow-md fixed w-full z-20 top-0">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/home" class="flex items-center">
-                <i class="fas fa-route text-3xl text-blue-600"></i>
-                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
-            </a>
+  <!-- Header -->
+  <header class="header-glass fixed w-full z-20 top-0 shadow-sm">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/home" class="flex items-center">
+        <i class="fas fa-route text-3xl text-blue-600"></i>
+        <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+      </a>
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="/profile" class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition">
+          <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+        </a>
+      </div>
+      <button class="md:hidden text-gray-600 text-2xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+  </header>
 
-            <div class="hidden md:flex items-center space-x-4">
-                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
-                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
-                </a>
+  <main class="pt-28 pb-12">
+    <div class="container mx-auto px-6">
+      <!-- Breadcrumb -->
+      <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex text-gray-500">
+          <li class="flex items-center">
+            <a th:href="@{/home/tour}" class="hover:text-blue-600">Tất cả tour</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center">
+            <a th:href="@{/home/tour/{maTour}(maTour=${tour.maTour})}" th:text="${tour.tenTour}" class="hover:text-blue-600">Tên Tour</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center">
+            <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="hover:text-blue-600">Chọn chuyến</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center">
+            <a th:href="@{/tour/booking/{maChuyen}(maChuyen=${chuyen.maChuyen})}" class="hover:text-blue-600">Đặt chuyến</a>
+            <i class="fas fa-chevron-right mx-3 text-xs"></i>
+          </li>
+          <li class="flex items-center text-gray-800">Thanh toán</li>
+        </ol>
+      </nav>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Left Column -->
+        <div class="lg:col-span-2">
+          <div class="bg-white p-8 rounded-2xl shadow-md border">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <i class="fas fa-credit-card text-blue-600"></i>
+              Chọn phương thức thanh toán
+            </h2>
+            <div class="space-y-5">
+              <!-- Bank -->
+              <label class="payment-option border-2 border-gray-200 p-6 rounded-xl flex items-center cursor-pointer">
+                <input type="radio" name="paymentMethod" value="bank" class="h-5 w-5 text-blue-600" checked>
+                <div class="ml-4">
+                  <p class="font-bold text-lg">Chuyển khoản ngân hàng</p>
+                  <p class="text-sm text-gray-600">Quét mã QR hoặc chuyển khoản thủ công qua thông tin ngân hàng.</p>
+                </div>
+              </label>
+
+              <!-- E-wallet -->
+              <label class="payment-option border-2 border-gray-200 p-6 rounded-xl flex items-center cursor-pointer justify-between">
+                <div class="flex items-center">
+                  <input type="radio" name="paymentMethod" value="ewallet" class="h-5 w-5 text-blue-600">
+                  <div class="ml-4">
+                    <p class="font-bold text-lg">Ví điện tử</p>
+                    <p class="text-sm text-gray-600">Thanh toán qua MoMo, ZaloPay...</p>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <img src="https://placehold.co/40x25/FFFFFF/000000?text=MoMo" alt="MoMo" class="h-6 rounded">
+                  <img src="https://placehold.co/40x25/FFFFFF/000000?text=ZaloPay" alt="ZaloPay" class="h-6 rounded">
+                </div>
+              </label>
+
+              <!-- Credit Card -->
+              <label class="payment-option border-2 border-gray-200 p-6 rounded-xl flex items-center cursor-pointer justify-between">
+                <div class="flex items-center">
+                  <input type="radio" name="paymentMethod" value="credit" class="h-5 w-5 text-blue-600">
+                  <div class="ml-4">
+                    <p class="font-bold text-lg">Thẻ Tín dụng/Ghi nợ</p>
+                    <p class="text-sm text-gray-600">Hỗ trợ thẻ Visa, Mastercard, JCB.</p>
+                  </div>
+                </div>
+                <div class="flex space-x-2 text-3xl">
+                  <i class="fab fa-cc-visa text-blue-800"></i>
+                  <i class="fab fa-cc-mastercard text-red-600"></i>
+                  <i class="fab fa-cc-jcb text-green-600"></i>
+                </div>
+              </label>
             </div>
-            <button class="md:hidden text-gray-600 text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-        </nav>
-    </header>
-
-    <main class="pt-24 pb-12">
-        <div class="container mx-auto px-6">
-             <!-- Breadcrumb -->
-            <nav class="text-sm font-semibold mb-6" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex">
-                    <li class="flex items-center">
-                        <a th:href="@{/home/tour}" class="text-gray-500 hover:text-blue-600">Tất cả tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center">
-                        <a th:href="@{/home/tour/{maTour}(maTour=${tour.maTour})}" th:text="${tour.tenTour}" class="text-gray-500 hover:text-blue-600">Tên Tour</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                     <li class="flex items-center">
-                        <a th:href="@{/home/tour/{maTour}/list(maTour=${tour.maTour})}" class="text-gray-500 hover:text-blue-600">Chọn chuyến</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center">
-                        <a th:href="@{/tour/booking/{maChuyen}(maChuyen=${chuyen.maChuyen})}" class="text-gray-500 hover:text-blue-600">Đặt chuyến</a><i class="fas fa-chevron-right mx-3 text-xs text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center text-gray-800">
-                        Thanh toán
-                    </li>
-                </ol>
-            </nav>
-            	<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            	
-	                <!-- Left Column: Payment Options -->
-	                <div class="lg:col-span-2">
-	                    <div class="bg-white p-8 rounded-lg shadow-md">
-	                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Chọn phương thức thanh toán</h2>
-	                        <div class="space-y-4">
-								 <label class="payment-option border-2 border-gray-200 p-6 rounded-lg flex items-center cursor-pointer transition">
-								    <input type="radio" name="paymentMethod" value="bank" class="h-5 w-5 text-blue-600 focus:ring-blue-500" checked>
-								    <div class="ml-4">
-								        <p class="font-bold text-lg">Chuyển khoản ngân hàng</p>
-								        <p class="text-sm text-gray-600">Quét mã QR hoặc chuyển khoản thủ công qua thông tin ngân hàng.</p>
-								    </div>
-								</label>
-								
-								<label class="payment-option border-2 border-gray-200 p-6 rounded-lg flex items-center cursor-pointer transition">
-								    <input type="radio" name="paymentMethod" value="ewallet" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
-								    <div class="ml-4 flex-grow">
-								        <p class="font-bold text-lg">Ví điện tử</p>
-								        <p class="text-sm text-gray-600">Thanh toán qua MoMo, ZaloPay...</p>
-								    </div>
-								    <div class="flex space-x-2">
-								        <img src="https://placehold.co/40x25/FFFFFF/000000?text=MoMo" alt="MoMo" class="h-6">
-								        <img src="https://placehold.co/40x25/FFFFFF/000000?text=ZaloPay" alt="ZaloPay" class="h-6">
-								    </div>
-								</label>
-								
-								<label class="payment-option border-2 border-gray-200 p-6 rounded-lg flex items-center cursor-pointer transition">
-								    <input type="radio" name="paymentMethod" value="credit" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
-								    <div class="ml-4 flex-grow">
-								        <p class="font-bold text-lg">Thẻ Tín dụng/Ghi nợ</p>
-								        <p class="text-sm text-gray-600">Hỗ trợ thẻ Visa, Mastercard, JCB.</p>
-								    </div>
-								    <div class="flex space-x-2">
-								        <i class="fab fa-cc-visa text-3xl text-blue-800"></i>
-								        <i class="fab fa-cc-mastercard text-3xl text-red-600"></i>
-								    </div>
-								</label>
-	
-	                        </div>
-	                    </div>
-	                </div>
-	
-	                <!-- Right Column: Booking Summary -->
-	                <div class="lg:col-span-1">
-	                    <div class="sticky-summary bg-white p-6 rounded-lg shadow-md">
-	                        <h3 class="text-xl font-bold text-gray-800 border-b pb-4">Tóm Tắt Đơn Hàng</h3>
-	                         <div class="mt-4">
-	                            <h4 th:text="${tour.tenTour}" class="font-bold text-lg">Khám phá Vịnh Hạ Long</h4>
-	                            <div class="text-sm text-gray-600 mt-2 space-y-2">
-	                                <p><i class="fas fa-calendar-alt w-4 mr-2"></i><strong class="font-semibold">Khởi hành:</strong> <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}">10/11/2025</span></p>
-	                                <p><i class="fas fa-users w-4 mr-2"></i><strong class="font-semibold">Hành khách:</strong> <span th:text="${soNguoiLon} + ' Người lớn, ' + ${soTreEm} + ' Trẻ em'"></span></p>
-	                            </div>
-	                        </div>
-	                        <div class="border-t my-4 py-4 space-y-2">
-	                            <div class="flex justify-between">
-	                                <span>Tạm tính</span>
-	                                <span class="font-semibold" th:text="${#numbers.formatDecimal(giaGoc, 0, 'COMMA', 0, 'POINT')} + '₫'">2,990,000₫</span>
-	                            </div>
-	                            <div class="flex justify-between text-green-600">
-	                                <span>Giảm giá</span>
-	                                <span class="font-semibold" th:text="'- ' + ${#numbers.formatDecimal(giamGia, 0, 'COMMA', 0, 'POINT')} + '₫'">- 0₫</span>
-	                            </div>
-	                            <div class="flex justify-between text-xl font-bold text-gray-800">
-	                                <span>Tổng cộng</span>
-	                                <span class="text-blue-600" th:text="${#numbers.formatDecimal(thanhTien, 0, 'COMMA', 0, 'POINT')} + '₫'">2,990,000₫</span>
-	                            </div>
-	                        </div>
-	                        <div class="text-xs text-gray-500">
-	                            Bằng việc nhấn nút bên dưới, bạn đồng ý với <a href="#" class="text-blue-600 font-semibold">Điều khoản & Điều kiện</a> của chúng tôi.
-	                        </div>
-							<form action="/payment/confirm" method="POST">
-							    <input type="hidden" name="adults" th:value="${soNguoiLon}" readonly>
-							    <input type="hidden" name="children" th:value="${soTreEm}" readonly>
-							    <input type="hidden" name="giaGoc" th:value="${giaGoc}" readonly>
-							    <input type="hidden" name="giamGia" th:value="${giamGia}" readonly>
-							    <input type="hidden" name="tiLeGiam" th:value="${tiLeGiam}" readonly>
-							    <input type="hidden" name="thanhTien" th:value="${thanhTien}" readonly>
-								<input type="hidden" name="notes" th:value="${notes}" readonly>
-							    <!-- Nếu muốn ẩn giá trị không cho người dùng sửa -->
-							    <input type="hidden" name="chuyenId" th:value="${chuyen.maChuyen}">
-							    <input type="hidden" name="tourId" th:value="${tour.maTour}">
-							    <input type="hidden" name="userId" th:value="${user.maTaiKhoan}">
-							    <input type="hidden" name="khachHangId" th:value="${khachhang.maKhachHang}">
-							
-							    <button type="submit" name="submitType" value="paid"
-							        class="w-full mt-4 bg-blue-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
-							        Xác Nhận & Thanh Toán
-							    </button>
-								<button type="button" id="notPaidBtn" 
-								    class="w-full mt-4 bg-gray-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
-								    Thanh toán sau
-								</button>
-							    
-							</form>
-
-                        
-	                    </div>
-	                </div>
-                
-            	</div>
+          </div>
         </div>
-<!-- Modal xác nhận -->
-<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
-  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-    <h2 class="text-xl font-bold mb-4">Xác nhận thanh toán sau</h2>
-    <p class="mb-6 text-gray-700">
-      Bạn có chắc muốn <strong class="text-blue-600">thanh toán sau</strong> không?<br>
-      Tổng tiền sẽ được cộng thêm <strong class="text-red-600">5%</strong>.
-    </p>
-    <div class="flex justify-end space-x-3">
-      <button id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Hủy</button>
-      <button id="confirmBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Đồng ý</button>
+
+        <!-- Right Column -->
+        <div class="lg:col-span-1">
+          <div class="sticky-summary bg-white p-6 rounded-2xl shadow-lg border">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-4 flex items-center gap-2">
+              <i class="fas fa-clipboard-list text-blue-600"></i>
+              Tóm Tắt Đơn Hàng
+            </h3>
+            <div class="mt-4">
+              <h4 th:text="${tour.tenTour}" class="font-bold text-lg">Tên tour</h4>
+              <div class="text-sm text-gray-600 mt-2 space-y-2">
+                <p>
+                  <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
+                  <strong>Khởi hành:</strong>
+                  <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
+                </p>
+                <p>
+                  <i class="fas fa-users mr-2 text-blue-500"></i>
+                  <strong>Hành khách:</strong>
+                  <span th:text="${soNguoiLon} + ' Người lớn, ' + ${soTreEm} + ' Trẻ em'"></span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Giá -->
+            <div class="border-t my-4 py-4 space-y-2">
+              <div class="flex justify-between">
+                <span>Tạm tính</span>
+                <span class="font-semibold" th:text="${#numbers.formatDecimal(giaGoc, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+              </div>
+              <div class="flex justify-between text-green-600">
+                <span>Giảm giá</span>
+                <span class="font-semibold" th:text="'- ' + ${#numbers.formatDecimal(giamGia, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+              </div>
+              <div class="flex justify-between text-xl font-bold text-gray-800">
+                <span>Tổng cộng</span>
+                <span class="text-blue-600" th:text="${#numbers.formatDecimal(thanhTien, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">
+              Bằng việc nhấn nút bên dưới, bạn đồng ý với
+              <a href="#" class="text-blue-600 font-semibold hover:underline">Điều khoản & Điều kiện</a>
+              của chúng tôi.
+            </p>
+
+            <form action="/payment/confirm" method="POST" class="mt-4 space-y-3">
+              <input type="hidden" name="adults" th:value="${soNguoiLon}" readonly>
+              <input type="hidden" name="children" th:value="${soTreEm}" readonly>
+              <input type="hidden" name="giaGoc" th:value="${giaGoc}" readonly>
+              <input type="hidden" name="giamGia" th:value="${giamGia}" readonly>
+              <input type="hidden" name="tiLeGiam" th:value="${tiLeGiam}" readonly>
+              <input type="hidden" name="thanhTien" th:value="${thanhTien}" readonly>
+              <input type="hidden" name="notes" th:value="${notes}" readonly>
+              <input type="hidden" name="chuyenId" th:value="${chuyen.maChuyen}">
+              <input type="hidden" name="tourId" th:value="${tour.maTour}">
+              <input type="hidden" name="userId" th:value="${user.maTaiKhoan}">
+              <input type="hidden" name="khachHangId" th:value="${khachhang.maKhachHang}">
+			  <input type="hidden" name="paymentMethod" id="paymentMethodHidden">
+
+              <button type="submit" name="submitType" value="paid"
+                      class="w-full bg-blue-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-blue-700 transition">
+                Xác Nhận & Thanh Toán
+              </button>
+              <button type="button" id="notPaidBtn"
+                      class="w-full bg-gray-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-gray-700 transition">
+                Thanh toán sau
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-        
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10 mt-12">
-        <div class="container mx-auto px-6">
-            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
-                <p>&copy; 2025 TravelGO. All rights reserved.</p>
-            </div>
+    <!-- Modal xác nhận -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl animate-fade-in">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Xác nhận thanh toán sau</h2>
+        <p class="mb-6 text-gray-700 leading-relaxed">
+          Bạn có chắc muốn <strong class="text-blue-600">thanh toán sau</strong> không?<br>
+          Tổng tiền sẽ được cộng thêm <strong class="text-red-600">5%</strong>.
+        </p>
+        <div class="flex justify-end space-x-3">
+          <button id="cancelBtn" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Hủy</button>
+          <button id="confirmBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Đồng ý</button>
         </div>
-    </footer>
-<script>
-  const notPaidBtn = document.getElementById('notPaidBtn');
-  const modal = document.getElementById('confirmModal');
-  const cancelBtn = document.getElementById('cancelBtn');
-  const confirmBtn = document.getElementById('confirmBtn');
+      </div>
+    </div>
+  </main>
 
-  // Khi nhấn nút “Thanh toán sau” → mở modal
-  notPaidBtn.addEventListener('click', () => {
-      modal.classList.remove('hidden');
-  });
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+      <div>
+        <h3 class="text-white font-bold text-xl mb-3">TravelGO</h3>
+        <p class="text-sm opacity-80">Cùng bạn khám phá thế giới với những hành trình đáng nhớ.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Liên hệ</h4>
+        <p>Email: support@travelgo.com</p>
+        <p>Hotline: 1900 1234</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-3 text-white">Theo dõi chúng tôi</h4>
+        <div class="flex justify-center md:justify-start space-x-4 text-xl">
+          <a href="#"><i class="fab fa-facebook hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-instagram hover:text-white"></i></a>
+          <a href="#"><i class="fab fa-youtube hover:text-white"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+      © 2025 TravelGO. All rights reserved.
+    </div>
+  </footer>
 
-  // Khi nhấn nút “Hủy” → đóng modal
-  cancelBtn.addEventListener('click', () => {
-      modal.classList.add('hidden');
-  });
+  <!-- Script modal -->
+  <script>
+    const notPaidBtn = document.getElementById('notPaidBtn');
+    const modal = document.getElementById('confirmModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
 
-  // Khi nhấn nút “Đồng ý” → submit form
-  confirmBtn.addEventListener('click', () => {
+    notPaidBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+    cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    confirmBtn.addEventListener('click', () => {
       const form = notPaidBtn.closest('form');
-      
-      // Nếu muốn biết đây là thanh toán sau (để xử lý ở controller sau này)
       const hidden = document.createElement('input');
       hidden.type = 'hidden';
       hidden.name = 'submitType';
       hidden.value = 'notpaid';
       form.appendChild(hidden);
-
       form.submit();
+    });
+  </script>
+  <script>
+  const form = document.querySelector('form');
+  form.addEventListener('submit', () => {
+    const selected = document.querySelector('input[name="paymentMethod"]:checked');
+    document.getElementById('paymentMethodHidden').value = selected ? selected.value : '';
   });
 </script>
 
+  <!-- Modal animation -->
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </body>
 </html>
-

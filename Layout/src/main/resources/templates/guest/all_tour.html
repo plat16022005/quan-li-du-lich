@@ -14,21 +14,32 @@
             font-family: 'Inter', sans-serif;
         }
         .tour-card:hover .tour-image {
-            transform: scale(1.05);
+            transform: scale(1.07);
+        }
+        .tour-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .tour-image {
+            transition: transform 0.4s ease;
+        }
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80');
+            background-size: cover;
+            background-position: center;
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
     <!-- Header -->
-    <header class="bg-white shadow-md fixed w-full z-20 top-0">
+    <header class="fixed top-0 left-0 w-full z-30 transition duration-300 bg-white/90 backdrop-blur-md shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="/home" class="flex items-center">
                 <i class="fas fa-route text-3xl text-blue-600"></i>
                 <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
             </a>
             <div class="hidden md:flex items-center space-x-4">
-                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+                <a href="/profile" class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition">
                     <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
                 </a>
             </div>
@@ -38,128 +49,127 @@
         </nav>
     </header>
 
-    <main class="pt-24 pb-16">
-        <div class="container mx-auto px-6">
-            <!-- Page Header -->
-            <div class="text-center py-10 bg-white rounded-lg shadow-md mb-12">
-                <h1 class="text-4xl font-extrabold text-gray-800">Khám Phá Hành Trình Mơ Ước</h1>
-                <p class="text-gray-600 mt-2">Tìm kiếm và lựa chọn tour du lịch phù hợp nhất với bạn</p>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero h-[350px] flex items-center justify-center text-center text-white mt-0">
+        <div class="bg-black/40 p-8 rounded-lg">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 drop-shadow-lg">Khám Phá Hành Trình Trong Mơ</h1>
+            <p class="text-lg md:text-xl opacity-90">Tìm kiếm và lựa chọn tour du lịch phù hợp nhất với bạn</p>
+        </div>
+    </section>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <!-- Left Column: Filters -->
-                <aside class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-lg shadow-md sticky top-24">
-                        <h3 class="text-xl font-bold text-gray-800 border-b pb-4 mb-4">Bộ lọc tìm kiếm</h3>
-                        <div class="space-y-6">
-							<form th:action="@{/home/tour}" method="get" class="space-y-6">
-							    <div>
-							        <label for="destination" class="block text-sm font-semibold text-gray-700 mb-2">Điểm đến</label>
-							        <input type="text" id="destination" name="destination"
-							               th:value="${destination}"
-							               placeholder="Ví dụ: Hạ Long..." 
-							               class="w-full border rounded-md py-2 px-3 focus:ring-blue-500">
-							    </div>
-							
-								<div>
-								    <label class="block text-sm font-semibold text-gray-700 mb-2">Khoảng giá</label>
-								    <div class="flex items-center space-x-2 mb-3">
-								        <div class="flex-1">
-								            <input type="number" name="minPrice" id="minPrice"
-								                   th:value="${minPrice}"
-								                   placeholder="Từ (VNĐ)"
-								                   class="w-full border rounded-md py-2 px-3 text-sm focus:ring-blue-500">
-								        </div>
-								        <span>-</span>
-								        <div class="flex-1">
-								            <input type="number" name="maxPrice" id="maxPrice"
-								                   th:value="${maxPrice}"
-								                   placeholder="Đến (VNĐ)"
-								                   class="w-full border rounded-md py-2 px-3 text-sm focus:ring-blue-500">
-								        </div>
-								    </div>
-								    <div class="text-xs text-gray-500 flex justify-between">
-								        <span th:text="'Từ: ' + (${minPrice != null} ? ${#numbers.formatDecimal(minPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫' : '0 ₫')"></span>
-								        <span th:text="'Đến: ' + (${maxPrice != null} ? ${#numbers.formatDecimal(maxPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫' : '20.000.000 ₫')"></span>
-								    </div>
-								</div>
+    <!-- Main Content -->
+    <main class="py-16">
+        <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-10">
 
-							
-							    <button type="submit"
-							            class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
-							        Áp Dụng
-							    </button>
-							</form>
+            <!-- Bộ lọc -->
+            <aside class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-2xl shadow-md sticky top-24">
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-4 mb-4">Bộ lọc tìm kiếm</h3>
+                    <form th:action="@{/home/tour}" method="get" class="space-y-6">
+                        <div>
+                            <label for="destination" class="block text-sm font-semibold text-gray-700 mb-2">Điểm đến</label>
+                            <input type="text" id="destination" name="destination"
+                                   th:value="${destination}"
+                                   placeholder="Ví dụ: Hạ Long..."
+                                   class="w-full border rounded-lg py-2 px-3 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
 
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Khoảng giá</label>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <input type="number" name="minPrice" th:value="${minPrice}" placeholder="Từ (VNĐ)" class="w-full border rounded-lg py-2 px-3 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                <span>-</span>
+                                <input type="number" name="maxPrice" th:value="${maxPrice}" placeholder="Đến (VNĐ)" class="w-full border rounded-lg py-2 px-3 text-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="text-xs text-gray-500 flex justify-between">
+                                <span th:text="'Từ: ' + (${minPrice != null} ? ${#numbers.formatDecimal(minPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫' : '0 ₫')"></span>
+                                <span th:text="'Đến: ' + (${maxPrice != null} ? ${#numbers.formatDecimal(maxPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫' : '20.000.000 ₫')"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                            Áp Dụng
+                        </button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Danh sách Tour -->
+            <div class="lg:col-span-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <div class="tour-card bg-white rounded-2xl shadow-md overflow-hidden transition duration-300 hover:-translate-y-1"
+                         th:each="tour : ${tours}">
+                        <div class="overflow-hidden h-56">
+                            <img th:src="${tour.hinhAnh}" alt="Ảnh Tour" class="tour-image w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2" th:text="${tour.tenTour}"></h3>
+                            <div class="flex items-center text-gray-500 text-sm mb-3">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span th:text="${tour.soNgay} + ' ngày'"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                                <a th:href="@{'/home/tour/' + ${tour.maTour}}"
+                                   class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-200 transition">
+                                    Xem
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </aside>
+                </div>
 
-                <!-- Right Column: Tour List -->
-                <div class="lg:col-span-3">
-					 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-					    <div class="tour-card bg-white rounded-lg shadow-lg overflow-hidden transition duration-300"
-					         th:each="tour : ${tours}">
-					        <div class="overflow-hidden h-56">
-					            <img th:src="${tour.hinhAnh}" alt="Ảnh Tour" class="tour-image w-full h-full object-cover transition duration-300">
-					        </div>
-					        <div class="p-6">
-					            <h3 class="text-xl font-bold text-gray-800 mb-2 h-14" th:text="${tour.tenTour}"></h3>
-					            <div class="flex items-center text-gray-600 mb-4">
-					                <i class="fas fa-clock mr-2"></i>
-					                <span th:text="${tour.soNgay} + ' ngày'"></span>
-					            </div>
-					            <div class="flex justify-between items-center">
-					                <p class="text-xl font-bold text-blue-600"
-					                   th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + '₫'"></p>
-					                <a th:href="@{'/home/tour/' + ${tour.maTour}}"
-					                   class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-200 transition">
-					                    Xem Chi Tiết
-					                </a>
-					            </div>
-					        </div>
-					    </div>
-					</div>
+                <!-- Phân trang -->
+                <div class="mt-12 flex justify-center">
+                    <ul class="inline-flex space-x-2">
+                        <li th:if="${currentPage > 0}">
+                            <a th:href="@{'/home/tour?page=' + ${currentPage - 1}}" class="px-3 py-2 rounded-full bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
 
-                    <!-- Pagination -->
-					<div class="mt-12 flex justify-center">
-					    <ul class="inline-flex items-center -space-x-px">
-					        <li th:if="${currentPage > 0}">
-					            <a th:href="@{'/home/tour?page=' + ${currentPage - 1}}"
-					               class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
-					                Trước
-					            </a>
-					        </li>
-					
-					        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-					            <a th:href="@{'/home/tour?page=' + ${i}}"
-					               th:text="${i + 1}"
-					               th:classappend="${i == currentPage} ? 'z-10 px-3 py-2 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'">
-					            </a>
-					        </li>
-					
-					        <li th:if="${currentPage < totalPages - 1}">
-					            <a th:href="@{'/home/tour?page=' + ${currentPage + 1}}"
-					               class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
-					                Sau
-					            </a>
-					        </li>
-					    </ul>
-					</div>
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                            <a th:href="@{'/home/tour?page=' + ${i}}"
+                               th:text="${i + 1}"
+                               th:classappend="${i == currentPage} ? 'px-3 py-2 rounded-full bg-blue-600 text-white font-bold' : 'px-3 py-2 rounded-full bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'">
+                            </a>
+                        </li>
 
+                        <li th:if="${currentPage < totalPages - 1}">
+                            <a th:href="@{'/home/tour?page=' + ${currentPage + 1}}" class="px-3 py-2 rounded-full bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </main>
-    
+
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10 mt-12">
-        <div class="container mx-auto px-6">
-            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
-                <p>&copy; 2025 TravelGO. All rights reserved.</p>
+    <footer class="bg-gray-900 text-gray-300 py-12 mt-16">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+                <h3 class="text-white font-bold text-xl mb-3">TravelGO</h3>
+                <p class="text-sm opacity-80">Cùng bạn khám phá thế giới với những hành trình đáng nhớ.</p>
             </div>
+            <div>
+                <h4 class="font-semibold mb-3 text-white">Liên hệ</h4>
+                <p>Email: support@travelgo.com</p>
+                <p>Hotline: 1900 1234</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-3 text-white">Theo dõi chúng tôi</h4>
+                <div class="flex justify-center md:justify-start space-x-4 text-xl">
+                    <a href="#"><i class="fab fa-facebook hover:text-white"></i></a>
+                    <a href="#"><i class="fab fa-instagram hover:text-white"></i></a>
+                    <a href="#"><i class="fab fa-youtube hover:text-white"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+            © 2025 TravelGO. All rights reserved.
         </div>
     </footer>
 </body>
 </html>
-

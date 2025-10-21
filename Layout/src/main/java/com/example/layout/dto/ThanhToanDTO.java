@@ -1,6 +1,7 @@
 package com.example.layout.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -15,7 +16,7 @@ public class ThanhToanDTO {
     @DecimalMin(value = "1.0", message = "Số tiền thanh toán phải lớn hơn 0")
     private BigDecimal soTien;
 
-    private Date ngayThanhToan;
+    private LocalDate ngayThanhToan;
 
     @NotBlank(message = "Vui lòng nhập hình thức thanh toán")
     private String hinhThuc; // Ví dụ: "Chuyển khoản", "Tiền mặt"
@@ -37,12 +38,12 @@ public class ThanhToanDTO {
         this.soTien = soTien;
     }
 
-    public Date getNgayThanhToan() {
+    public LocalDate getNgayThanhToan() {
         return ngayThanhToan;
     }
 
-    public void setNgayThanhToan(Date ngayThanhToan) {
-        this.ngayThanhToan = ngayThanhToan;
+    public void setNgayThanhToan(LocalDate localDate) {
+        this.ngayThanhToan = localDate;
     }
 
     public String getHinhThuc() {

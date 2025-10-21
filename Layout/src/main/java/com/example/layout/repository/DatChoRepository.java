@@ -1,6 +1,7 @@
 package com.example.layout.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.DatCho;
+import com.example.layout.entity.KhachHang;
 
 @Repository
 public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
@@ -45,4 +48,24 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
             "FROM DatCho dc JOIN ChiTietDatCho ct ON dc.maDatCho = ct.datCho.maDatCho " +
             "WHERE dc.chuyenDuLich.maChuyen = :maChuyen")
      int getTongSoLuongDaDat(@Param("maChuyen") Integer maChuyen);
+    
+    @Query("""
+    	    SELECT d FROM DatCho d
+    	    JOIN FETCH d.chuyenDuLich c
+    	    JOIN FETCH c.tour t
+    	    WHERE d.khachHang.maKhachHang = :maKH
+    	    AND c.trangThai = 'Sắp diễn ra'
+    	    AND d.trangThai = 'Chưa thanh toán'
+    	""")
+    	List<DatCho> findDatChoSapDienRaChuaThanhToan(@Param("maKH") Integer maKH);
+    Optional<DatCho> findFirstByKhachHangAndChuyenDuLichOrderByNgayDatDesc(KhachHang khachHang, ChuyenDuLich chuyenDuLich);
+    @Query("""
+    	    SELECT d FROM DatCho d
+    	    JOIN d.chuyenDuLich c
+    	    WHERE d.khachHang.maKhachHang = :maKH
+    	    AND (c.trangThai = 'Sắp diễn ra' OR c.trangThai = 'Đang diễn ra')
+    	    AND d.trangThai = 'Đã thanh toán'
+    	""")
+    	List<DatCho> findVeSapDienRa(@Param("maKH") Integer maKH);
+
 }
