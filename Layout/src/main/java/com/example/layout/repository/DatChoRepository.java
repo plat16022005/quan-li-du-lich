@@ -53,7 +53,7 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
             "FROM DatCho dc JOIN ChiTietDatCho ct ON dc.maDatCho = ct.datCho.maDatCho " +
             "WHERE dc.chuyenDuLich.maChuyen = :maChuyen")
 
-     int getTongSoLuongDaDat(@Param("maChuyen") Integer maChuyen);
+    int getTongSoLuongDaDat(@Param("maChuyen") Integer maChuyen);
     
     @Query("""
     	    SELECT d FROM DatCho d

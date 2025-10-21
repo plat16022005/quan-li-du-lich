@@ -12,33 +12,68 @@
   </head>
   <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
-      <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col" id="sidebar">
-        <div class="flex items-center justify-center h-20 border-b border-gray-700">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
           <i class="fas fa-route text-3xl text-blue-400"></i>
           <span class="ml-3 text-2xl font-bold">TravelGO</span>
         </div>
         <nav class="mt-8 px-4">
-          <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-            <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
           </a>
-          <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-            <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
           </a>
-          <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-            <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
           </a>
-          <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-            <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          <a
+            th:href="@{/nhanvien/manager_tour}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i
+            ><span class="ml-4">Quản lý Tour</span>
           </a>
+
           <a th:href="@{/nhanvien/finance}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
               <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
           </a>           
-          <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-            <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Xuất báo cáo</span>
+
+          <a
+            th:href="@{/nhanvien/report}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i
+            ><span class="ml-4">Xuất báo cáo</span>
           </a>
         </nav>
         <div class="mt-auto w-full p-4 border-t border-gray-800">
-          <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+          <a
+            th:href="@{/logout}"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
             <i class="fas fa-sign-out-alt w-6 text-center"></i>
             <span class="ml-4">Đăng xuất</span>
           </a>
@@ -62,12 +97,6 @@
               Chi tiết Khách hàng
             </h1>
           </div>
-          <a
-            href="#"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
-          >
-            <i class="fas fa-edit mr-2"></i>Sửa thông tin
-          </a>
         </header>
 
         <main class="flex-1 p-6">
@@ -194,5 +223,66 @@ const customerId = parseInt(document.getElementById("customerId").value);
   document.addEventListener("DOMContentLoaded", loadCustomerDetails);
 </script>
 
+    <script>
+          const customer = data.customer;
+          const bookingHistory = data.bookingHistory;
+
+          // Điền thông tin cá nhân
+          // Thay đổi các dòng này
+          document.getElementById(
+            "customer-header"
+          ).textContent = `Chi tiết: ${customer.hoTen}`;
+          document.getElementById("hoTen").textContent = customer.hoTen;
+          document.getElementById("email").textContent = customer.email;
+          document.getElementById("soDienThoai").textContent =
+            customer.soDienThoai;
+          document.getElementById("diaChi").textContent =
+            customer.diaChi || "Chưa cập nhật";
+          document.getElementById("ngaySinh").textContent = customer.ngaySinh
+            ? new Date(customer.ngaySinh).toLocaleDateString("vi-VN")
+            : "Chưa cập nhật";
+          document.getElementById("gioiTinh").textContent =
+            customer.gioiTinh || "Chưa cập nhật";
+          document.getElementById("ngayThamGia").textContent =
+            customer.ngayThamGia
+              ? new Date(customer.ngayThamGia).toLocaleDateString("vi-VN")
+              : "Chưa cập nhật";
+
+          // Điền lịch sử đặt chỗ
+          const historyBody = document.getElementById("booking-history-body");
+          historyBody.innerHTML = "";
+          if (bookingHistory.length === 0) {
+            historyBody.innerHTML =
+              '<tr><td colspan="4" class="text-center py-4 text-gray-500">Khách hàng này chưa đặt tour nào.</td></tr>';
+          } else {
+            bookingHistory.forEach((booking) => {
+              const row = `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-bold text-gray-900">
+                                <a href="/nhanvien/bookings/${
+                                  booking.maDatCho
+                                }" class="text-blue-600 hover:underline">#${
+                booking.maDatCho
+              }</a>
+                            </td>
+                            <td class="px-6 py-4">${booking.tenTour}</td>
+                            <td class="px-6 py-4">${new Date(
+                              booking.ngayDat
+                            ).toLocaleDateString("vi-VN")}</td>
+                            <td class="px-6 py-4">${getStatusBadge(
+                              booking.trangThai
+                            )}</td>
+                        </tr>
+                    `;
+              historyBody.innerHTML += row;
+            });
+          }
+        } catch (error) {
+          console.error("Lỗi tải chi tiết khách hàng:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCustomerDetails);
+    </script>
   </body>
 </html>
