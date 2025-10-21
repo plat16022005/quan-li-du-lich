@@ -1,5 +1,7 @@
 package com.example.layout.controller.nhanvien;
 
+import com.example.layout.dto.BookingHistoryDTO;
+import com.example.layout.dto.CustomerDetailDTO;
 import com.example.layout.dto.NewCustomerDTO;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +67,7 @@ public class NhanvienCustomerController {
     @GetMapping("/{id}")
     public String showCustomerDetailPage(@PathVariable("id") Integer customerId, Model model) {
         model.addAttribute("customerId", customerId);
+        System.out.println("Customer ID: " + customerId); // Debug log
         return "nhanvien/customer/detail";
     }
 
@@ -74,12 +78,18 @@ public class NhanvienCustomerController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getCustomerDetailsApi(@PathVariable("id") Integer customerId) {
         KhachHang customer = khachHangService.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-        List<DatCho> bookingHistory = datChoService.findByKhachHangId(customerId);
+            .orElseThrow(() -> new RuntimeException("Customer not found"));
+        List<DatCho> bookingHistoryEntities = datChoService.findByKhachHangId(customerId);
+
+    // Chuyển đổi sang DTO
+        CustomerDetailDTO customerDTO = new CustomerDetailDTO(customer);
+        List<BookingHistoryDTO> bookingHistoryDTO = bookingHistoryEntities.stream()
+            .map(BookingHistoryDTO::new) // Sử dụng constructor
+            .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("customer", customer);
-        response.put("bookingHistory", bookingHistory);
+        response.put("customer", customerDTO); // Trả về DTO
+        response.put("bookingHistory", bookingHistoryDTO); // Trả về DTO
 
         return ResponseEntity.ok(response);
     }
@@ -108,7 +118,7 @@ public class NhanvienCustomerController {
     
     @PostMapping("/save-new")
     public String saveNewCustomer(@ModelAttribute("newCustomer") NewCustomerDTO newCustomerDTO,
-                                  RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes) {
         try {
             // Tạo tài khoản mới
             boolean userCreated = userService.register(
@@ -148,7 +158,7 @@ public class NhanvienCustomerController {
     
     @PostMapping("/save")
     public String saveCustomer(@ModelAttribute("customer") KhachHang customer,
-                              RedirectAttributes redirectAttributes) {
+                            RedirectAttributes redirectAttributes) {
         khachHangService.save(customer);
         redirectAttributes.addFlashAttribute("successMessage", "Thêm khách hàng mới thành công!");
         return "redirect:/nhanvien/customers";
