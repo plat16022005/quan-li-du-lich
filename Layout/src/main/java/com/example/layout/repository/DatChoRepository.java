@@ -31,7 +31,6 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
     
     @Query("SELECT dc FROM DatCho dc JOIN dc.chuyenDuLich c WHERE c.tour.maTour = :maTour")
     List<DatCho>  findByChuyenDuLich_Tour_MaTour(@Param("maTour") Integer maTour);
-    
     @Query(value = """
     	    SELECT 
     	        tk.HoTen AS customerName,

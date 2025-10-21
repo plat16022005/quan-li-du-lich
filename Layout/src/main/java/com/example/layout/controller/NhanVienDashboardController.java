@@ -35,13 +35,6 @@ public class NhanVienDashboardController {
         return ResponseEntity.ok(stats);
     }
 
-    @GetMapping("/dashboard/api/recent-bookings")
-    @ResponseBody
-    public ResponseEntity<List<Map<String, Object>>> getRecentBookings() {
-        List<Map<String, Object>> bookings = dashboardService.getRecentBookings();
-        return ResponseEntity.ok(bookings);
-    }
-
     @GetMapping("/dashboard/api/revenue-week")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getWeekRevenue() {

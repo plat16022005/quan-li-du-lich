@@ -68,32 +68,6 @@ public class NhanVienDashboardService {
         return stats;
     }
 
-    public List<Map<String, Object>> getRecentBookings() {
-        List<Map<String, Object>> bookings = new ArrayList<>();
-        
-        try {
-            // Lấy 5 booking gần đây nhất
-            List<Object[]> results = datChoRepository.findTop5RecentBookings();
-            
-            for (Object[] row : results) {
-                Map<String, Object> booking = new HashMap<>();
-                booking.put("customerName", row[0] != null ? row[0].toString() : "Khách hàng");
-                booking.put("tourName", row[1] != null ? row[1].toString() : "Tour");
-                booking.put("bookingDate", row[2] != null ? 
-                    ((Date) row[2]).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
-                booking.put("status", row[3] != null ? row[3].toString() : "Chờ xác nhận");
-                bookings.add(booking);
-            }
-            
-        } catch (Exception e) {
-            // Nếu có lỗi, trả về danh sách trống
-            System.err.println("Error loading recent bookings: " + e.getMessage());
-        }
-        
-        return bookings;
-    }
-
     public Map<String, Object> getWeekRevenue() {
         Map<String, Object> result = new HashMap<>();
         
