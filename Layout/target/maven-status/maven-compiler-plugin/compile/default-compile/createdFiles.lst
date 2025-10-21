@@ -8,6 +8,7 @@ com\example\layout\service\impl\EmailServiceImpl.class
 com\example\layout\service\KhachHangService.class
 com\example\layout\dto\ThanhToanDTO.class
 com\example\layout\controller\hdvtx\HdvTxDashboardController$CurrentUserDTO.class
+com\example\layout\dto\TopCustomerDTO.class
 com\example\layout\entity\PhanHoi.class
 com\example\layout\controller\nhanvien\NhanvienHomeController.class
 com\example\layout\entity\LichTrinh.class
@@ -52,6 +53,7 @@ com\example\layout\entity\Nhanvien.class
 com\example\layout\dto\BookingApiDTO$ChuyenSummary.class
 com\example\layout\entity\ThanhToan.class
 com\example\layout\dto\FinanceReportDTO.class
+com\example\layout\dto\BookingHistoryDTO.class
 com\example\layout\controller\nhanvien\NhanvienCustomerController.class
 com\example\layout\LayoutApplication.class
 com\example\layout\controller\NhanVienDashboardController.class
@@ -94,6 +96,7 @@ com\example\layout\controller\guest\GuestHomeController.class
 com\example\layout\service\ThanhToanService.class
 com\example\layout\controller\manager\staff\ManagerStaffController.class
 com\example\layout\service\NhanVienService.class
+com\example\layout\dto\CustomerDetailDTO.class
 com\example\layout\service\KhachSanService.class
 com\example\layout\service\TourService.class
 com\example\layout\dto\UpcomingTourDTO.class
