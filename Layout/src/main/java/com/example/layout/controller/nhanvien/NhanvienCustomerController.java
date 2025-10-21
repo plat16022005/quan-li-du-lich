@@ -4,9 +4,12 @@ import com.example.layout.dto.NewCustomerDTO;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
 import com.example.layout.entity.User;
+import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.service.DatChoService;
 import com.example.layout.service.KhachHangService;
 import com.example.layout.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -35,12 +38,13 @@ public class NhanvienCustomerController {
     private final KhachHangService khachHangService;
     private final DatChoService datChoService;
     private final UserService userService;
+    private final KhachHangRepository khachHangRepository;
     
-    
-    public NhanvienCustomerController(KhachHangService khachHangService, DatChoService datChoService, UserService userService) {
+    public NhanvienCustomerController(KhachHangService khachHangService, DatChoService datChoService, UserService userService, KhachHangRepository khachHangRepository) {
         this.khachHangService = khachHangService;
 		this.datChoService = datChoService;
 		this.userService = userService;
+		this.khachHangRepository = khachHangRepository;
     } 
 
     @GetMapping
@@ -62,7 +66,12 @@ public class NhanvienCustomerController {
     }
     
     @GetMapping("/{id}")
-    public String showCustomerDetailPage(@PathVariable("id") Integer customerId, Model model) {
+    public String showCustomerDetailPage(@PathVariable("id") Integer customerId, Model model, HttpSession session) {
+    	User user = (User) session.getAttribute("user");
+    	if (user == null)
+    	{
+    		return "redirect:/access_deniel";
+    	}
         model.addAttribute("customerId", customerId);
         return "nhanvien/customer/detail";
     }

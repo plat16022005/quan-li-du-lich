@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhân viên - Báo Cáo Thu-Chi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Apply the Inter font */
+        body, html {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style from the reference dashboard */
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar - Consistent with the employee dashboard style -->
+        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
+            <div class="flex items-center justify-center h-20 border-b border-gray-700">
+                <i class="fas fa-route text-3xl text-blue-400"></i>
+                <span class="ml-3 text-2xl font-bold">TravelGO</span>
+            </div>
+            <nav class="mt-8 px-4">
+                <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
+                </a>
+                <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
+                </a>
+                <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
+                </a>
+                <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
+                    <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
+                </a>
+                <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Báo cáo chung</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
+                <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-sign-out-alt w-6 text-center"></i><span class="ml-4">Đăng xuất</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
+                <h1 class="text-2xl font-semibold text-gray-800">Báo Cáo Thu-Chi Chuyến Đi</h1>
+                <div class="flex items-center">
+                    <div class="ml-3 text-right">
+                        <p class="text-sm font-semibold text-gray-800" th:text="${session.user.hoTen}">Tên Nhân Viên</p>
+                        <p class="text-xs text-gray-500">Nhân viên</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 p-6">
+                <!-- Trip Information -->
+                <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                    <h2 th:text="${trip.tour.tenTour}" class="text-xl font-bold text-gray-800">Tour: Khám phá Vịnh Hạ Long - Kỳ Quan Thế Giới</h2>
+					<p class="text-gray-500 mt-1">
+					    <strong>Mã chuyến:</strong> <span th:text="${trip.maChuyen}"></span> |
+					    <strong>Khởi hành:</strong> <span th:text="${#temporals.format(trip.ngayBatDau, 'dd/MM/yyyy')}"></span> -
+					    <strong>Về:</strong> <span th:text="${#temporals.format(trip.ngayKetThuc, 'dd/MM/yyyy')}"></span>
+					</p>
+
+
+                </div>
+
+                <!-- Financial Overview - Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-500">Tổng Doanh Thu (từ vé)</p>
+                            <div class="bg-green-100 text-green-500 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                        </div>
+						<p class="text-3xl font-bold text-green-600 mt-2"
+						   th:text="${#numbers.formatDecimal(report.tongDoanhThu, 0, 'POINT', 0, 'COMMA')} + '₫'"></p>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-500">Tổng Chi Phí</p>
+                            <div class="bg-red-100 text-red-500 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                        </div>
+						<p class="text-3xl font-bold text-red-500 mt-2"
+						   th:text="${#numbers.formatDecimal(report.tongChiPhi, 0, 'POINT', 0, 'COMMA')} + '₫'"></p>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-500">Lợi Nhuận</p>
+                            <div class="bg-blue-100 text-blue-500 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+						<p class="text-3xl font-bold text-blue-600 mt-2"
+						   th:text="${#numbers.formatDecimal(report.loiNhuan, 0, 'POINT', 0, 'COMMA')} + '₫'"></p>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Revenue Details -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Chi Tiết Doanh Thu</h3>
+                        <div class="space-y-4">
+							<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+							    <div>
+							        <p class="font-medium text-gray-800">Doanh thu từ vé</p>
+									<p class="text-sm text-gray-500" th:text="${soldTickets} + ' vé đã bán'"></p>	
+
+							    </div>
+							    <p class="font-bold text-green-600"
+							       th:text="${'+ ' + #numbers.formatDecimal(report.tongDoanhThu, 0, 'POINT', 0, 'COMMA') + '₫'}"></p>
+							</div>
+
+                            <!-- Add other revenue sources here if any -->
+                        </div>
+                    </div>
+
+                    <!-- Expense Details -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Thống Kê Chi Phí Tổng</h3>
+<div class="space-y-4">
+    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+        <p class="font-medium text-gray-800">Chi phí vận chuyển</p>
+        <p class="font-bold text-red-500" 
+           th:text="${'- ' + #numbers.formatDecimal(report.chiPhiPhuongTien, 0, 'POINT', 0, 'COMMA') + '₫'}"></p>
+    </div>
+    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+        <p class="font-medium text-gray-800">Chi phí lưu trú</p>
+        <p class="font-bold text-red-500" 
+           th:text="${'- ' + #numbers.formatDecimal(report.chiPhiKhachSan, 0, 'POINT', 0, 'COMMA') + '₫'}"></p>
+    </div>
+    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+        <p class="font-medium text-gray-800">Chi phí HDV</p>
+        <p class="font-bold text-red-500" 
+           th:text="${'- ' + #numbers.formatDecimal(report.chiPhiHDV, 0, 'POINT', 0, 'COMMA') + '₫'}"></p>
+    </div>
+    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+        <p class="font-medium text-gray-800">Chi phí Tài xế</p>
+        <p class="font-bold text-red-500" 
+           th:text="${'- ' + #numbers.formatDecimal(report.chiPhiTX, 0, 'POINT', 0, 'COMMA') + '₫'}"></p>
+    </div>
+</div>
+
+
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+

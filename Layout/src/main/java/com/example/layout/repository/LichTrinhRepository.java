@@ -29,5 +29,6 @@ public interface LichTrinhRepository extends JpaRepository<LichTrinh, Integer> {
         "FROM LichTrinh lt JOIN lt.diaDiem dd " +
         "GROUP BY lt.diaDiem, dd.tenDiaDiem ORDER BY soLan DESC")
     List<Map<String, Object>> findLocationUsageStatistics();
+    
 }
 

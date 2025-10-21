@@ -56,4 +56,5 @@ public class LichTrinhService {
     public List<LichTrinh> saveAll(List<LichTrinh> lichTrinhList) {
         return lichTrinhRepo.saveAll(lichTrinhList);
     }
+    
 }

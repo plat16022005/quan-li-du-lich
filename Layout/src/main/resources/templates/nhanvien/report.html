@@ -52,6 +52,9 @@
             <i class="fas fa-map-marked-alt w-6 text-center"></i
             ><span class="ml-4">Quản lý Tour</span>
           </a>
+          <a th:href="@{/nhanvien/finance}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+              <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
+          </a>           
           <a
             th:href="@{/nhanvien/report}"
             class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md"
@@ -108,13 +111,16 @@
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                         <h2 class="text-lg font-semibold text-gray-800 whitespace-nowrap">Tùy chọn:</h2>
                         <select id="report-type" class="w-full sm:w-auto p-2 border rounded-lg">
-                            <option value="bookings">Thống kê đặt chỗ</option>
-                            <option value="customers">Thống kê khách hàng</option>
-                            <option value="revenue">Thống kê doanh thu</option>
-                            <option value="tourPopularity">Thống kê Tour Phổ biến</option>
-                            <option value="locationStats">Thống kê Địa điểm</option>
-                            <option value="tripFinance">Báo cáo Thu/Chi theo Tháng</option>
+                            <option value="tourPopularity">Thống kê Tour</option>
+                            <option value="revenue">Báo cáo doanh thu</option>
+                            <option value="topCustomers">Thống kê hành khách</option>
+                            <option value="tripExpense">Báo cáo chi phí từng chuyến</option>
                         </select>
+						<!-- ⚡ Chỉ hiện khi chọn Báo cáo chi phí chuyến -->
+						<select id="tour-filter" class="hidden w-full sm:w-auto p-2 border rounded-lg">
+						  <option value="">-- Tất cả tour --</option>
+						</select>
+                        
                         <input type="month" id="date-range" class="w-full sm:w-auto p-2 border rounded-lg hidden">
                         <button id="create-report" class="bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-blue-700">
                             <i class="fas fa-cogs mr-2"></i>Tạo
@@ -480,45 +486,52 @@
                     const revenueData = await revenueRes.json();
                     const tripList = await tripsRes.json();
                     
-                    drawChart('line', `Doanh thu (Tháng ${month}/${year})`, Object.keys(revenueData), Object.values(revenueData));
+                    ('line', `Doanh thu (Tháng ${month}/${year})`, Object.keys(revenueData), Object.values(revenueData));
                     renderTripTable(tripList);
                 }
 
-                function drawChart(type, label, labels, data) {
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                reportChart = new Chart(ctx, {
-                    type: type,
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: label,
-                            data: data,
-                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(239, 68, 68, 0.7)', 'rgba(139, 92, 246, 0.7)'],
-                            borderColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'top', display: type === 'doughnut' },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let value = context.parsed;
-                                        if (context.parsed.y !== undefined) value = context.parsed.y;
-                                        return `${context.label}: ${value}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: (type === 'bar' || type === 'line') ? { y: { beginAtZero: true } } : {}
-                    }
-                });
-            }
+            function drawChart(type, label, labels, data) {
+            	  if (reportChart) reportChart.destroy();
+            	  reportChart = new Chart(ctx, {
+            	    type: type,
+            	    data: {
+            	      labels: labels,
+            	      datasets: [{
+            	        label: label,
+            	        data: data,
+            	        backgroundColor: [
+            	          'rgba(59, 130, 246, 0.7)',
+            	          'rgba(16, 185, 129, 0.7)',
+            	          'rgba(245, 158, 11, 0.7)',
+            	          'rgba(239, 68, 68, 0.7)',
+            	          'rgba(139, 92, 246, 0.7)'
+            	        ],
+            	        borderColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+            	        borderWidth: 1
+            	      }]
+            	    },
+            	    options: {
+            	      responsive: true,
+            	      maintainAspectRatio: false,
+            	      plugins: {
+            	        legend: { position: 'top', display: type === 'doughnut' },
+            	        tooltip: {
+            	          callbacks: {
+            	            label: function(context) {
+            	              let value = context.parsed.y ?? context.parsed;
+            	              return new Intl.NumberFormat('vi-VN', {
+            	                style: 'currency',
+            	                currency: 'VND'
+            	              }).format(value);
+            	            }
+            	          }
+            	        }
+            	      },
+            	      scales: (type === 'bar' || type === 'line') ? { y: { beginAtZero: true } } : {}
+            	    }
+            	  });
+            	}
+
 
                 async function renderTripTable(trips) {
                     const tableBody = document.getElementById('trip-list-body');
@@ -614,6 +627,7 @@
                         dateRangeInput.style.display = 'block';
                         monthlySection.style.display = 'block';
                     }
+                    
                 }
 
                 function loadReportData() {
@@ -625,10 +639,11 @@
                         case "tourPopularity": loadTourPopularityChart(); break;
                         case "locationStats": loadLocationStatsTable(); break;
                         case "tripFinance": loadMonthlyReport(); break;
+                        case "tripExpense": loadTripExpenseReport(); break;
+                        case "topCustomers": loadTopCustomersChart(); break;
                     }
                 }
                 
-                function drawChart(type, label, labels, data) { /* ... code cũ của bạn ... */ }
                 
                 // GẮN SỰ KIỆN
                 reportTypeSelect.addEventListener("change", updateUI);
@@ -645,5 +660,50 @@
         </main>
       </div>
     </div>
+    <script>
+    async function loadTripExpenseReport() {
+    	  try {
+    	    const res = await fetch("/nhanvien/report/api/trip-expense");
+    	    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    	    const data = await res.json();
+    	    console.log("Trip Expense Data:", data);
+
+    	    if (!data || data.length === 0) {
+    	      document.getElementById('chart-title').textContent = "Không có dữ liệu chi phí chuyến!";
+    	      return;
+    	    }
+
+    	    const labels = data.map(item => item.tenTour);
+    	    const values = data.map(item => item.tongChiPhi ?? 0);
+
+    	    document.getElementById("chart-area").style.display = "block";
+    	    drawChart("bar", "Tổng Chi Phí (VNĐ)", labels, values);
+
+    	  } catch (error) {
+    	    console.error("Lỗi tải báo cáo chi phí chuyến:", error);
+    	    document.getElementById('chart-title').textContent = "Không thể tải dữ liệu!";
+    	  }
+    	}
+    async function loadTopCustomersChart() {
+    	  try {
+    	    const res = await fetch("/nhanvien/report/api/top-customers");
+    	    const data = await res.json();
+
+    	    if (!data || data.length === 0) {
+    	      document.getElementById('chart-title').textContent = "Không có dữ liệu khách hàng!";
+    	      return;
+    	    }
+
+    	    const labels = data.map(item => item.hoTen);
+    	    const values = data.map(item => item.tongChiTieu);
+
+    	    drawChart("bar", "Top khách hàng chi tiêu (VNĐ)", labels, values);
+    	  } catch (error) {
+    	    console.error("Lỗi tải top khách hàng:", error);
+    	  }
+    	}
+
+
+</script>
   </body>
 </html>

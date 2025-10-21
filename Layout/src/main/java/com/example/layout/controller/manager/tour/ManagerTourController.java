@@ -2,6 +2,7 @@ package com.example.layout.controller.manager.tour;
 
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
+import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.entity.Tour;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
@@ -40,12 +41,13 @@ public class ManagerTourController {
     private final ChuyenDuLichService chuyenDuLichService;
     private final NhanVienService nhanVienService;
     private final LichTrinhService lichTrinhService;
-
-    public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService, NhanVienService nhanVienService, LichTrinhService lichTrinhService) {
+    private final LichTrinhRepository lichTrinhRepository;
+    public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService, NhanVienService nhanVienService, LichTrinhService lichTrinhService, LichTrinhRepository lichTrinhRepository) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
         this.nhanVienService = nhanVienService;
         this.lichTrinhService = lichTrinhService;
+        this.lichTrinhRepository = lichTrinhRepository;
     }
 
     @GetMapping("/tour")
@@ -140,12 +142,6 @@ public class ManagerTourController {
             @RequestParam int soNgay,
             @RequestParam(required = false) String moTa,
             @RequestParam("file") MultipartFile file,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayBatDau,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayKetThuc,
-            @RequestParam int soLuongToiDa,
-            @RequestParam BigDecimal giaThueHDV,
-            @RequestParam BigDecimal giaThueTX,
-            @RequestParam String trangThai,
             RedirectAttributes redirectAttributes
     ) {
         try {
@@ -167,15 +163,6 @@ public class ManagerTourController {
             tour.setHinhAnh(imageUrl);
             Tour savedTour = tourService.saveTour(tour);
 
-            ChuyenDuLich chuyen = new ChuyenDuLich();
-            chuyen.setTour(savedTour);
-            chuyen.setNgayBatDau(ngayBatDau);
-            chuyen.setNgayKetThuc(ngayKetThuc);
-            chuyen.setSoLuongToiDa(soLuongToiDa);
-            chuyen.setTrangThai(trangThai);
-            chuyen.setGiaThueHDV(giaThueHDV);
-            chuyen.setGiaThueTX(giaThueTX);
-            chuyenDuLichService.saveChuyen(chuyen);
 
             redirectAttributes.addFlashAttribute("success", "Thêm tour và chuyến đi thành công!");
         } catch (Exception e) {
@@ -448,6 +435,5 @@ public class ManagerTourController {
         Integer maTour = chuyenDuLich.getTour().getMaTour();
         return "redirect:/manager/tour/" + maTour + "/trips";
     }
-
-    
+   
 }

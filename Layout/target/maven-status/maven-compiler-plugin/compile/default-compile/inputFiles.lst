@@ -16,6 +16,7 @@ C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\q
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\SapKhoiHanhDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\BookingApiDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\KhuyenMaiRepository.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\TripFinanceSummaryDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\nhanvien\NhanvienBookingController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\LayoutApplication.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\DiaDiemRepository.java
@@ -35,6 +36,7 @@ C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\q
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\manager\tour\TourDetailController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\manager\tour\LichTrinhRequest.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\NhanVienDashboardController.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\BookingResponseDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\KhachHangRepository.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\config\SecurityConfig.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\guest\GuestBookingController.java
@@ -49,6 +51,7 @@ C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\q
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\manager\guest\ManagerGuestController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\DatChoDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\nhanvien\NhanvienHomeController.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\nhanvien\ReportApiController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\TaiKhoanRepository.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\VaiTroRepository.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\EmailService.java
@@ -63,11 +66,14 @@ C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\q
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\TourService.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\hdvtx\api\HdvTxSalaryApiController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\HanhKhachDTO.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\FinanceService.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\KhuyenMaiService.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\nhanvien\NhanvienReportController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\NhanVienDashboardService.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\nhanvien\NhanvienFinanceController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\KhachSanRepository.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\hdvtx\ProfileController.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\BookingApiController.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\ChiTietDatChoRepository.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\NewCustomerDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\repository\ThanhToanRepository.java
@@ -104,4 +110,5 @@ C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\q
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\service\ThanhToanService.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\DiaDiem.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\controller\hdvtx\TripPdfExportController.java
+C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\dto\FinanceReportDTO.java
 C:\Users\buita\Documents\workspace-spring-tool-suite-4-4.24.0.RELEASE\DoAnCNPM\quan-li-du-lich\Layout\src\main\java\com\example\layout\entity\KhachHang.java

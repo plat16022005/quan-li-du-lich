@@ -229,5 +229,49 @@ public interface ChuyenDuLichRepository extends JpaRepository<ChuyenDuLich, Inte
 
 	@Query("SELECT c FROM ChuyenDuLich c JOIN FETCH c.tour")
     List<ChuyenDuLich> findAllWithTour();
+    @Query("SELECT c FROM ChuyenDuLich c WHERE c.trangThai = 'Đã hoàn thành' ORDER BY c.ngayBatDau DESC")
+    List<ChuyenDuLich> findAllCompletedTrips();
+    
+    @Query(value = """
+    	    SELECT 
+    	        cd.MaChuyen,
+    	        t.TenTour,
+    	        cd.GiaThueHDV,
+    	        cd.GiaThueTX,
+    	        COALESCE(SUM(ks.GiaTheoNgay), 0) AS TongKS,
+    	        COALESCE(SUM(pt.GiaTheoNgay), 0) AS TongPT,
+    	        (cd.GiaThueHDV + cd.GiaThueTX + 
+    	         COALESCE(SUM(ks.GiaTheoNgay), 0) + 
+    	         COALESCE(SUM(pt.GiaTheoNgay), 0)) AS TongChiPhi
+    	    FROM ChuyenDuLich cd
+    	    JOIN Tour t ON cd.MaTour = t.MaTour
+    	    LEFT JOIN LichTrinh lt ON lt.MaTour = t.MaTour
+    	    LEFT JOIN KhachSan ks ON lt.MaKhachSan = ks.MaKhachSan
+    	    LEFT JOIN PhuongTien pt ON lt.MaPhuongTien = pt.MaPhuongTien
+    	    WHERE cd.MaChuyen = :maChuyen
+    	    GROUP BY cd.MaChuyen, t.TenTour, cd.GiaThueHDV, cd.GiaThueTX
+    	""", nativeQuery = true)
+    	List<Object[]> getFinanceData(@Param("maChuyen") Integer maChuyen);
+
+    	@Query(value = """
+    		    SELECT 
+    		        cd.MaChuyen,
+    		        t.TenTour,
+    		        cd.GiaThueHDV,
+    		        cd.GiaThueTX,
+    		        COALESCE(SUM(ks.GiaTheoNgay), 0) AS TongKS,
+    		        COALESCE(SUM(pt.GiaTheoNgay), 0) AS TongPT,
+    		        (COALESCE(cd.GiaThueHDV,0) + COALESCE(cd.GiaThueTX,0) +
+    		         COALESCE(SUM(ks.GiaTheoNgay), 0) + 
+    		         COALESCE(SUM(pt.GiaTheoNgay), 0)) AS TongChiPhi
+    		    FROM ChuyenDuLich cd
+    		    JOIN Tour t ON cd.MaTour = t.MaTour
+    		    LEFT JOIN LichTrinh lt ON lt.MaTour = t.MaTour
+    		    LEFT JOIN KhachSan ks ON lt.MaKhachSan = ks.MaKhachSan
+    		    LEFT JOIN PhuongTien pt ON lt.MaPhuongTien = pt.MaPhuongTien
+    		    GROUP BY cd.MaChuyen, t.TenTour, cd.GiaThueHDV, cd.GiaThueTX
+    		""", nativeQuery = true)
+    		List<Object[]> getAllFinanceData();
+
 }
 
