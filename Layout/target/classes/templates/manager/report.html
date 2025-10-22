@@ -152,7 +152,7 @@
                   class="w-full sm:w-auto pl-4 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm"
                 >
                   <option value="marketing">Hiệu quả marketing</option>
-                  <option value="expense">Tổng chi phí</option>
+                  <option value="expense">Tổng Doanh Thu</option>
                 </select>
                 <input
                   type="month"
@@ -169,13 +169,6 @@
               </div>
               <!-- Right side: Export Buttons -->
               <div class="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  id="export-excel"
-                  class="w-full text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors"
-                >
-                  <i class="fas fa-file-excel mr-2"></i>
-                  <span>Xuất Excel</span>
-                </button>
                 <button
                   id="export-pdf"
                   class="w-full text-sm bg-red-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors"
@@ -304,7 +297,7 @@
         });
       }
 
-      // Hàm vẽ biểu đồ chi phí (bar chart)
+      // Hàm vẽ biểu đồ doanh thu (bar chart)
       async function loadExpenseData() {
         try {
           const dateRange = document.getElementById("date-range").value;
@@ -349,7 +342,7 @@
               labels: labels,
               datasets: [
                 {
-                  label: "Tổng chi phí (VNĐ)",
+                  label: "Tổng doanh thu (VNĐ)",
                   data: values,
                   backgroundColor: "rgba(59, 130, 246, 0.7)",
                   borderColor: "rgba(59, 130, 246, 1)",
@@ -395,7 +388,7 @@
           console.log("New chart created");
         } catch (error) {
           console.error("Error loading expense data:", error);
-          alert("Có lỗi khi tải dữ liệu chi phí: " + error.message);
+          alert("Có lỗi khi tải dữ liệu doanh thu: " + error.message);
         }
       }
 
@@ -422,7 +415,7 @@
           dateRangeInput.disabled = true;
           loadMarketingData();
         } else if (type === "expense") {
-          chartTitle.textContent = "Biểu đồ thống kê tổng chi phí theo tháng";
+          chartTitle.textContent = "Biểu đồ thống kê tổng doanh thu theo tháng";
           dateRangeInput.disabled = false;
         }
       });
@@ -448,7 +441,7 @@
       });
 
       // Handle export buttons
-      document.getElementById("export-excel").addEventListener("click", () => {
+      /* document.getElementById("export-excel").addEventListener("click", () => {
         const reportType = document.getElementById("report-type").value;
         const dateRange = document.getElementById("date-range").value;
 
@@ -458,7 +451,7 @@
         }
 
         window.location.href = url;
-      });
+      }); {% endcomment %}*/
 
       document.getElementById("export-pdf").addEventListener("click", () => {
         const reportType = document.getElementById("report-type").value;

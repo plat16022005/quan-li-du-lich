@@ -1,571 +1,846 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trang Quản Trị - Quản Lý Nhân Viên</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
         .sidebar {
-            transition: transform 0.3s ease-in-out;
+          transform: translateX(-100%);
         }
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
+        .sidebar.open {
+          transform: translateX(0);
         }
-        .modal {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .modal-content {
-            transition: transform 0.3s ease;
-        }
-        .modal.hidden .modal-content {
-            transform: translateY(-50px);
-        }
+      }
+      .modal {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .modal.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+      .modal.hidden .modal-content {
+        transform: translateY(-50px);
+      }
     </style>
-</head>
-<body class="bg-gray-100">
+  </head>
+  <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
-            <div class="flex items-center justify-center h-20 border-b border-gray-700">
-                <i class="fas fa-route text-3xl text-blue-400"></i>
-                <span class="ml-3 text-2xl font-bold">TravelGO</span>
-            </div>
-            <nav class="mt-8 px-4">
-                <a href="/manager/home" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
-                    <span class="ml-4">Tổng quan</span>
-                </a>
-                <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-map-marked-alt w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Tour</span>
-                </a>
-                <a href="/manager/guest" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-users w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Khách hàng</span>
-                </a>
-                <a href="/manager/staff" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
-                    <i class="fas fa-user-tie w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Nhân viên</span>
-                </a>
-                <a href="/manager/promotion" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-tags w-6 text-center"></i>
-                    <span class="ml-4">Quản lý Khuyến mãi</span>
-                </a>
-                <a href="/manager/report" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-chart-pie w-6 text-center"></i>
-                    <span class="ml-4">Xuất báo cáo</span>
-                </a>
-            </nav>
-            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
-                 <a href="/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
-                    <i class="fas fa-sign-out-alt w-6 text-center"></i>
-                    <span class="ml-4">Đăng xuất</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main content -->
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            <!-- Header -->
-             <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20">
-                <div class="flex items-center">
-                    <button id="menu-button" class="md:hidden mr-4 text-gray-600">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                    <h1 class="text-2xl font-semibold text-gray-800">Quản Lý Nhân Viên</h1>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <div class="flex items-center">
-                        <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ" alt="Avatar" class="h-10 w-10 rounded-full object-cover">
-                        <div class="ml-3">
-                            <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
-                            <p class="text-xs text-gray-500">Admin</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content -->
-            <main class="flex-1 p-6">
-                <!-- Action bar -->
-                <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-				<div class="flex items-center space-x-4">
-				  <!-- Lọc vai trò -->
-				  <div class="relative">
-				    <select id="filter-role" class="pl-4 pr-10 py-2 border rounded-lg" onchange="applyFilter()">
-				      <option value="">Tất cả vai trò</option>
-				      <option value="2" th:selected="${role == 2}">Điều hành tour</option>
-				      <option value="3" th:selected="${role == 3}">Hướng dẫn viên</option>
-				      <option value="5" th:selected="${role == 5}">Tài xế</option>
-				    </select>
-				  </div>
-				
-				  <!-- Lọc trạng thái -->
-				  <div class="relative">
-				    <select id="filter-status" class="pl-4 pr-10 py-2 border rounded-lg" onchange="applyFilter()">
-				      <option value="">Tất cả trạng thái</option>
-				      <option value="true" th:selected="${status == true}">Hoạt động</option>
-				      <option value="false" th:selected="${status == false}">Đã khóa</option>
-				    </select>
-				  </div>
-				
-				  <!-- Ô tìm kiếm -->
-				  <div class="relative">
-					<input 
-					  type="text" 
-					  id="filter-keyword"
-					  th:value="${keyword}"
-					  onkeypress="if(event.key === 'Enter'){ applyFilter(); }"
-					  placeholder="Tìm kiếm nhân viên..."
-					  class="w-full md:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-
-				    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-				      <i class="fas fa-search text-gray-400"></i>
-				    </span>
-				  </div>
-				</div>
-
-					<button onclick="openAddStaffModal()" class="w-full md:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md">
-					    <i class="fas fa-user-plus mr-2"></i>
-					    <span>Thêm Nhân Viên</span>
-					</button>
-                </div>
-
-                <!-- Employees Table -->
-                <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-4">Nhân Viên</th>
-                                <th scope="col" class="px-6 py-4">Chức vụ</th>
-                                <th scope="col" class="px-6 py-4">Email</th>
-                                <th scope="col" class="px-6 py-4">Ngày tham gia</th>
-                                <th scope="col" class="px-6 py-4">Trạng thái</th>
-                                <th scope="col" class="px-6 py-4 text-center">Hành động</th>
-                            </tr>
-                        </thead>
-						<tbody>
-						  <tr th:each="staff : ${staffList}" class="bg-white border-b hover:bg-gray-50">
-						    <td class="px-6 py-4 font-semibold text-gray-900">
-						      <div class="flex items-center">
-						        <img class="h-10 w-10 rounded-full mr-3" 
-						             src="https://placehold.co/40x40/E2E8F0/4A5568?text=NV" alt="Avatar">
-						        <span th:text="${staff.taiKhoan.hoTen}"></span>
-						      </div>
-						    </td>
-						    <td class="px-6 py-4" th:text="${staff.chucVu}"></td>
-						    <td class="px-6 py-4" th:text="${staff.taiKhoan.email}"></td>
-						    <td class="px-6 py-4" th:text="${#temporals.format(staff.ngayVaoLam, 'dd/MM/yyyy')}"></td>
-						    <td class="px-6 py-4">
-						      <span th:if="${staff.taiKhoan.trangThai}" 
-						            class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Hoạt động</span>
-						      <span th:unless="${staff.taiKhoan.trangThai}" 
-						            class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Đã khóa</span>
-						    </td>
-						    <td class="px-6 py-4 text-center">
-								<button 
-								  th:attr="onclick=|openSalaryModal(${staff.maNhanVien}, '${staff.taiKhoan.hoTen}')|" 
-								  class="text-gray-500 hover:text-yellow-600 mr-4 text-base" 
-								  title="Quản lý lương">
-								  <i class="fas fa-file-invoice-dollar"></i>
-								</button>
-
-								<button 
-								  th:attr="onclick=|openEditStaffModal(${staff.maNhanVien}, '${staff.taiKhoan.hoTen}', '${staff.taiKhoan.email}', '${staff.taiKhoan.soDienThoai}', '${staff.chucVu}', '${#temporals.format(staff.ngayVaoLam, 'yyyy-MM-dd')}')|" 
-								  class="text-gray-500 hover:text-blue-600 mr-4 text-base" 
-								  title="Chỉnh sửa">
-								  <i class="fas fa-edit"></i>
-								</button>
-								<button 
-								  th:attr="onclick=|deleteStaff(${staff.taiKhoan.maTaiKhoan})|" 
-								  class="text-gray-500 hover:text-red-600 text-base" 
-								  title="Xóa">
-								  <i class="fas fa-exchange-alt"></i>
-								</button>
-						    </td>
-						  </tr>
-						</tbody>
-
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="flex items-center justify-between mt-6">
-                    <span class="text-sm text-gray-700">
-                    </span>
-					<div class="inline-flex items-center -space-x-px mt-6">
-						<a th:if="${hasPrev}" 
-						   th:href="@{'/manager/staff'(page=${currentPage - 1}, size=10, role=${role}, status=${status}, keyword=${keyword})}"
-						   class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
-						   Trước
-						</a>
-					    <a th:unless="${hasPrev}"
-					       class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-l-lg cursor-not-allowed">
-					        Trước
-					    </a>
-					
-					    <span class="px-4 py-2 bg-gray-50 border border-gray-300 text-gray-700">
-					        Trang <span th:text="${currentPage + 1}"></span> / <span th:text="${totalPages}"></span>
-					    </span>
-					
-						<a th:if="${hasNext}" 
-						   th:href="@{'/manager/staff'(page=${currentPage + 1}, size=10, role=${role}, status=${status}, keyword=${keyword})}"
-						   class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
-						   Sau
-						</a>
-					    <a th:unless="${hasNext}"
-					       class="px-3 py-2 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-r-lg cursor-not-allowed">
-					        Sau
-					    </a>
-					</div>
-
-                </div>
-            </main>
+      <!-- Sidebar -->
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
         </div>
+        <nav class="mt-8 px-4">
+          <a
+            href="/manager/home"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i>
+            <span class="ml-4">Tổng quan</span>
+          </a>
+          <a
+            href="/manager/tour"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i>
+            <span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a
+            href="/manager/guest"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-users w-6 text-center"></i>
+            <span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a
+            href="/manager/staff"
+            class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-user-tie w-6 text-center"></i>
+            <span class="ml-4">Quản lý Nhân viên</span>
+          </a>
+          <a
+            href="/manager/promotion"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-tags w-6 text-center"></i>
+            <span class="ml-4">Quản lý Khuyến mãi</span>
+          </a>
+          <a
+            href="/manager/report"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i>
+            <span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+          <a
+            href="/logout"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Header -->
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20"
+        >
+          <div class="flex items-center">
+            <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <h1 class="text-2xl font-semibold text-gray-800">
+              Quản Lý Nhân Viên
+            </h1>
+          </div>
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ"
+                alt="Avatar"
+                class="h-10 w-10 rounded-full object-cover"
+              />
+              <div class="ml-3">
+                <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
+                <p class="text-xs text-gray-500">Admin</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 p-6">
+          <!-- Action bar -->
+          <div
+            class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4"
+          >
+            <div class="flex items-center space-x-4">
+              <!-- Lọc vai trò -->
+              <div class="relative">
+                <select
+                  id="filter-role"
+                  class="pl-4 pr-10 py-2 border rounded-lg"
+                  onchange="applyFilter()"
+                >
+                  <option value="">Tất cả vai trò</option>
+                  <option value="2" th:selected="${role == 2}">
+                    Điều hành tour
+                  </option>
+                  <option value="3" th:selected="${role == 3}">
+                    Hướng dẫn viên
+                  </option>
+                  <option value="5" th:selected="${role == 5}">Tài xế</option>
+                </select>
+              </div>
+
+              <!-- Lọc trạng thái -->
+              <div class="relative">
+                <select
+                  id="filter-status"
+                  class="pl-4 pr-10 py-2 border rounded-lg"
+                  onchange="applyFilter()"
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="true" th:selected="${status == true}">
+                    Hoạt động
+                  </option>
+                  <option value="false" th:selected="${status == false}">
+                    Đã khóa
+                  </option>
+                </select>
+              </div>
+
+              <!-- Ô tìm kiếm -->
+              <div class="relative">
+                <input
+                  type="text"
+                  id="filter-keyword"
+                  th:value="${keyword}"
+                  onkeypress="if(event.key === 'Enter'){ applyFilter(); }"
+                  placeholder="Tìm kiếm nhân viên..."
+                  class="w-full md:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                />
+
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <i class="fas fa-search text-gray-400"></i>
+                </span>
+              </div>
+            </div>
+
+            <button
+              onclick="openAddStaffModal()"
+              class="w-full md:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md"
+            >
+              <i class="fas fa-user-plus mr-2"></i>
+              <span>Thêm Nhân Viên</span>
+            </button>
+          </div>
+
+          <!-- Employees Table -->
+          <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-600">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-4">Nhân Viên</th>
+                  <th scope="col" class="px-6 py-4">Chức vụ</th>
+                  <th scope="col" class="px-6 py-4">Email</th>
+                  <th scope="col" class="px-6 py-4">Ngày tham gia</th>
+                  <th scope="col" class="px-6 py-4">Trạng thái</th>
+                  <th scope="col" class="px-6 py-4 text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="staff : ${staffList}"
+                  class="bg-white border-b hover:bg-gray-50"
+                >
+                  <td class="px-6 py-4 font-semibold text-gray-900">
+                    <div class="flex items-center">
+                      <img
+                        class="h-10 w-10 rounded-full mr-3"
+                        src="https://placehold.co/40x40/E2E8F0/4A5568?text=NV"
+                        alt="Avatar"
+                      />
+                      <span th:text="${staff.taiKhoan.hoTen}"></span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4" th:text="${staff.chucVu}"></td>
+                  <td class="px-6 py-4" th:text="${staff.taiKhoan.email}"></td>
+                  <td
+                    class="px-6 py-4"
+                    th:text="${#temporals.format(staff.ngayVaoLam, 'dd/MM/yyyy')}"
+                  ></td>
+                  <td class="px-6 py-4">
+                    <span
+                      th:if="${staff.taiKhoan.trangThai}"
+                      class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full"
+                      >Hoạt động</span
+                    >
+                    <span
+                      th:unless="${staff.taiKhoan.trangThai}"
+                      class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full"
+                      >Đã khóa</span
+                    >
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <button
+                      th:attr="onclick=|openSalaryModal(${staff.maNhanVien}, '${staff.taiKhoan.hoTen}')|"
+                      class="text-gray-500 hover:text-yellow-600 mr-4 text-base"
+                      title="Quản lý lương"
+                    >
+                      <i class="fas fa-file-invoice-dollar"></i>
+                    </button>
+
+                    <button
+                      th:attr="onclick=|openEditStaffModal(${staff.maNhanVien}, '${staff.taiKhoan.hoTen}', '${staff.taiKhoan.email}', '${staff.taiKhoan.soDienThoai}', '${staff.chucVu}', '${#temporals.format(staff.ngayVaoLam, 'yyyy-MM-dd')}')|"
+                      class="text-gray-500 hover:text-blue-600 mr-4 text-base"
+                      title="Chỉnh sửa"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      th:attr="onclick=|deleteStaff(${staff.taiKhoan.maTaiKhoan})|"
+                      class="text-gray-500 hover:text-red-600 text-base"
+                      title="Xóa"
+                    >
+                      <i class="fas fa-exchange-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex items-center justify-between mt-6">
+            <span class="text-sm text-gray-700"> </span>
+            <div class="inline-flex items-center -space-x-px mt-6">
+              <a
+                th:if="${hasPrev}"
+                th:href="@{'/manager/staff'(page=${currentPage - 1}, size=10, role=${role}, status=${status}, keyword=${keyword})}"
+                class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+              >
+                Trước
+              </a>
+              <a
+                th:unless="${hasPrev}"
+                class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-l-lg cursor-not-allowed"
+              >
+                Trước
+              </a>
+
+              <span
+                class="px-4 py-2 bg-gray-50 border border-gray-300 text-gray-700"
+              >
+                Trang <span th:text="${currentPage + 1}"></span> /
+                <span th:text="${totalPages}"></span>
+              </span>
+
+              <a
+                th:if="${hasNext}"
+                th:href="@{'/manager/staff'(page=${currentPage + 1}, size=10, role=${role}, status=${status}, keyword=${keyword})}"
+                class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+              >
+                Sau
+              </a>
+              <a
+                th:unless="${hasNext}"
+                class="px-3 py-2 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-r-lg cursor-not-allowed"
+              >
+                Sau
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
     <!-- Modal Tính Lương -->
-<div id="salary-modal" class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-  <div class="modal-content bg-white p-6 rounded-lg w-96 shadow-lg">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold text-gray-800">Tính lương nhân viên</h2>
-      <button onclick="closeSalaryModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+    <div
+      id="salary-modal"
+      class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="modal-content bg-white p-6 rounded-lg w-96 shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-gray-800">Tính lương nhân viên</h2>
+          <button
+            onclick="closeSalaryModal()"
+            class="text-gray-500 hover:text-gray-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form id="salary-form">
+          <input type="hidden" id="salary-id" />
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Họ tên</label
+            >
+            <input
+              type="text"
+              id="salary-name"
+              readonly
+              class="w-full border p-2 rounded-lg bg-gray-100"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Lương cơ bản (VNĐ)</label
+            >
+            <input
+              type="number"
+              id="salary-base"
+              class="w-full border p-2 rounded-lg"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Số ngày làm</label
+            >
+            <input
+              type="number"
+              id="salary-days"
+              class="w-full border p-2 rounded-lg"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Phụ cấp (VNĐ)</label
+            >
+            <input
+              type="number"
+              id="salary-bonus"
+              class="w-full border p-2 rounded-lg"
+              value="0"
+            />
+          </div>
+
+          <div class="mt-4 p-3 bg-gray-100 rounded text-center">
+            <span class="font-semibold text-gray-800">Lương hiện tại: </span>
+            <span id="salary-result" class="text-blue-600 font-bold"
+              >0 VNĐ</span
+            >
+          </div>
+
+          <div class="mt-5 flex justify-end gap-2">
+            <div class="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onclick="calcSalary()"
+                class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+              >
+                Tính
+              </button>
+              <button
+                type="button"
+                onclick="saveSalary()"
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                Lưu
+              </button>
+              <button
+                type="button"
+                onclick="closeSalaryModal()"
+                class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Modal Thêm Nhân Viên + Tài Khoản -->
+    <div
+      id="add-staff-modal"
+      class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]"
+    >
+      <div class="modal-content bg-white p-6 rounded-lg w-[450px] shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-gray-800">Thêm Nhân Viên Mới</h2>
+          <button
+            onclick="closeAddStaffModal()"
+            class="text-gray-500 hover:text-gray-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form method="post" action="/manager/staff/add">
+          <!-- Tài khoản -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Tên đăng nhập</label
+            >
+            <input
+              type="text"
+              name="tenDangNhap"
+              required
+              placeholder="Tên đăng nhập"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Mật khẩu</label
+            >
+            <input
+              type="password"
+              name="matKhau"
+              required
+              placeholder="Mật khẩu"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <!-- Thông tin cá nhân -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Họ tên</label
+            >
+            <input
+              type="text"
+              name="hoTen"
+              required
+              placeholder="Họ và tên"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Số điện thoại</label
+            >
+            <input
+              type="text"
+              name="soDienThoai"
+              placeholder="Số điện thoại"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <!-- Vai trò -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Vai trò / Chức vụ</label
+            >
+            <select
+              name="maVaiTro"
+              required
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">-- Chọn vai trò --</option>
+              <option value="2">Điều hành tour</option>
+              <option value="3">Hướng dẫn viên</option>
+              <option value="5">Tài xế</option>
+            </select>
+          </div>
+
+          <!-- Thông tin công việc -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Ngày vào làm</label
+            >
+            <input
+              type="date"
+              name="ngayVaoLam"
+              required
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div class="mt-5 flex justify-end gap-2">
+            <button
+              type="button"
+              onclick="closeAddStaffModal()"
+              class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Thêm
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <form id="salary-form">
-      <input type="hidden" id="salary-id">
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
-        <input type="text" id="salary-name" readonly class="w-full border p-2 rounded-lg bg-gray-100">
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Lương cơ bản (VNĐ)</label>
-        <input type="number" id="salary-base" class="w-full border p-2 rounded-lg" required>
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Số ngày làm</label>
-        <input type="number" id="salary-days" class="w-full border p-2 rounded-lg" required>
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Phụ cấp (VNĐ)</label>
-        <input type="number" id="salary-bonus" class="w-full border p-2 rounded-lg" value="0">
-      </div>
+    <!-- Modal Chỉnh sửa Nhân Viên -->
+    <div
+      id="edit-staff-modal"
+      class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]"
+    >
+      <div class="modal-content bg-white p-6 rounded-lg w-[450px] shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-gray-800">Chỉnh sửa thông tin</h2>
+          <button
+            onclick="closeEditStaffModal()"
+            class="text-gray-500 hover:text-gray-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
 
-      <div class="mt-4 p-3 bg-gray-100 rounded text-center">
-        <span class="font-semibold text-gray-800">Lương hiện tại: </span>
-        <span id="salary-result" class="text-blue-600 font-bold">0 VNĐ</span>
-      </div>
+        <form id="edit-staff-form">
+          <input type="hidden" id="edit-id" />
 
-      <div class="mt-5 flex justify-end gap-2">
-		<div class="mt-5 flex justify-end gap-2">
-		  <button type="button" onclick="calcSalary()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Tính</button>
-		  <button type="button" onclick="saveSalary()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Lưu</button>
-		  <button type="button" onclick="closeSalaryModal()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Đóng</button>
-		</div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Họ tên</label
+            >
+            <input
+              type="text"
+              id="edit-name"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="edit-email"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Số điện thoại</label
+            >
+            <input
+              type="text"
+              id="edit-phone"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Chức vụ</label
+            >
+            <input
+              type="text"
+              id="edit-role"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Ngày vào làm</label
+            >
+            <input
+              type="date"
+              id="edit-date"
+              class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div class="mt-5 flex justify-end gap-2">
+            <button
+              type="button"
+              onclick="closeEditStaffModal()"
+              class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onclick="updateStaff()"
+              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Lưu
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
-<!-- Modal Thêm Nhân Viên + Tài Khoản -->
-<div id="add-staff-modal" 
-     class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
-  <div class="modal-content bg-white p-6 rounded-lg w-[450px] shadow-lg">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold text-gray-800">Thêm Nhân Viên Mới</h2>
-      <button onclick="closeAddStaffModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
     </div>
 
-    <form method="post" action="/manager/staff/add">
-      <!-- Tài khoản -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Tên đăng nhập</label>
-        <input type="text" name="tenDangNhap" required placeholder="Tên đăng nhập" 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-        <input type="password" name="matKhau" required placeholder="Mật khẩu" 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
+    <script>
+      function openSalaryModal(id, name) {
+        document.getElementById("salary-id").value = id;
+        document.getElementById("salary-name").value = name;
+        document.getElementById("salary-base").value = "";
+        document.getElementById("salary-days").value = "";
+        document.getElementById("salary-bonus").value = 0;
+        document.getElementById("salary-result").textContent = "0 VNĐ";
+        fetch(`/manager/staff/salary/${id}`)
+          .then((response) => response.text())
+          .then((data) => {
+            const currentSalary = parseFloat(data) || 0;
+            document.getElementById("salary-result").textContent =
+              currentSalary.toLocaleString("vi-VN") + " VNĐ";
+          });
 
-      <!-- Thông tin cá nhân -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
-        <input type="text" name="hoTen" required placeholder="Họ và tên" 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input type="email" name="email" placeholder="Email" 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
-        <input type="text" name="soDienThoai" placeholder="Số điện thoại" 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
+        document.getElementById("salary-modal").classList.remove("hidden");
+      }
 
-      <!-- Vai trò -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Vai trò / Chức vụ</label>
-        <select name="maVaiTro" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-          <option value="">-- Chọn vai trò --</option>
-          <option value="2">Điều hành tour</option>
-          <option value="3">Hướng dẫn viên</option>
-          <option value="5">Tài xế</option>
-        </select>
-      </div>
+      function closeSalaryModal() {
+        document.getElementById("salary-modal").classList.add("hidden");
+      }
 
-      <!-- Thông tin công việc -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Ngày vào làm</label>
-        <input type="date" name="ngayVaoLam" required 
-               class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
+      function calcSalary() {
+        const base =
+          parseFloat(document.getElementById("salary-base").value) || 0;
+        const days =
+          parseInt(document.getElementById("salary-days").value) || 0;
+        const bonus =
+          parseFloat(document.getElementById("salary-bonus").value) || 0;
 
-      <div class="mt-5 flex justify-end gap-2">
-        <button type="button" onclick="closeAddStaffModal()" 
-                class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Hủy</button>
-        <button type="submit" 
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Thêm</button>
-      </div>
-    </form>
-  </div>
-</div>
+        // Ví dụ: tiền công 1 ngày = 200.000 VNĐ
+        const total = base + days * 200000 + bonus;
 
-<!-- Modal Chỉnh sửa Nhân Viên -->
-<div id="edit-staff-modal" class="modal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
-  <div class="modal-content bg-white p-6 rounded-lg w-[450px] shadow-lg">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold text-gray-800">Chỉnh sửa thông tin</h2>
-      <button onclick="closeEditStaffModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
-    </div>
+        document.getElementById("salary-result").textContent =
+          total.toLocaleString("vi-VN") + " VNĐ";
+      }
+    </script>
 
-    <form id="edit-staff-form">
-      <input type="hidden" id="edit-id">
-
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
-        <input type="text" id="edit-name" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input type="email" id="edit-email" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
-        <input type="text" id="edit-phone" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Chức vụ</label>
-        <input type="text" id="edit-role" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Ngày vào làm</label>
-        <input type="date" id="edit-date" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-      </div>
-
-      <div class="mt-5 flex justify-end gap-2">
-        <button type="button" onclick="closeEditStaffModal()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Hủy</button>
-        <button type="button" onclick="updateStaff()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Lưu</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script>
-  function openSalaryModal(id, name) {
-    document.getElementById('salary-id').value = id;
-    document.getElementById('salary-name').value = name;
-    document.getElementById('salary-base').value = '';
-    document.getElementById('salary-days').value = '';
-    document.getElementById('salary-bonus').value = 0;
-    document.getElementById('salary-result').textContent = '0 VNĐ';
-    fetch(`/manager/staff/salary/${id}`)
-    .then(response => response.text())
-    .then(data => {
-      const currentSalary = parseFloat(data) || 0;
-      document.getElementById('salary-result').textContent = 
-        currentSalary.toLocaleString('vi-VN') + ' VNĐ';
-    });
-
-  document.getElementById('salary-modal').classList.remove('hidden');
-  }
-
-  function closeSalaryModal() {
-    document.getElementById('salary-modal').classList.add('hidden');
-  }
-
-  function calcSalary() {
-    const base = parseFloat(document.getElementById('salary-base').value) || 0;
-    const days = parseInt(document.getElementById('salary-days').value) || 0;
-    const bonus = parseFloat(document.getElementById('salary-bonus').value) || 0;
-
-    // Ví dụ: tiền công 1 ngày = 200.000 VNĐ
-    const total = base + (days * 200000) + bonus;
-
-    document.getElementById('salary-result').textContent = total.toLocaleString('vi-VN') + ' VNĐ';
-  }
-</script>
-    
-  <script>
-    const menuButton = document.getElementById('menu-button');
-    const sidebar = document.getElementById('sidebar');
-    if (menuButton && sidebar) menuButton.addEventListener('click', () => sidebar.classList.toggle('open'));
-  </script>
-  <script>
-  (function(){
-    try{
-      const links = Array.from(document.querySelectorAll('aside#sidebar a'));
-      const path = window.location.pathname.replace(/\/$/, '');
-      links.forEach(a=>{
-        const href = (a.getAttribute('href')||'').replace(/\/$/, '');
-        if (href === path) {
-          a.classList.remove('text-gray-300'); a.classList.add('bg-gray-700','text-white');
+    <script>
+      const menuButton = document.getElementById("menu-button");
+      const sidebar = document.getElementById("sidebar");
+      if (menuButton && sidebar)
+        menuButton.addEventListener("click", () =>
+          sidebar.classList.toggle("open")
+        );
+    </script>
+    <script>
+      (function () {
+        try {
+          const links = Array.from(
+            document.querySelectorAll("aside#sidebar a")
+          );
+          const path = window.location.pathname.replace(/\/$/, "");
+          links.forEach((a) => {
+            const href = (a.getAttribute("href") || "").replace(/\/$/, "");
+            if (href === path) {
+              a.classList.remove("text-gray-300");
+              a.classList.add("bg-gray-700", "text-white");
+            }
+          });
+        } catch (e) {
+          console.warn(e);
         }
-      });
-    }catch(e){console.warn(e)}
-  })();
-  </script>
-<script>
-  function openAddStaffModal() {
-    document.getElementById('add-staff-modal').classList.remove('hidden');
-  }
+      })();
+    </script>
+    <script>
+      function openAddStaffModal() {
+        document.getElementById("add-staff-modal").classList.remove("hidden");
+      }
 
-  function closeAddStaffModal() {
-    document.getElementById('add-staff-modal').classList.add('hidden');
-  }
-</script>
-<script>
-function saveSalary() {
-  const id = document.getElementById('salary-id').value;
-  const base = document.getElementById('salary-base').value;
-  const days = document.getElementById('salary-days').value;
-  const bonus = document.getElementById('salary-bonus').value;
+      function closeAddStaffModal() {
+        document.getElementById("add-staff-modal").classList.add("hidden");
+      }
+    </script>
+    <script>
+      function saveSalary() {
+        const id = document.getElementById("salary-id").value;
+        const base = document.getElementById("salary-base").value;
+        const days = document.getElementById("salary-days").value;
+        const bonus = document.getElementById("salary-bonus").value;
 
-  fetch('/manager/staff/salary', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      maNhanVien: id,
-      luongCoBan: base,
-      soNgayLam: days,
-      phuCap: bonus
-    })
-  })
-  .then(response => response.text())
-  .then(data => {
-    if (data === 'success') {
-      alert('💰 Đã lưu lương thành công!');
-      closeSalaryModal();
-      location.reload(); // reload để cập nhật bảng nhân viên
-    } else {
-      alert('❌ Có lỗi khi lưu lương!');
-    }
-  });
-}
-</script>
-<script>
-function deleteStaff(id) {
-  if (!confirm('⚠️ Bạn có chắc muốn thay đổi trạng thái tài khoản này không?')) return;
+        fetch("/manager/staff/salary", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            maNhanVien: id,
+            luongCoBan: base,
+            soNgayLam: days,
+            phuCap: bonus,
+          }),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            if (data === "success") {
+              alert("💰 Đã lưu lương thành công!");
+              closeSalaryModal();
+              location.reload(); // reload để cập nhật bảng nhân viên
+            } else {
+              alert("❌ Có lỗi khi lưu lương!");
+            }
+          });
+      }
+    </script>
+    <script>
+      function deleteStaff(id) {
+        if (
+          !confirm(
+            "⚠️ Bạn có chắc muốn thay đổi trạng thái tài khoản này không?"
+          )
+        )
+          return;
 
-  fetch('/manager/staff/delete/' + id, {
-    method: 'POST'
-  })
-  .then(response => response.text())
-  .then(data => {
-    if (data === 'success') {
-      alert('✅ Đã thay đổi trạng thái tài khoản nhân viên');
-      location.reload();
-    } else {
-      alert('❌ Thay đổi thất bại');
-    }
-  });
-}
-</script>
-<script>
-function openEditStaffModal(id, name, email, phone, role, date) {
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-name').value = name;
-  document.getElementById('edit-email').value = email;
-  document.getElementById('edit-phone').value = phone;
-  document.getElementById('edit-role').value = role;
-  document.getElementById('edit-date').value = date;
-  document.getElementById('edit-staff-modal').classList.remove('hidden');
-}
+        fetch("/manager/staff/delete/" + id, {
+          method: "POST",
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            if (data === "success") {
+              alert("✅ Đã thay đổi trạng thái tài khoản nhân viên");
+              location.reload();
+            } else {
+              alert("❌ Thay đổi thất bại");
+            }
+          });
+      }
+    </script>
+    <script>
+      function openEditStaffModal(id, name, email, phone, role, date) {
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-name").value = name;
+        document.getElementById("edit-email").value = email;
+        document.getElementById("edit-phone").value = phone;
+        document.getElementById("edit-role").value = role;
+        document.getElementById("edit-date").value = date;
+        document.getElementById("edit-staff-modal").classList.remove("hidden");
+      }
 
-function closeEditStaffModal() {
-  document.getElementById('edit-staff-modal').classList.add('hidden');
-}
-</script>
-<script>
-function updateStaff() {
-  const id = document.getElementById('edit-id').value;
-  const name = document.getElementById('edit-name').value;
-  const email = document.getElementById('edit-email').value;
-  const phone = document.getElementById('edit-phone').value;
-  const role = document.getElementById('edit-role').value;
-  const date = document.getElementById('edit-date').value;
+      function closeEditStaffModal() {
+        document.getElementById("edit-staff-modal").classList.add("hidden");
+      }
+    </script>
+    <script>
+      function updateStaff() {
+        const id = document.getElementById("edit-id").value;
+        const name = document.getElementById("edit-name").value;
+        const email = document.getElementById("edit-email").value;
+        const phone = document.getElementById("edit-phone").value;
+        const role = document.getElementById("edit-role").value;
+        const date = document.getElementById("edit-date").value;
 
-  fetch('/manager/staff/update/' + id, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      hoTen: name,
-      email: email,
-      soDienThoai: phone,
-      chucVu: role,
-      ngayVaoLam: date
-    })
-  })
-  .then(response => response.text())
-  .then(data => {
-    if (data === 'success') {
-      alert('✅ Đã cập nhật thông tin thành công');
-      closeEditStaffModal();
-      location.reload();
-    } else {
-      alert('❌ Cập nhật thất bại');
-    }
-  });
-}
-function applyFilter(page = 0) {
-	  const role = document.getElementById('filter-role').value;
-	  const status = document.getElementById('filter-status') ? document.getElementById('filter-status').value : '';
-	  const keyword = document.getElementById('filter-keyword').value;
+        fetch("/manager/staff/update/" + id, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            hoTen: name,
+            email: email,
+            soDienThoai: phone,
+            chucVu: role,
+            ngayVaoLam: date,
+          }),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            if (data === "success") {
+              alert("✅ Đã cập nhật thông tin thành công");
+              closeEditStaffModal();
+              location.reload();
+            } else {
+              alert("❌ Cập nhật thất bại");
+            }
+          });
+      }
+      function applyFilter(page = 0) {
+        const role = document.getElementById("filter-role").value;
+        const status = document.getElementById("filter-status")
+          ? document.getElementById("filter-status").value
+          : "";
+        const keyword = document.getElementById("filter-keyword").value;
 
-	  const params = new URLSearchParams();
-	  params.append('page', page);
-	  params.append('size', 10);
+        const params = new URLSearchParams();
+        params.append("page", page);
+        params.append("size", 10);
 
-	  if (role && role !== 'Tất cả vai trò') params.append('role', role);
-	  if (status && status !== 'Tất cả trạng thái') params.append('status', status);
-	  if (keyword.trim() !== '') params.append('keyword', keyword.trim());
+        if (role && role !== "Tất cả vai trò") params.append("role", role);
+        if (status && status !== "Tất cả trạng thái")
+          params.append("status", status);
+        if (keyword.trim() !== "") params.append("keyword", keyword.trim());
 
-	  window.location.href = '/manager/staff?' + params.toString();
-	}
-
-</script>
-
-</body>
+        window.location.href = "/manager/staff?" + params.toString();
+      }
+    </script>
+  </body>
 </html>

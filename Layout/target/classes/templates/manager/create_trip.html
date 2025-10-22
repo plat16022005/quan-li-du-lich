@@ -40,6 +40,14 @@
         </header>
 
         <main class="flex-1 p-6">
+          <div
+            th:if="${errorMessage}"
+            class="max-w-3xl mx-auto p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
+            role="alert"
+          >
+            <span class="font-medium">Lỗi!</span>
+            <span th:text="${errorMessage}"></span>
+          </div>
           <form
             th:action="@{/manager/tour/create-trip-post}"
             th:object="${chuyenDuLich}"

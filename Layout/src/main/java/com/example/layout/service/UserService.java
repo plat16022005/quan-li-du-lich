@@ -34,6 +34,9 @@ public class UserService {
         {
             return false;
         }
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email " + email + " đã tồn tại!");
+        }
         User user = new User();
         user.setTenDangNhap(username);
         user.setMatKhau(password);

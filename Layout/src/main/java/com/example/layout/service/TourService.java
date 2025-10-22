@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 //import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -31,6 +33,14 @@ public class TourService {
         return tourRepository.findAll();
     }
     public Tour saveTour(Tour tour) {
+        if (tour.getGiaCoBan() != null && tour.getGiaCoBan().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Giá cơ bản của tour phải lớn hơn 0");
+        }
+
+    // === KIỂM TRA SỐ NGÀY > 0 ===
+        if (tour.getSoNgay() != null && tour.getSoNgay() <= 0) {
+            throw new RuntimeException("Số ngày của tour phải ít nhất là 1");
+        }
         return tourRepository.save(tour);
     }
     @Transactional

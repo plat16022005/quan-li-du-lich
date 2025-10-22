@@ -18,6 +18,12 @@ public class KhuyenMaiService {
     }
 
     public KhuyenMai save(KhuyenMai km) {
+        if (repository.existsByMaCode(km.getMaCode())) {
+            throw new RuntimeException("Mã code " + km.getMaCode() + " đã tồn tại!");
+        }
+        if(km.getNgayBatDau().isAfter(km.getNgayKetThuc())) {
+            throw new RuntimeException("Ngày bắt đầu phải trước ngày kết thúc!");
+        }
         return repository.save(km);
     }
 

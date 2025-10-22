@@ -84,12 +84,15 @@ public class ManagerStaffController {
         @RequestParam("soDienThoai") String soDienThoai,
         @RequestParam("ngayVaoLam") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayVaoLam
     ) {
-
         // ⚠️ Kiểm tra tài khoản đã tồn tại
         if (taiKhoanRepository.existsByTenDangNhap(tenDangNhap)) {
-            // có thể set flash attribute thông báo lỗi
-            return "redirect:/manager/staff?error=tendangnhap";
+            throw new RuntimeException("Tên đăng nhập " + tenDangNhap + " đã tồn tại!");    
         }
+        if (taiKhoanRepository.existsByEmail(email)) {
+            // có thể set flash attribute thông báo lỗi
+            throw new RuntimeException("Email " + email + " đã tồn tại!");
+        }
+    
 
         // ✅ Tạo tài khoản
         User taiKhoan = new User();

@@ -4,6 +4,7 @@ import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.entity.Tour;
+import com.example.layout.dto.TourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.service.TourService;
@@ -187,13 +188,22 @@ public class ManagerTourController {
     @ResponseBody
     public ResponseEntity<?> getTourAndChuyen(@PathVariable Integer maTour) {
         Tour tour = tourService.getTourById(maTour);
-        ChuyenDuLich chuyen = chuyenDuLichService.getNearestChuyen(maTour).orElse(null);
+        //ChuyenDuLich chuyen = chuyenDuLichService.getNearestChuyen(maTour).orElse(null);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("tour", tour);
-        response.put("chuyen", chuyen);
+        // Map<String, Object> response = new HashMap<>();
+        // response.put("tour", tour);
+        // response.put("chuyen", chuyen);
 
-        return ResponseEntity.ok(response);
+        TourDTO tourDTO = new TourDTO(
+                tour.getMaTour(),
+                tour.getTenTour(),
+                tour.getGiaCoBan(),
+                tour.getSoNgay(),
+                tour.getMoTa(),
+                tour.getHinhAnh()
+        );
+
+        return ResponseEntity.ok(tourDTO);
     }
 
     @PutMapping("/tour/update/{maTour}")
@@ -204,8 +214,7 @@ public class ManagerTourController {
 
         try {
             Map<String, Object> tourData = (Map<String, Object>) body.get("tour");
-            Map<String, Object> chuyenData = (Map<String, Object>) body.get("chuyen");
-
+            // Map<String, Object> chuyenData = (Map<String, Object>) body.get("chuyen");
             Tour tour = tourService.getTourById(maTour);
             if (tour == null) return ResponseEntity.notFound().build();
 
@@ -217,17 +226,16 @@ public class ManagerTourController {
             System.out.println(">>>> HINH ANH NHẬN VÀO: " + tourData.get("hinhAnh"));
             tourService.saveTour(tour);
 
-            if (chuyenData != null && chuyenData.get("maChuyen") != null) {
-                Integer maChuyen = Integer.parseInt(chuyenData.get("maChuyen").toString());
-                ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
-                if (chuyen != null) {
-                    chuyen.setNgayBatDau(LocalDate.parse(chuyenData.get("ngayBatDau").toString()));
-                    chuyen.setNgayKetThuc(LocalDate.parse(chuyenData.get("ngayKetThuc").toString()));
-                    chuyen.setSoLuongToiDa(Integer.parseInt(chuyenData.get("soLuongToiDa").toString()));
-                    chuyen.setTrangThai((String) chuyenData.get("trangThai"));
-                    chuyenDuLichService.saveChuyen(chuyen);
-                }
-            }
+            // if (chuyenData != null && chuyenData.get("maChuyen") != null) {
+            //     Integer maChuyen = Integer.parseInt(chuyenData.get("maChuyen").toString());
+            //     ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
+            //     if (chuyen != null) {
+            //         chuyen.setNgayBatDau(LocalDate.parse(chuyenData.get("ngayBatDau").toString()));
+            //         chuyen.setNgayKetThuc(LocalDate.parse(chuyenData.get("ngayKetThuc").toString()));
+            //         chuyen.setSoLuongToiDa(Integer.parseInt(chuyenData.get("soLuongToiDa").toString()));
+            //         chuyen.setTrangThai((String) chuyenData.get("trangThai"));
+            //         chuyenDuLichService.saveChuyen(chuyen);
+            //     }
 
             return ResponseEntity.ok("Cập nhật Tour và Chuyến thành công!");
         } catch (Exception e) {
@@ -425,11 +433,15 @@ public class ManagerTourController {
     public String handleSaveChuyenDuLich(@ModelAttribute("chuyenDuLich") ChuyenDuLich chuyenDuLich, 
                                         RedirectAttributes redirectAttributes) {
         try {
+            if (chuyenDuLich.getNgayBatDau() != null && chuyenDuLich.getNgayKetThuc() != null) {
+                if (chuyenDuLich.getNgayBatDau().isAfter(chuyenDuLich.getNgayKetThuc())) {
+                    throw new RuntimeException("Lỗi: Ngày bắt đầu phải trước ngày kết thúc!");
+                }
+            }
             chuyenDuLichService.saveChuyen(chuyenDuLich);
             redirectAttributes.addFlashAttribute("success", "Lưu chuyến đi thành công!");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi lưu chuyến đi.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi lưu chuyến đi.");
         }
         
         Integer maTour = chuyenDuLich.getTour().getMaTour();
