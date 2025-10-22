@@ -425,11 +425,15 @@ public class ManagerTourController {
     public String handleSaveChuyenDuLich(@ModelAttribute("chuyenDuLich") ChuyenDuLich chuyenDuLich, 
                                         RedirectAttributes redirectAttributes) {
         try {
+            if (chuyenDuLich.getNgayBatDau() != null && chuyenDuLich.getNgayKetThuc() != null) {
+                if (chuyenDuLich.getNgayBatDau().isAfter(chuyenDuLich.getNgayKetThuc())) {
+                    throw new RuntimeException("Lỗi: Ngày bắt đầu phải trước ngày kết thúc!");
+                }
+            }
             chuyenDuLichService.saveChuyen(chuyenDuLich);
             redirectAttributes.addFlashAttribute("success", "Lưu chuyến đi thành công!");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi lưu chuyến đi.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi lưu chuyến đi.");
         }
         
         Integer maTour = chuyenDuLich.getTour().getMaTour();

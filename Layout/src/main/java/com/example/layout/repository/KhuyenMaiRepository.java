@@ -24,4 +24,6 @@ public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai, Integer> {
             ORDER BY k.ngayKetThuc ASC
         """)
         List<KhuyenMai> findKhuyenMaiDangHieuLuc();
+
+    boolean existsByMaCode(String maCode);
 }
