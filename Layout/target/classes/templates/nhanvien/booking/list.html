@@ -1,213 +1,303 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Đặt chỗ</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <style>
-        /* Bạn có thể thêm các style tùy chỉnh ở đây nếu cần */
+      /* Bạn có thể thêm các style tùy chỉnh ở đây nếu cần */
     </style>
-</head>
-<body class="bg-gray-100">
-<div class="flex h-screen overflow-hidden">
-        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col" id="sidebar">
-                <div class="flex items-center justify-center h-20 border-b border-gray-700">
-                    <i class="fas fa-route text-3xl text-blue-400"></i>
-                    <span class="ml-3 text-2xl font-bold">TravelGO</span>
-                </div>
-                <nav class="mt-8 px-4">
-                    <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-                        <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
-                    </a>
-                    <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-                        <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
-                    </a>
-                    <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-                        <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
-                    </a>
-                    <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-                        <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
-                    </a>
-		          <a th:href="@{/nhanvien/finance}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
-		              <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
-		          </a>                     
-                    <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 rounded-lg" th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}">
-                        <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Xuất báo cáo</span>
-                    </a>
-                </nav>
-                <div class="mt-auto w-full p-4 border-t border-gray-800">
-                    <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
-                        <i class="fas fa-sign-out-alt w-6 text-center"></i>
-                        <span class="ml-4">Đăng xuất</span>
-                    </a>
-                </div>
-            </aside>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/manager_tour}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i
+            ><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/finance}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-file-invoice-dollar w-6 text-center"></i
+            ><span class="ml-4">Thu/Chi chuyến</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/report}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i
+            ><span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="mt-auto w-full p-4 border-t border-gray-800">
+          <a
+            th:href="@{/logout}"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
 
-    <div class="flex-1 flex flex-col overflow-y-auto">
-        <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
-            <h1 class="text-2xl font-semibold text-gray-800">Quản lý Đặt chỗ</h1>
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <h1 class="text-2xl font-semibold text-gray-800">Quản lý Đặt chỗ</h1>
         </header>
 
         <main class="flex-1 p-6">
-            <div class="flex justify-between items-center mb-4 gap-4">
-                <div class="flex gap-4 w-2/3">
-                    <input type="text" id="searchInput" placeholder="Tìm theo tên khách hàng..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <select id="statusFilter" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="Chờ xác nhận">Chờ xác nhận</option>
-                        <option value="Đã xác nhận">Đã xác nhận</option>
-                        <option value="Đã thanh toán">Đã thanh toán</option>
-                        <option value="Đã hủy">Đã hủy</option>
-                    </select>
-                </div>
-                <!-- 'Tạo Đơn Mới' button removed as requested -->
+          <div class="flex justify-between items-center mb-4 gap-4">
+            <div class="flex gap-4 w-2/3">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Tìm theo tên khách hàng..."
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <select
+                id="statusFilter"
+                class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                <option value="Đã xác nhận">Đã xác nhận</option>
+                <option value="Đã thanh toán">Đã thanh toán</option>
+                <option value="Đã hủy">Đã hủy</option>
+              </select>
             </div>
+            <!-- 'Tạo Đơn Mới' button removed as requested -->
+          </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Mã Đơn</th>
-                                <th scope="col" class="px-6 py-3">Khách Hàng</th>
-                                <th scope="col" class="px-6 py-3">Tên Tour</th>
-                                <th scope="col" class="px-6 py-3">Ngày Đặt</th>
-                                <th scope="col" class="px-6 py-3">Tổng Tiền</th>
-                                <th scope="col" class="px-6 py-3">Trạng thái</th>
-                                            <th scope="col" class="px-6 py-3">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody id="booking-table-body">
-                            </tbody>
-                    </table>
-                </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">Mã Đơn</th>
+                    <th scope="col" class="px-6 py-3">Khách Hàng</th>
+                    <th scope="col" class="px-6 py-3">Tên Tour</th>
+                    <th scope="col" class="px-6 py-3">Ngày Đặt</th>
+                    <th scope="col" class="px-6 py-3">Tổng Tiền</th>
+                    <th scope="col" class="px-6 py-3">Trạng thái</th>
+                    <th scope="col" class="px-6 py-3">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="booking-table-body"></tbody>
+              </table>
             </div>
-            
-            <div id="pagination-container" class="mt-4 flex justify-center">
-                </div>
+          </div>
+
+          <div id="pagination-container" class="mt-4 flex justify-center"></div>
         </main>
+      </div>
     </div>
-</div>
 
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const tableBody = document.getElementById('booking-table-body');
-    const paginationContainer = document.getElementById('pagination-container');
-    
-    const currencyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const tableBody = document.getElementById("booking-table-body");
+      const paginationContainer = document.getElementById(
+        "pagination-container"
+      );
 
-    async function loadBookings(page = 0, keyword = '', status = '') {
+      const currencyFormatter = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      });
+
+      async function loadBookings(page = 0, keyword = "", status = "") {
         try {
-            // Build query params and omit empty values so the server receives null for unused filters
-            const params = new URLSearchParams();
-            params.set('page', page);
-            params.set('size', 10);
-            if (keyword && keyword.trim() !== '') params.set('keyword', keyword.trim());
-            if (status && status.trim() !== '') params.set('status', status.trim());
+          // Build query params and omit empty values so the server receives null for unused filters
+          const params = new URLSearchParams();
+          params.set("page", page);
+          params.set("size", 10);
+          if (keyword && keyword.trim() !== "")
+            params.set("keyword", keyword.trim());
+          if (status && status.trim() !== "")
+            params.set("status", status.trim());
 
-            const url = `/nhanvien/bookings/api?${params.toString()}`;
-            const response = await fetch(url);
+          const url = `/nhanvien/bookings/api?${params.toString()}`;
+          const response = await fetch(url);
 
-            if (!response.ok) {
-                // show a helpful message when server denies access
-                if (response.status === 403) {
-                    tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Bạn không có quyền xem dữ liệu. Vui lòng đăng nhập bằng tài khoản nhân viên.</td></tr>`;
-                    return;
-                }
-                throw new Error(`HTTP ${response.status}`);
+          if (!response.ok) {
+            // show a helpful message when server denies access
+            if (response.status === 403) {
+              tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Bạn không có quyền xem dữ liệu. Vui lòng đăng nhập bằng tài khoản nhân viên.</td></tr>`;
+              return;
             }
+            throw new Error(`HTTP ${response.status}`);
+          }
 
-            const data = await response.json();
+          const data = await response.json();
 
-            renderTable(data.content);
-            renderPagination(data, keyword, status);
-
+          renderTable(data.content);
+          renderPagination(data, keyword, status);
         } catch (error) {
-            console.error('Fetch error:', error);
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Lỗi tải dữ liệu.</td></tr>`;
+          console.error("Fetch error:", error);
+          tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Lỗi tải dữ liệu.</td></tr>`;
         }
-    }
-    
-    function renderTable(bookings) {
-        tableBody.innerHTML = '';
+      }
+
+      function renderTable(bookings) {
+        tableBody.innerHTML = "";
         if (bookings.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Không tìm thấy đơn đặt chỗ nào.</td></tr>`;
-            return;
+          tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Không tìm thấy đơn đặt chỗ nào.</td></tr>`;
+          return;
         }
-        bookings.forEach(booking => {
-            const statusBadge = getStatusBadge(booking.trangThai);
+        bookings.forEach((booking) => {
+          const statusBadge = getStatusBadge(booking.trangThai);
 
-            // Compute total amount safely. API returns thanhTien which may be a number or string.
-            const totalAmount = (booking.chiTietDatCho && booking.chiTietDatCho.length > 0)
-                ? booking.chiTietDatCho.reduce((sum, item) => sum + (Number(item.thanhTien) || 0), 0)
-                : 0;
+          // Compute total amount safely. API returns thanhTien which may be a number or string.
+          const totalAmount =
+            booking.chiTietDatCho && booking.chiTietDatCho.length > 0
+              ? booking.chiTietDatCho.reduce(
+                  (sum, item) => sum + (Number(item.thanhTien) || 0),
+                  0
+                )
+              : 0;
 
-            // Use the DTO field names returned by the API (khachHang.hoTen and chuyenDuLich.tenTour)
-            const customerName = booking.khachHang ? (booking.khachHang.hoTen || '') : '';
-            const tourName = booking.chuyenDuLich ? (booking.chuyenDuLich.tenTour || '') : '';
+          // Use the DTO field names returned by the API (khachHang.hoTen and chuyenDuLich.tenTour)
+          const customerName = booking.khachHang
+            ? booking.khachHang.hoTen || ""
+            : "";
+          const tourName = booking.chuyenDuLich
+            ? booking.chuyenDuLich.tenTour || ""
+            : "";
 
-            const row = `
+          const row = `
                 <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="px-6 py-4 font-bold text-gray-900">#${booking.maDatCho}</td>
+                    <td class="px-6 py-4 font-bold text-gray-900">#${
+                      booking.maDatCho
+                    }</td>
                     <td class="px-6 py-4">${customerName}</td>
                     <td class="px-6 py-4">${tourName}</td>
-                    <td class="px-6 py-4">${new Date(booking.ngayDat).toLocaleDateString('vi-VN')}</td>
-                    <td class="px-6 py-4 font-semibold">${currencyFormatter.format(totalAmount)}</td>
+                    <td class="px-6 py-4">${new Date(
+                      booking.ngayDat
+                    ).toLocaleDateString("vi-VN")}</td>
+                    <td class="px-6 py-4 font-semibold">${currencyFormatter.format(
+                      totalAmount
+                    )}</td>
                     <td class="px-6 py-4">${statusBadge}</td>
                     <td class="px-6 py-4">
-                        <a href="/nhanvien/bookings/${booking.maDatCho}" class="inline-block mr-2 font-medium text-blue-600 hover:underline">Xem</a>
-                        ${booking.trangThai === 'Chờ xác nhận' ? `<a href="/nhanvien/bookings/confirm/${booking.maDatCho}" class="inline-block mr-2 bg-green-500 text-white px-2 py-1 rounded">Xác nhận</a>` : ''}
-                        ${booking.trangThai !== 'Đã hủy' && booking.trangThai !== 'Đã thanh toán' ? `<a href="/nhanvien/bookings/cancel/${booking.maDatCho}" class="inline-block bg-red-500 text-white px-2 py-1 rounded">Hủy</a>` : ''}
+                        <a href="/nhanvien/bookings/${
+                          booking.maDatCho
+                        }" class="inline-block mr-2 font-medium text-blue-600 hover:underline">Xem</a>
+                        ${
+                          booking.trangThai === "Chờ xác nhận"
+                            ? `<a href="/nhanvien/bookings/confirm/${booking.maDatCho}" class="inline-block mr-2 bg-green-500 text-white px-2 py-1 rounded">Xác nhận</a>`
+                            : ""
+                        }
                     </td>
                 </tr>
             `;
-            tableBody.innerHTML += row;
+          tableBody.innerHTML += row;
         });
-    }
-    
-    function getStatusBadge(status) {
-        let baseClasses = 'px-2 py-1 text-xs font-semibold rounded-full';
-        if (status === 'Đã thanh toán') return `<span class="${baseClasses} bg-green-100 text-green-800">${status}</span>`;
-        if (status === 'Đã hủy') return `<span class="${baseClasses} bg-red-100 text-red-800">${status}</span>`;
-        if (status === 'Đã xác nhận') return `<span class="${baseClasses} bg-blue-100 text-blue-800">${status}</span>`;
-        return `<span class="${baseClasses} bg-yellow-100 text-yellow-800">${status}</span>`; // Chờ xác nhận
-    }
+      }
 
-    function renderPagination(pageData, keyword, status) {
-        paginationContainer.innerHTML = '';
+      function getStatusBadge(status) {
+        let baseClasses = "px-2 py-1 text-xs font-semibold rounded-full";
+        if (status === "Đã thanh toán")
+          return `<span class="${baseClasses} bg-green-100 text-green-800">${status}</span>`;
+        if (status === "Đã hủy")
+          return `<span class="${baseClasses} bg-red-100 text-red-800">${status}</span>`;
+        if (status === "Đã xác nhận")
+          return `<span class="${baseClasses} bg-blue-100 text-blue-800">${status}</span>`;
+        return `<span class="${baseClasses} bg-yellow-100 text-yellow-800">${status}</span>`; // Chờ xác nhận
+      }
+
+      function renderPagination(pageData, keyword, status) {
+        paginationContainer.innerHTML = "";
         if (pageData.totalPages <= 1) return;
 
-        let paginationHtml = '<nav><ul class="inline-flex items-center -space-x-px">';
-        
-        const prevDisabled = pageData.first ? 'cursor-not-allowed opacity-50' : '';
-        paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${pageData.number - 1}, '${keyword}', '${status}')" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${prevDisabled}">Prev</a></li>`;
-        
+        let paginationHtml =
+          '<nav><ul class="inline-flex items-center -space-x-px">';
+
+        const prevDisabled = pageData.first
+          ? "cursor-not-allowed opacity-50"
+          : "";
+        paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${
+          pageData.number - 1
+        }, '${keyword}', '${status}')" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${prevDisabled}">Prev</a></li>`;
+
         for (let i = 0; i < pageData.totalPages; i++) {
-            const activeClass = i === pageData.number ? 'text-blue-600 bg-blue-50 border-blue-300' : 'text-gray-500 bg-white border-gray-300';
-            paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${i}, '${keyword}', '${status}')" class="px-3 py-2 leading-tight ${activeClass} hover:bg-gray-100">${i + 1}</a></li>`;
+          const activeClass =
+            i === pageData.number
+              ? "text-blue-600 bg-blue-50 border-blue-300"
+              : "text-gray-500 bg-white border-gray-300";
+          paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${i}, '${keyword}', '${status}')" class="px-3 py-2 leading-tight ${activeClass} hover:bg-gray-100">${
+            i + 1
+          }</a></li>`;
         }
 
-        const nextDisabled = pageData.last ? 'cursor-not-allowed opacity-50' : '';
-        paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${pageData.number + 1}, '${keyword}', '${status}')" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${nextDisabled}">Next</a></li>`;
-        
-        paginationHtml += '</ul></nav>';
+        const nextDisabled = pageData.last
+          ? "cursor-not-allowed opacity-50"
+          : "";
+        paginationHtml += `<li><a href="#" onclick="event.preventDefault(); loadBookings(${
+          pageData.number + 1
+        }, '${keyword}', '${status}')" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${nextDisabled}">Next</a></li>`;
+
+        paginationHtml += "</ul></nav>";
         paginationContainer.innerHTML = paginationHtml;
-    }
+      }
 
-    searchInput.addEventListener('keyup', () => {
+      searchInput.addEventListener("keyup", () => {
         loadBookings(0, searchInput.value, statusFilter.value);
-    });
-    
-    statusFilter.addEventListener('change', () => {
-        loadBookings(0, searchInput.value, statusFilter.value);
-    });
+      });
 
-    document.addEventListener('DOMContentLoaded', () => {
+      statusFilter.addEventListener("change", () => {
+        loadBookings(0, searchInput.value, statusFilter.value);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
         loadBookings();
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>

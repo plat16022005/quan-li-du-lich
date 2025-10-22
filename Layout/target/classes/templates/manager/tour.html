@@ -473,7 +473,6 @@
 
           <div class="flex-1 p-6 space-y-6">
             <input type="hidden" id="editMaTour" />
-            <input type="hidden" id="editMaChuyen" />
 
             <!-- Thông tin Tour -->
             <h3 class="font-semibold text-lg border-b pb-2">Thông tin Tour</h3>
@@ -495,7 +494,7 @@
               id="editSoNgay"
               class="w-full border rounded p-2"
             />
-            <label>Mô tả</label>
+            <label>Địa Điểm</label>
             <textarea
               id="editMoTa"
               class="w-full border rounded p-2"
@@ -516,36 +515,6 @@
               class="hidden"
               onchange="previewEditImage(event)"
             />
-
-            <!-- Thông tin Chuyến đi -->
-            <h3 class="font-semibold text-lg border-b pb-2 mt-6">
-              Thông tin Chuyến đi
-            </h3>
-            <label>Ngày khởi hành</label>
-            <input
-              type="date"
-              id="editNgayBatDau"
-              class="w-full border rounded p-2"
-            />
-            <label>Ngày kết thúc</label>
-            <input
-              type="date"
-              id="editNgayKetThuc"
-              class="w-full border rounded p-2"
-            />
-            <label>Số lượng khách tối đa</label>
-            <input
-              type="number"
-              id="editSoLuongToiDa"
-              class="w-full border rounded p-2"
-            />
-            <label>Trạng thái</label>
-            <select id="editTrangThai" class="w-full border rounded p-2">
-              <option value="Sắp diễn ra">Sắp diễn ra</option>
-              <option value="Đang diễn ra">Đang diễn ra</option>
-              <option value="Đã kết thúc">Đã kết thúc</option>
-            </select>
-          </div>
 
           <div class="flex justify-end p-4 border-t bg-gray-50">
             <button
@@ -707,26 +676,13 @@
         const data = await res.json();
 
         // Tour
-        document.getElementById("editMaTour").value = data.tour.maTour;
-        document.getElementById("editTenTour").value = data.tour.tenTour;
-        document.getElementById("editGiaCoBan").value = data.tour.giaCoBan;
-        document.getElementById("editSoNgay").value = data.tour.soNgay;
-        document.getElementById("editMoTa").value = data.tour.moTa || "";
-        document.getElementById("edit-preview").src = data.tour.hinhAnh;
+        document.getElementById("editMaTour").value = data.maTour;
+        document.getElementById("editTenTour").value = data.tenTour;
+        document.getElementById("editGiaCoBan").value = data.giaCoBan;
+        document.getElementById("editSoNgay").value = data.soNgay;
+        document.getElementById("editMoTa").value = data.moTa || "";
+        document.getElementById("edit-preview").src = data.hinhAnh;
         document.getElementById("edit-preview").classList.remove("hidden");
-
-        // Chuyến
-        if (data.chuyen) {
-          document.getElementById("editMaChuyen").value = data.chuyen.maChuyen;
-          document.getElementById("editNgayBatDau").value =
-            data.chuyen.ngayBatDau;
-          document.getElementById("editNgayKetThuc").value =
-            data.chuyen.ngayKetThuc;
-          document.getElementById("editSoLuongToiDa").value =
-            data.chuyen.soLuongToiDa;
-          document.getElementById("editTrangThai").value =
-            data.chuyen.trangThai;
-        }
 
         document.getElementById("edit-tour-modal").classList.remove("hidden");
       }
@@ -746,7 +702,6 @@
     <script>
       async function updateTourAndChuyen() {
         const maTour = document.getElementById("editMaTour").value;
-        const maChuyen = document.getElementById("editMaChuyen").value;
         const file = document.getElementById("edit-file-upload").files[0];
 
         let imageUrl = document.getElementById("edit-preview").src;
@@ -768,13 +723,6 @@
             soNgay: document.getElementById("editSoNgay").value,
             moTa: document.getElementById("editMoTa").value,
             hinhAnh: imageUrl,
-          },
-          chuyen: {
-            maChuyen: maChuyen,
-            ngayBatDau: document.getElementById("editNgayBatDau").value,
-            ngayKetThuc: document.getElementById("editNgayKetThuc").value,
-            soLuongToiDa: document.getElementById("editSoLuongToiDa").value,
-            trangThai: document.getElementById("editTrangThai").value,
           },
         };
 
