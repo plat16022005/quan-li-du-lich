@@ -109,7 +109,7 @@ public class NhanvienTourController {
             return ResponseEntity.status(500).body("Lỗi upload ảnh: " + e.getMessage());
         }
     }
-    @GetMapping("/tour/{maTour}/create-trip")
+    @GetMapping("/manager_tour/{maTour}/create-trip")
     public String createTrip(@PathVariable("maTour") String maTour, Model model, HttpSession session) {
         Tour tour = tourService.getTourById(Integer.parseInt(maTour));
         if (tour == null) {
@@ -163,4 +163,15 @@ public class NhanvienTourController {
         model.addAttribute("chuyenDuLichList", chuyenDuLichList);
         return "nhanvien/show_all_trips";
     }
+    @GetMapping("/manager_tour/detail/{maTour}")
+    public String showTourDetailForm(@PathVariable("maTour") String maTour,HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+            return "redirect:/access_denied";
+        }
+    	session.setAttribute("matour", maTour);
+    	return "nhanvien/tour_detail";
+    }
+
 }

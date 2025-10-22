@@ -1,256 +1,555 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quản lý Tour - Nhân viên</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-  <style>
-    .iframe-container { height: calc(100vh - 4rem); }
-  </style>
-</head>
-<body class="bg-gray-100">
-  <div class="flex h-screen overflow-hidden">
-    <aside
-      class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
-      id="sidebar"
-    >
-      <div
-        class="flex items-center justify-center h-20 border-b border-gray-700"
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Tour - Nhân viên</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+      }
+      .modal {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .modal.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+      .modal.hidden .modal-content {
+        transform: translateY(-50px);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+       /* Style for selected row */
+      .selected-row {
+        background-color: #eff6ff; /* Tailwind's blue-100 */
+        --tw-ring-color: #3b82f6; /* Tailwind's blue-500 */
+        box-shadow: 0 0 0 2px var(--tw-ring-color);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <!-- ✅ Sidebar nhân viên giữ nguyên -->
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
       >
-        <i class="fas fa-route text-3xl text-blue-400"></i>
-        <span class="ml-3 text-2xl font-bold">TravelGO</span>
-      </div>
-      <nav class="mt-8 px-4">
-        <a
-          th:href="@{/nhanvien/dashboard}"
-          class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
-        >
-          <i class="fas fa-tachometer-alt w-6 text-center"></i
-          ><span class="ml-4">Dashboard</span>
-        </a>
-        <a
-          th:href="@{/nhanvien/bookings}"
-          class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
-        >
-          <i class="fas fa-book-open w-6 text-center"></i
-          ><span class="ml-4">Quản lý Đặt chỗ</span>
-        </a>
-        <a
-          th:href="@{/nhanvien/customers}"
-          class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
-        >
-          <i class="fas fa-users w-6 text-center"></i
-          ><span class="ml-4">Quản lý Khách hàng</span>
-        </a>
-        <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
-          <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
-        </a>
+        <div class="flex items-center justify-center h-20 border-b border-gray-700">
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a th:href="@{/nhanvien/dashboard}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-4">Dashboard</span>
+          </a>
+          <a th:href="@{/nhanvien/bookings}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-book-open w-6 text-center"></i><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a th:href="@{/nhanvien/customers}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-users w-6 text-center"></i><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 bg-gray-700 text-white rounded-lg shadow-md">
+            <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          </a>
           <a th:href="@{/nhanvien/finance}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
-              <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
-          </a>              
-        <a
-          th:href="@{/nhanvien/report}"
-          class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
-        >
-          <i class="fas fa-chart-pie w-6 text-center"></i>
-          <span class="ml-4">Xuất báo cáo</span>
-        </a>
-      </nav>
-      <!-- Logout link (bottom-left) -->
-      <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
-        <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
-          <i class="fas fa-sign-out-alt w-6 text-center"></i>
-          <span class="ml-4">Đăng xuất</span>
-        </a>
-      </div>
-    </aside>
+            <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
+          </a>
+          <a th:href="@{/nhanvien/report}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
+          <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
 
-    <div class="flex-1 flex flex-col overflow-y-auto">
-      <header
-        class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
-      >
-        <h1 class="text-2xl font-semibold text-gray-800">Quản lý Tour</h1>
-        <div class="flex items-center">
-          <div class="ml-3">
-            <p
-              class="text-sm font-semibold text-gray-800"
-              th:text="${session.user.hoTen}"
-            ></p>
-            <p class="text-xs text-gray-500">Nhân viên</p>
+      <!-- ✅ Main content: Lấy từ giao diện Manager -->
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200 sticky top-0 z-20">
+          <div class="flex items-center">
+            <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <h1 class="text-2xl font-semibold text-gray-800">Quản lý Tour</h1>
           </div>
-        </div>
-      </header>
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/40x40/E2E8F0/4A5568?text=NV"
+                alt="Avatar"
+                class="h-10 w-10 rounded-full object-cover"
+              />
+              <div class="ml-3">
+                <p class="text-sm font-semibold text-gray-800" th:text="${session.user != null ? session.user.hoTen : 'Tên Nhân Viên'}"></p>
+                <p class="text-xs text-gray-500">Nhân viên</p>
+              </div>
+            </div>
+          </div>
+        </header>
 
-      <main class="flex-1 p-6">
-        <!-- Page header inside main -->
-        <div class="mb-6">
-          <h2 class="text-xl font-semibold text-gray-800">Danh sách Tour</h2>
-          <p class="text-sm text-gray-500">Giao diện dành cho nhân viên — hiển thị danh sách tour và các hành động phù hợp.</p>
-        </div>
+        <main class="flex-1 p-6">
+            <!-- Action bar đầy đủ chức năng -->
+            <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+                <div class="flex items-center space-x-4">
+                    <select id="filter-status" class="w-full md:w-auto pl-4 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm">
+                        <option value="">Tất cả trạng thái</option>
+                        <option>Sắp diễn ra</option>
+                        <option>Đang diễn ra</option>
+                        <option>Đã kết thúc</option>
+                    </select>
 
-    <!-- Action & Filters (responsive: stacked on small screens, inline on md+ ) -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between mb-6 gap-4">
-      <div class="flex items-center space-x-4 w-full md:w-2/3">
-        <select id="filter-status" class="pl-4 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm w-full md:w-auto">
-          <option value="">Tất cả trạng thái</option>
-          <option>Sắp diễn ra</option>
-          <option>Đang diễn ra</option>
-          <option>Đã kết thúc</option>
-        </select>
+                    <div class="relative">
+                        <input id="search-input" type="text" class="w-full md:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="Tìm kiếm theo tên, mã tour...">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </span>
+                    </div>
 
-        <div class="relative flex-1 min-w-0">
-          <input id="search-input" type="text" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tìm kiếm theo tên, mã tour..." />
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none"><i class="fas fa-search"></i></span>
-        </div>
-      </div>
+                    <div id="selected-tour-label" class="hidden text-sm text-gray-700 font-semibold">
+                        Mã tour: <span id="selected-tour-id" class="text-blue-600"></span>
+                    </div>
 
-      <div class="w-full md:w-auto flex justify-end items-center">
-        <!-- Nút thêm tour mới cho nhân viên -->
-        <a th:href="@{/nhanvien/add_tour}" id="add-tour-button" class="md:inline-flex bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-          <i class="fas fa-plus mr-2"></i>Thêm Tour Mới
-        </a>
+                    <!-- Các nút theo ngữ cảnh -->
+                    <a id="create-trip-btn" href="#" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden"><i class="fas fa-plus"></i><span>Tạo Chuyến</span></a>
+                    <a id="list-trips-btn" href="#" class="bg-cyan-600 hover:bg-cyan-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden ml-2"><i class="fas fa-list-ul"></i><span>Xem DS Chuyến</span></a>
+                    <a id="detail-tour-btn" href="#" class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 hidden ml-2"><i class="fas fa-calendar-alt"></i><span>QL Lịch trình</span></a>
+                </div>
+
+                <button id="add-tour-button" class="w-full md:w-auto bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Thêm Tour Mới</span>
+                </button>
+            </div>
+
+            <!-- Bảng tour -->
+            <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Tên Tour</th>
+                            <th scope="col" class="px-6 py-4">Lịch trình</th>
+                            <th scope="col" class="px-6 py-4">Giá</th>
+                            <th scope="col" class="px-6 py-4">Trạng thái</th>
+                            <th scope="col" class="px-6 py-4">Ảnh bìa</th>
+                            <th scope="col" class="px-6 py-4 text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tour-table-body">
+                       <!-- Dữ liệu sẽ được render bởi JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
       </div>
     </div>
 
-    <!-- Tours Table -->
-    <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-      <table class="w-full table-auto text-sm text-left text-gray-600">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
-          <tr>
-            <th class="px-4 py-3">Tên Tour</th>
-            <th class="px-4 py-3">Lịch trình</th>
-            <th class="px-4 py-3">Ngày đi</th>
-            <th class="px-4 py-3">Giá</th>
-            <th class="px-4 py-3">Số khách</th>
-            <th class="px-4 py-3">Trạng thái</th>
-            <th class="px-4 py-3">Ảnh bìa</th>
-            <th class="px-4 py-3 text-center">Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="tour-table-body"></tbody>
-      </table>
+    <!-- ✨ Modal Thêm Tour (Lấy từ Manager) -->
+    <div id="tour-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 overflow-y-auto">
+        <div class="modal-content my-auto bg-white rounded-lg shadow-xl w-full max-w-3xl h-[90vh] flex flex-col overflow-y-scroll custom-scrollbar">
+            <form id="add-tour-form" enctype="multipart/form-data" class="flex flex-col h-full">
+                <div class="flex justify-between items-center p-5 border-b">
+                    <h2 class="text-xl font-bold text-gray-800">Thêm Tour Du Lịch Mới</h2>
+                    <button type="button" id="close-modal-button" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="flex-1 p-6 space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Thông tin Tour</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-800">Tên tour</label>
+                                <input type="text" name="tenTour" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-800">Giá cơ bản (VND)</label>
+                                <input type="number" name="giaCoBan" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-800">Số ngày</label>
+                                <input type="number" name="soNgay" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-800">Ảnh bìa tour</label>
+                                <div class="mt-1 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer" onclick="document.getElementById('file-upload').click();">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    <p class="mt-2 text-sm text-gray-500">Nhấn để tải ảnh từ máy</p>
+                                    <img id="preview" class="mt-4 max-h-48 rounded-md hidden" />
+                                </div>
+                                <input id="file-upload" name="file" type="file" accept="image/*" class="sr-only" onchange="previewImage(event, 'preview')"/>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-800">Địa Điểm</label>
+                                <textarea name="moTa" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end items-center p-4 border-t bg-gray-50 rounded-b-lg">
+                    <button type="button" id="cancel-button" class="bg-white text-gray-700 font-semibold px-4 py-2 rounded-lg border mr-3 hover:bg-gray-100">Hủy bỏ</button>
+                    <button type="submit" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm">Lưu</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Edit / View modal (kept minimal for staff) -->
+    <!-- ✨ Modal Chỉnh sửa Tour (Lấy từ Manager) -->
     <div id="edit-tour-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 overflow-y-auto">
-      <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-3xl h-[90vh] flex flex-col overflow-y-scroll">
-        <div class="flex justify-between items-center p-5 border-b">
-          <h2 class="text-xl font-bold text-gray-800">Chi tiết Tour</h2>
-          <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-3xl h-[90vh] flex flex-col overflow-y-scroll custom-scrollbar">
+            <form id="edit-tour-form" enctype="multipart/form-data" class="flex flex-col h-full">
+                <div class="flex justify-between items-center p-5 border-b">
+                    <h2 class="text-xl font-bold text-gray-800">Chỉnh sửa Tour & Chuyến đi</h2>
+                    <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="flex-1 p-6 space-y-4">
+                    <input type="hidden" id="editMaTour" />
+                    <input type="hidden" id="editMaChuyen" />
+                    <h3 class="font-semibold text-lg border-b pb-2">Thông tin Tour</h3>
+                    <div><label for="editTenTour" class="text-sm font-medium text-gray-700">Tên tour</label><input type="text" id="editTenTour" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div><label for="editGiaCoBan" class="text-sm font-medium text-gray-700">Giá cơ bản (VND)</label><input type="number" id="editGiaCoBan" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div><label for="editSoNgay" class="text-sm font-medium text-gray-700">Số ngày</label><input type="number" id="editSoNgay" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div><label for="editMoTa" class="text-sm font-medium text-gray-700">Mô tả</label><textarea id="editMoTa" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2" rows="2"></textarea></div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Ảnh bìa</label>
+                        <div onclick="document.getElementById('edit-file-upload').click()" class="mt-1 border-2 border-dashed rounded-md p-4 cursor-pointer text-center hover:border-blue-500">
+                            <img id="edit-preview" class="mx-auto max-h-48 mb-2 hidden rounded" />
+                            <p class="text-gray-500 text-sm">Nhấn để tải ảnh mới</p>
+                        </div>
+                        <input id="edit-file-upload" type="file" accept="image/*" class="hidden" onchange="previewImage(event, 'edit-preview')"/>
+                    </div>
+                    <h3 class="font-semibold text-lg border-b pb-2 mt-6">Thông tin Chuyến đi (nếu có)</h3>
+                    <div><label for="editNgayBatDau" class="text-sm font-medium text-gray-700">Ngày khởi hành</label><input type="date" id="editNgayBatDau" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div><label for="editNgayKetThuc" class="text-sm font-medium text-gray-700">Ngày kết thúc</label><input type="date" id="editNgayKetThuc" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div><label for="editSoLuongToiDa" class="text-sm font-medium text-gray-700">Số lượng khách tối đa</label><input type="number" id="editSoLuongToiDa" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                    <div>
+                        <label for="editTrangThai" class="text-sm font-medium text-gray-700">Trạng thái</label>
+                        <select id="editTrangThai" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2">
+                            <option value="Sắp diễn ra">Sắp diễn ra</option>
+                            <option value="Đang diễn ra">Đang diễn ra</option>
+                            <option value="Đã kết thúc">Đã kết thúc</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end p-4 border-t bg-gray-50">
+                    <button type="button" onclick="closeEditModal()" class="bg-white text-gray-700 px-4 py-2 rounded-lg border mr-3 hover:bg-gray-100">Hủy</button>
+                    <button type="button" onclick="updateTourAndChuyen()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Lưu</button>
+                </div>
+            </form>
         </div>
-        <div class="flex-1 p-6 space-y-6">
-          <div>
-            <h3 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Thông tin Tour</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Tên tour</label>
-                <input id="editTenTour" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Giá cơ bản (VND)</label>
-                <input id="editGiaCoBan" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Số ngày</label>
-                <input id="editSoNgay" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-800">Mô tả</label>
-                <textarea id="editMoTa" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly></textarea>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">Thông tin Chuyến đi</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Ngày khởi hành</label>
-                <input id="editNgayBatDau" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Ngày kết thúc</label>
-                <input id="editNgayKetThuc" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Số lượng khách tối đa</label>
-                <input id="editSoLuongToiDa" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-800">Trạng thái</label>
-                <input id="editTrangThai" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white text-gray-900" readonly />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-end p-4 border-t bg-gray-50">
-          <button type="button" onclick="closeEditModal()" class="bg-white text-gray-700 px-4 py-2 rounded border mr-3">Đóng</button>
-        </div>
-      </div>
-
     </div>
 
+    <!-- 🚀 Toàn bộ Script chức năng từ Manager -->
     <script>
-      const tableBody = document.getElementById('tour-table-body');
-      const searchInput = document.getElementById('search-input');
-      const statusSelect = document.getElementById('filter-status');
+      // --- Biến toàn cục ---
+      const menuButton = document.getElementById("menu-button");
+      const sidebar = document.getElementById("sidebar");
+      const tourModal = document.getElementById("tour-modal");
+      const editTourModal = document.getElementById("edit-tour-modal");
+      const addTourButton = document.getElementById("add-tour-button");
+      const closeModalButton = document.getElementById("close-modal-button");
+      const cancelButton = document.getElementById("cancel-button");
+      const searchInput = document.querySelector("#search-input");
+      const statusSelect = document.querySelector("#filter-status");
+      const tableBody = document.querySelector("#tour-table-body");
+      let selectedTourRow = null;
 
+      // --- Sidebar & Modal Controls ---
+      menuButton.addEventListener("click", () => sidebar.classList.toggle("open"));
+      addTourButton.addEventListener("click", () => tourModal.classList.remove("hidden"));
+      closeModalButton.addEventListener("click", () => tourModal.classList.add("hidden"));
+      cancelButton.addEventListener("click", () => tourModal.classList.add("hidden"));
+      tourModal.addEventListener("click", (e) => { if (e.target === tourModal) tourModal.classList.add("hidden"); });
+      
+      function closeEditModal() {
+        editTourModal.classList.add("hidden");
+      }
+
+      function previewImage(event, previewId) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const preview = document.getElementById(previewId);
+          preview.src = e.target.result;
+          preview.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // --- Chức năng chính: Tải, Thêm, Sửa, Xóa, Cập nhật ---
+      
+      // Tải và render danh sách tour
       async function loadTours() {
+        const keyword = searchInput.value.trim();
+        const status = statusSelect.value;
         const params = new URLSearchParams();
-        if (searchInput.value) params.append('keyword', searchInput.value.trim());
-        if (statusSelect.value) params.append('status', statusSelect.value);
+        if (keyword) params.append("keyword", keyword);
+        if (status) params.append("status", status);
 
-        const res = await fetch('/manager/tour/search?' + params.toString());
-        const tours = await res.json();
-        tableBody.innerHTML = '';
-        tours.forEach(tour => {
-          const tr = document.createElement('tr');
-          tr.className = 'bg-white border-b hover:bg-gray-50';
-          tr.innerHTML = `
-            <td class="px-6 py-4 font-semibold text-gray-900">${tour.tenTour}</td>
-            <td class="px-6 py-4">${tour.soNgay} ngày</td>
-            <td class="px-6 py-4">${tour.ngayBatDau ?? 'Chưa có chuyến'}</td>
-            <td class="px-6 py-4 font-semibold">${Number(tour.giaCoBan).toLocaleString()} ₫</td>
-            <td class="px-6 py-4">${tour.soKhach ?? '-'}</td>
-            <td class="px-6 py-4"><span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full">${tour.trangThai ?? 'Chưa có chuyến'}</span></td>
-            <td class="px-6 py-4"><img src="${tour.hinhAnh}" class="w-20 h-12 object-cover rounded-md"/></td>
-            <td class="px-6 py-4 text-center"><button class="text-blue-600 hover:text-blue-900" onclick="openEditModal(${tour.maTour})">Xem</button></td>
-          `;
-          tableBody.appendChild(tr);
-        });
+        let url = '/manager/tour/search';
+        const paramString = params.toString();
+        if (paramString) {
+            url += `?${paramString}`;
+        }
+
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Network response was not ok');
+            const tours = await res.json();
+            
+            tableBody.innerHTML = ""; // Xóa bảng cũ
+            tours.forEach((tour) => {
+              const row = document.createElement("tr");
+              row.className = "bg-white border-b hover:bg-gray-50 cursor-pointer";
+              row.innerHTML = `
+                <td class="px-6 py-4 font-semibold text-gray-900">${tour.tenTour}</td>
+                <td class="px-6 py-4">${tour.soNgay} ngày</td>
+                <td class="px-6 py-4 font-semibold">${Number(tour.giaCoBan).toLocaleString('vi-VN')} ₫</td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full">
+                    ${tour.trangThai ?? "Chưa có chuyến"}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <img src="${tour.hinhAnh}" class="w-20 h-12 object-cover rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/80x48/E2E8F0/4A5568?text=LỗiẢnh';"/>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <button class="text-blue-600 hover:text-blue-900 mr-4 text-base" onclick="event.stopPropagation(); openEditModal(${tour.maTour})">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="text-red-600 hover:text-red-900 text-base" onclick="event.stopPropagation(); deleteTour(${tour.maTour})">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>`;
+                
+              row.addEventListener("click", () => selectTour(row, tour.maTour));
+              tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Failed to load tours:", error);
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">Không thể tải dữ liệu. Vui lòng thử lại.</td></tr>`;
+        }
       }
 
-      searchInput.addEventListener('input', () => setTimeout(loadTours, 250));
-      statusSelect.addEventListener('change', loadTours);
-      document.addEventListener('DOMContentLoaded', loadTours);
+      // Xử lý submit form thêm tour
+      async function handleAddTourSubmit(event) {
+          const file = document.getElementById("file-upload").files[0];
+          let imageUrl = "";
 
+          if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            const res = await fetch("/manager/tour/upload-image", {
+              method: "POST",
+              body: formData,
+            });
+            imageUrl = await res.text();
+          }
+
+          // Sau khi có imageUrl → gửi form chính
+          const tourData = {
+            tenTour: document.getElementById("tenTour").value,
+            moTa: document.getElementById("moTa").value,
+            giaCoBan: document.getElementById("giaCoBan").value,
+            soNgay: document.getElementById("soNgay").value,
+            hinhAnh: imageUrl,
+          };
+
+          await fetch("/manager/tour/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(tourData),
+          });
+
+          location.reload();
+      }
+
+      // Xóa tour
+      async function deleteTour(maTour) {
+        if (confirm(`Bạn có chắc chắn muốn xóa tour mã #${maTour} không?`)) {
+          try {
+            const res = await fetch(`/manager/tour/deletetour/${maTour}`, { method: "DELETE" });
+            if (res.ok) {
+                alert("Xóa tour thành công!");
+                loadTours();
+                deselectTour();
+            } else {
+                alert("Xóa tour thất bại!");
+            }
+          } catch (error) {
+              console.error("Error deleting tour:", error);
+              alert("Đã xảy ra lỗi khi xóa tour.");
+          }
+        }
+      }
+      
+      // Mở modal chỉnh sửa và điền dữ liệu
       async function openEditModal(maTour) {
-        const res = await fetch(`/manager/tour/get/${maTour}`);
-        const data = await res.json();
-        const tour = data.tour || {};
-        const chuyen = data.chuyen || {};
-        document.getElementById('editTenTour').value = tour.tenTour || '';
-        document.getElementById('editGiaCoBan').value = tour.giaCoBan || '';
-        document.getElementById('editSoNgay').value = tour.soNgay || '';
-        document.getElementById('editMoTa').value = tour.moTa || '';
-        document.getElementById('editNgayBatDau').value = chuyen.ngayBatDau || '';
-        document.getElementById('editNgayKetThuc').value = chuyen.ngayKetThuc || '';
-        document.getElementById('editSoLuongToiDa').value = chuyen.soLuongToiDa || '';
-        document.getElementById('editTrangThai').value = chuyen.trangThai || '';
-        document.getElementById('edit-tour-modal').classList.remove('hidden');
+        try {
+            const res = await fetch(`/manager/tour/get/${maTour}`);
+            const data = await res.json();
+            if (!data || !data.tour) throw new Error("Invalid data received");
+
+            document.getElementById("editMaTour").value = data.tour.maTour;
+            document.getElementById("editTenTour").value = data.tour.tenTour;
+            document.getElementById("editGiaCoBan").value = data.tour.giaCoBan;
+            document.getElementById("editSoNgay").value = data.tour.soNgay;
+            document.getElementById("editMoTa").value = data.tour.moTa || "";
+            const preview = document.getElementById("edit-preview");
+            preview.src = data.tour.hinhAnh;
+            preview.classList.remove("hidden");
+
+            const chuyenFields = ["editMaChuyen", "editNgayBatDau", "editNgayKetThuc", "editSoLuongToiDa", "editTrangThai"];
+            if (data.chuyen) {
+                document.getElementById("editMaChuyen").value = data.chuyen.maChuyen;
+                document.getElementById("editNgayBatDau").value = data.chuyen.ngayBatDau;
+                document.getElementById("editNgayKetThuc").value = data.chuyen.ngayKetThuc;
+                document.getElementById("editSoLuongToiDa").value = data.chuyen.soLuongToiDa;
+                document.getElementById("editTrangThai").value = data.chuyen.trangThai;
+            } else {
+                chuyenFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el.tagName === 'SELECT') el.selectedIndex = 0;
+                    else el.value = '';
+                });
+            }
+
+            editTourModal.classList.remove("hidden");
+        } catch(error) {
+            console.error("Failed to open edit modal:", error);
+            alert("Không thể tải thông tin tour để chỉnh sửa.");
+        }
       }
 
-      function closeEditModal() { document.getElementById('edit-tour-modal').classList.add('hidden'); }
+      // Cập nhật tour và chuyến
+      async function updateTourAndChuyen() {
+        const maTour = document.getElementById("editMaTour").value;
+        const maChuyen = document.getElementById("editMaChuyen").value;
+        const fileInput = document.getElementById("edit-file-upload");
+        let imageUrl = document.getElementById("edit-preview").src;
+
+        if (fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            const res = await fetch("/manager/tour/upload-image", { method: "POST", body: formData });
+            imageUrl = await res.text();
+        }
+
+        const body = {
+          tour: {
+            tenTour: document.getElementById("editTenTour").value,
+            giaCoBan: document.getElementById("editGiaCoBan").value,
+            soNgay: document.getElementById("editSoNgay").value,
+            moTa: document.getElementById("editMoTa").value,
+            hinhAnh: imageUrl,
+          },
+          chuyen: {
+            maChuyen: maChuyen || null,
+            ngayBatDau: document.getElementById("editNgayBatDau").value,
+            ngayKetThuc: document.getElementById("editNgayKetThuc").value,
+            soLuongToiDa: document.getElementById("editSoLuongToiDa").value,
+            trangThai: document.getElementById("editTrangThai").value,
+          },
+        };
+
+        try {
+            const updateRes = await fetch(`/manager/tour/update/${maTour}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            if (updateRes.ok) {
+                alert("Cập nhật thành công!");
+                closeEditModal();
+                loadTours();
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        } catch (error) {
+            console.error("Error updating tour:", error);
+            alert("Đã xảy ra lỗi khi cập nhật.");
+        }
+      }
+      
+      // Chọn tour và hiển thị các nút chức năng
+      function selectTour(row, maTour) {
+        if (selectedTourRow) {
+            selectedTourRow.classList.remove('selected-row');
+        }
+        row.classList.add('selected-row');
+        selectedTourRow = row;
+
+        document.getElementById("selected-tour-label").classList.remove("hidden");
+        document.getElementById("selected-tour-id").textContent = maTour;
+        document.getElementById("create-trip-btn").classList.remove("hidden");
+        document.getElementById("list-trips-btn").classList.remove("hidden");
+        document.getElementById("detail-tour-btn").classList.remove("hidden");
+        
+        // --- FIX: Đã trả về URL /manager/ theo đúng controller ---
+        document.getElementById('create-trip-btn').href = `/nhanvien/manager_tour/${maTour}/create-trip`;
+        document.getElementById('list-trips-btn').href = `/nhanvien/manager_tour/${maTour}/trips`;
+        document.getElementById('detail-tour-btn').href = `/nhanvien/manager_tour/detail/${maTour}`;
+      }
+      
+      function deselectTour() {
+          if (selectedTourRow) {
+              selectedTourRow.classList.remove('selected-row');
+              selectedTourRow = null;
+          }
+          document.getElementById("selected-tour-label").classList.add("hidden");
+          document.getElementById("create-trip-btn").classList.add("hidden");
+          document.getElementById("list-trips-btn").classList.add("hidden");
+          document.getElementById("detail-tour-btn").classList.add("hidden");
+      }
+
+      // --- Event Listeners ---
+      searchInput.addEventListener("input", loadTours);
+      statusSelect.addEventListener("change", loadTours);
+      document.addEventListener("DOMContentLoaded", () => {
+        loadTours();
+        document.getElementById('add-tour-form').addEventListener('submit', handleAddTourSubmit);
+      });
     </script>
-
-      </main>
-    </div>
-  </div>
-</body>
-
+  </body>
 </html>
+
