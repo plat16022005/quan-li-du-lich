@@ -51,6 +51,16 @@ public class NhanvienReportController {
         return reportService.thongKeNguonKhachHang();
     }
 
+    @GetMapping("/report/api/bookings")
+    @ResponseBody
+    public Map<String, Long> getBookingStatusReport(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != 2) {
+            return null;
+        }
+        return reportService.thongKeTrangThaiDatCho();
+    }
+
     @GetMapping("/report/api/expense")
     @ResponseBody
     public Map<String, BigDecimal> getExpenseReport(

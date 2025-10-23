@@ -8,6 +8,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.PageSize;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -37,6 +38,72 @@ public class ExportService {
 
     private static final Locale VIETNAM_LOCALE = Locale.forLanguageTag("vi-VN");
 
+    // Tìm font Arial trên hệ thống
+    private String findArialFont() {
+        String[] possiblePaths = {
+            "c:/windows/fonts/arial.ttf",
+            "c:/windows/fonts/Arial.ttf", 
+            "/System/Library/Fonts/Arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+        };
+        
+        for (String path : possiblePaths) {
+            if (new java.io.File(path).exists()) {
+                return path;
+            }
+        }
+        return null;
+    }
+
+    // Tạo font Arial hỗ trợ tiếng Việt cho PDF
+    private com.itextpdf.text.Font createVietnameseFont(float size, int style) {
+        try {
+            // Tìm và sử dụng font Arial trên hệ thống
+            String arialPath = findArialFont();
+            if (arialPath != null) {
+                BaseFont bf = BaseFont.createFont(arialPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                return new com.itextpdf.text.Font(bf, size, style);
+            }
+        } catch (Exception e) {
+            // Bỏ qua lỗi và thử fallback
+        }
+
+        try {
+            // Fallback 1: Sử dụng Times Roman với IDENTITY_H encoding (hỗ trợ Unicode tốt)
+            BaseFont bf = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            return new com.itextpdf.text.Font(bf, size, style);
+        } catch (Exception e) {
+            try {
+                // Fallback 2: Sử dụng Helvetica với IDENTITY_H encoding
+                BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                return new com.itextpdf.text.Font(bf, size, style);
+            } catch (Exception e2) {
+                try {
+                    // Fallback 3: Sử dụng CP1252 encoding cho tiếng Việt
+                    BaseFont bf = BaseFont.createFont(BaseFont.TIMES_ROMAN, "Cp1252", BaseFont.NOT_EMBEDDED);
+                    return new com.itextpdf.text.Font(bf, size, style);
+                } catch (Exception e3) {
+                    // Fallback cuối cùng
+                    return new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, size, style);
+                }
+            }
+        }
+    }
+
+    // Xử lý text tiếng Việt để đảm bảo hiển thị đúng trong PDF
+    private String processVietnameseText(String text) {
+        if (text == null) return "";
+        
+        try {
+            // Đảm bảo text được encode đúng UTF-8
+            byte[] utf8Bytes = text.getBytes("UTF-8");
+            return new String(utf8Bytes, "UTF-8");
+        } catch (Exception e) {
+            return text; // Trả về text gốc nếu có lỗi
+        }
+    }
+
     public byte[] exportToExcel(String reportType, LocalDate fromDate, LocalDate toDate) throws IOException {
         try {
             Workbook workbook = new XSSFWorkbook();
@@ -51,10 +118,14 @@ public class ExportService {
 
         // Create header row
         Row headerRow = sheet.createRow(0);
-        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
+        if ("marketing".equals(reportType) || "customers".equals(reportType)) {
             createMarketingExcelReport(sheet, headerRow, headerStyle);
-        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
-            createExpenseExcelReport(sheet, headerRow, headerStyle, fromDate, toDate);
+        } else if ("bookings".equals(reportType)) {
+            createBookingStatusExcelReport(sheet, headerRow, headerStyle);
+        } else if ("expense".equals(reportType)) {
+            createExpenseExcelReport(sheet, headerRow, headerStyle, fromDate, toDate, "Chi phí");
+        } else if ("revenue".equals(reportType)) {
+            createExpenseExcelReport(sheet, headerRow, headerStyle, fromDate, toDate, "Doanh thu");
         }
 
         // Autosize columns
@@ -79,25 +150,47 @@ public class ExportService {
         
         // Xử lý title báo cáo
         String title = "";
-        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
-            title = "Marketing/Nguồn khách hàng";
-        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
-            title = "Chi phí/Doanh thu";
+        if ("marketing".equals(reportType) || "customers".equals(reportType)) {
+            title = "Nguồn Khách Hàng";
+        } else if ("bookings".equals(reportType)) {
+            title = "Trạng Thái Đặt Tour";
+        } else if ("expense".equals(reportType)) {
+            title = "Chi Phí";
+        } else if ("revenue".equals(reportType)) {
+            title = "Doanh Thu";
         }
         csvContent.append("Báo cáo ").append(title).append("\n");
         
-        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
-            csvContent.append("Nguồn khách hàng,Số lượng\n");
+        if ("marketing".equals(reportType) || "customers".equals(reportType)) {
+            csvContent.append("Nguồn khách hàng,Số lượng khách\n");
             Map<String, Long> marketingData = reportService.thongKeNguonKhachHang();
             for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
                 csvContent.append(getMarketingSourceLabel(entry.getKey())).append(",").append(entry.getValue()).append("\n");
             }
-        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
+        } else if ("bookings".equals(reportType)) {
+            csvContent.append("Trạng thái đặt tour,Số lượng\n");
+            Map<String, Long> bookingData = reportService.thongKeTrangThaiDatCho();
+            for (Map.Entry<String, Long> entry : bookingData.entrySet()) {
+                csvContent.append(entry.getKey()).append(",").append(entry.getValue()).append("\n");
+            }
+        } else if ("expense".equals(reportType)) {
             csvContent.append("Thời gian,Chi phí (VNĐ)\n");
             if (fromDate != null) {
                 Map<String, BigDecimal> expenseData = reportService.thongKeChiPhi(fromDate.getYear(), fromDate.getMonthValue());
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 for (Map.Entry<String, BigDecimal> entry : expenseData.entrySet()) {
+                    if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
+                        String dateStr = LocalDate.parse(entry.getKey()).format(formatter);
+                        csvContent.append(dateStr).append(",").append(entry.getValue()).append("\n");
+                    }
+                }
+            }
+        } else if ("revenue".equals(reportType)) {
+            csvContent.append("Thời gian,Doanh thu (VNĐ)\n");
+            if (fromDate != null) {
+                Map<String, BigDecimal> revenueData = reportService.thongKeChiPhi(fromDate.getYear(), fromDate.getMonthValue());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                for (Map.Entry<String, BigDecimal> entry : revenueData.entrySet()) {
                     if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
                         String dateStr = LocalDate.parse(entry.getKey()).format(formatter);
                         csvContent.append(dateStr).append(",").append(entry.getValue()).append("\n");
@@ -118,36 +211,45 @@ public class ExportService {
         
         // Xử lý title
         String titleText = "";
-        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
-            titleText = "MARKETING/NGUỒN KHÁCH HÀNG";
-        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
-            titleText = "CHI PHÍ/DOANH THU";
+        if ("marketing".equals(reportType) || "customers".equals(reportType)) {
+            titleText = "NGUỒN KHÁCH HÀNG";
+        } else if ("bookings".equals(reportType)) {
+            titleText = "TRẠNG THÁI ĐẶT TOUR";
+        } else if ("expense".equals(reportType)) {
+            titleText = "CHI PHÍ";
+        } else if ("revenue".equals(reportType)) {
+            titleText = "DOANH THU";
         }
         document.addTitle("Báo cáo " + titleText);
 
         // Add title
-        com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 18, com.itextpdf.text.Font.BOLD);
-        Paragraph title = new Paragraph("BÁO CÁO " + titleText, titleFont);
+        com.itextpdf.text.Font titleFont = createVietnameseFont(18, com.itextpdf.text.Font.BOLD);
+        Paragraph title = new Paragraph(processVietnameseText("BÁO CÁO " + titleText), titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
         document.add(new Paragraph("\n")); // Add spacing
 
         // Add date range if applicable
         if (fromDate != null && toDate != null) {
-            com.itextpdf.text.Font dateFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12);
+            com.itextpdf.text.Font dateFont = createVietnameseFont(12, com.itextpdf.text.Font.NORMAL);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            Paragraph dateRange = new Paragraph("Từ ngày: " + fromDate.format(formatter) + 
-                " đến ngày: " + toDate.format(formatter), dateFont);
+            String dateRangeText = "Từ ngày: " + fromDate.format(formatter) + 
+                " đến ngày: " + toDate.format(formatter);
+            Paragraph dateRange = new Paragraph(processVietnameseText(dateRangeText), dateFont);
             dateRange.setAlignment(Element.ALIGN_CENTER);
             document.add(dateRange);
             document.add(new Paragraph("\n"));
         }
 
         // Create content based on report type
-        if ("marketing".equals(reportType) || "bookings".equals(reportType) || "customers".equals(reportType)) {
+        if ("marketing".equals(reportType) || "customers".equals(reportType)) {
             createMarketingPDFReport(document);
-        } else if ("expense".equals(reportType) || "revenue".equals(reportType)) {
-            createExpensePDFReport(document, fromDate, toDate);
+        } else if ("bookings".equals(reportType)) {
+            createBookingStatusPDFReport(document);
+        } else if ("expense".equals(reportType)) {
+            createExpensePDFReport(document, fromDate, toDate, "Chi phí");
+        } else if ("revenue".equals(reportType)) {
+            createExpensePDFReport(document, fromDate, toDate, "Doanh thu");
         }
 
         document.close();
@@ -175,14 +277,14 @@ public class ExportService {
     }
 
     private void createExpenseExcelReport(Sheet sheet, Row headerRow, CellStyle headerStyle, 
-            LocalDate fromDate, LocalDate toDate) {
+            LocalDate fromDate, LocalDate toDate, String type) {
         // Create headers
         Cell headerCell1 = headerRow.createCell(0);
         headerCell1.setCellValue("Thời gian");
         headerCell1.setCellStyle(headerStyle);
 
         Cell headerCell2 = headerRow.createCell(1);
-        headerCell2.setCellValue("Chi phí (VNĐ)");
+        headerCell2.setCellValue(type + " (VNĐ)");
         headerCell2.setCellStyle(headerStyle);
 
         // Create currency style
@@ -223,22 +325,22 @@ public class ExportService {
         table.setSpacingAfter(10f);
 
         // Add header
-        com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12, com.itextpdf.text.Font.BOLD);
-        table.addCell(new PdfPCell(new Phrase("Nguồn khách hàng", headerFont)));
-        table.addCell(new PdfPCell(new Phrase("Số lượng", headerFont)));
+        com.itextpdf.text.Font headerFont = createVietnameseFont(12, com.itextpdf.text.Font.BOLD);
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText("Nguồn khách hàng"), headerFont)));
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText("Số lượng"), headerFont)));
 
         // Add data
-        com.itextpdf.text.Font contentFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12);
+        com.itextpdf.text.Font contentFont = createVietnameseFont(12, com.itextpdf.text.Font.NORMAL);
         Map<String, Long> marketingData = reportService.thongKeNguonKhachHang();
         for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
-            table.addCell(new PdfPCell(new Phrase(getMarketingSourceLabel(entry.getKey()), contentFont)));
+            table.addCell(new PdfPCell(new Phrase(processVietnameseText(getMarketingSourceLabel(entry.getKey())), contentFont)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(entry.getValue()), contentFont)));
         }
 
         document.add(table);
     }
 
-    private void createExpensePDFReport(Document document, LocalDate fromDate, LocalDate toDate) 
+    private void createExpensePDFReport(Document document, LocalDate fromDate, LocalDate toDate, String type) 
             throws DocumentException {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
@@ -246,12 +348,12 @@ public class ExportService {
         table.setSpacingAfter(10f);
 
         // Add header
-        com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12, com.itextpdf.text.Font.BOLD);
-        table.addCell(new PdfPCell(new Phrase("Thời gian", headerFont)));
-        table.addCell(new PdfPCell(new Phrase("Chi phí (VNĐ)", headerFont)));
+        com.itextpdf.text.Font headerFont = createVietnameseFont(12, com.itextpdf.text.Font.BOLD);
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText("Thời gian"), headerFont)));
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText(type + " (VNĐ)"), headerFont)));
 
         // Add data
-        com.itextpdf.text.Font contentFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12);
+        com.itextpdf.text.Font contentFont = createVietnameseFont(12, com.itextpdf.text.Font.NORMAL);
         
         if (fromDate != null) {
             Map<String, BigDecimal> expenseData = reportService.thongKeChiPhi(
@@ -279,13 +381,55 @@ public class ExportService {
         document.add(table);
     }
 
+    private void createBookingStatusExcelReport(Sheet sheet, Row headerRow, CellStyle headerStyle) {
+        // Create headers
+        Cell headerCell1 = headerRow.createCell(0);
+        headerCell1.setCellValue("Trạng thái đặt tour");
+        headerCell1.setCellStyle(headerStyle);
+
+        Cell headerCell2 = headerRow.createCell(1);
+        headerCell2.setCellValue("Số lượng");
+        headerCell2.setCellStyle(headerStyle);
+
+        // Add data
+        Map<String, Long> bookingData = reportService.thongKeTrangThaiDatCho();
+        int rowNum = 1;
+        for (Map.Entry<String, Long> entry : bookingData.entrySet()) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(entry.getKey());
+            row.createCell(1).setCellValue(entry.getValue());
+        }
+    }
+
+    private void createBookingStatusPDFReport(Document document) throws DocumentException {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        // Add header
+        com.itextpdf.text.Font headerFont = createVietnameseFont(12, com.itextpdf.text.Font.BOLD);
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText("Trạng thái đặt tour"), headerFont)));
+        table.addCell(new PdfPCell(new Phrase(processVietnameseText("Số lượng"), headerFont)));
+
+        // Add data
+        com.itextpdf.text.Font contentFont = createVietnameseFont(12, com.itextpdf.text.Font.NORMAL);
+        Map<String, Long> bookingData = reportService.thongKeTrangThaiDatCho();
+        for (Map.Entry<String, Long> entry : bookingData.entrySet()) {
+            table.addCell(new PdfPCell(new Phrase(processVietnameseText(entry.getKey()), contentFont)));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(entry.getValue()), contentFont)));
+        }
+
+        document.add(table);
+    }
+
     private String getMarketingSourceLabel(String key) {
         return switch (key) {
             case "friend" -> "Người quen giới thiệu";
             case "facebook" -> "Facebook";
-            case "tiktok" -> "Tiktok";
+            case "tiktok" -> "TikTok";
             case "google" -> "Tìm kiếm trên Google";
-            case "youtube" -> "Quảng cáo Youtube";
+            case "youtube" -> "Quảng cáo YouTube";
             case "website" -> "Website/Blog khác";
             default -> "Khác";
         };

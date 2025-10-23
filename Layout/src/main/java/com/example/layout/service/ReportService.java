@@ -2,6 +2,7 @@ package com.example.layout.service;
 
 import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.ThanhToanRepository;
+import com.example.layout.repository.DatChoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class ReportService {
 
     @Autowired
     private ThanhToanRepository thanhToanRepository;
+
+    @Autowired
+    private DatChoRepository datChoRepository;
 
     private static final Set<String> VALID_SOURCES = new HashSet<>(Arrays.asList(
         "friend", "facebook", "tiktok", "google", "youtube", "website"
@@ -130,6 +134,34 @@ public class ReportService {
             e.printStackTrace();
         }
 
+        return result;
+    }
+
+    public Map<String, Long> thongKeTrangThaiDatCho() {
+        Map<String, Long> result = new LinkedHashMap<>();
+        
+        // Khởi tạo tất cả trạng thái với giá trị 0
+        result.put("Chờ xác nhận", 0L);
+        result.put("Đã xác nhận", 0L);
+        result.put("Đã thanh toán", 0L);
+        result.put("Hoàn thành", 0L);
+        result.put("Đã hủy", 0L);
+        
+        try {
+            List<Object[]> data = datChoRepository.countByTrangThaiGroupBy();
+            
+            for (Object[] row : data) {
+                String trangThai = (String) row[0];
+                Long soLuong = (Long) row[1];
+                
+                if (trangThai != null && soLuong != null) {
+                    result.put(trangThai, soLuong);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy thống kê trạng thái đặt chỗ: " + e.getMessage());
+        }
+        
         return result;
     }
 }

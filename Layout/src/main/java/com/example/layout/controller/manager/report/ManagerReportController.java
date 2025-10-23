@@ -44,6 +44,12 @@ public class ManagerReportController {
         return reportService.thongKeNguonKhachHang();
     }
 
+    @GetMapping("/report/api/bookings")
+    @ResponseBody
+    public Map<String, Long> getBookingStatusReport() {
+        return reportService.thongKeTrangThaiDatCho();
+    }
+
     @GetMapping("/report/api/expense")
     @ResponseBody
     public Map<String, BigDecimal> getExpenseReport(

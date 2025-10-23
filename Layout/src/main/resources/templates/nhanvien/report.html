@@ -107,9 +107,9 @@
                   id="report-type"
                   class="w-full sm:w-auto pl-4 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm"
                 >
-                  <option value="bookings">Thống kê đặt chỗ</option>
-                  <option value="customers">Thống kê khách hàng</option>
-                  <option value="revenue">Thống kê doanh thu</option>
+                  <option value="customers">Nguồn khách hàng</option>
+                  <option value="bookings">Trạng thái đặt tour</option>
+                  <option value="revenue">Doanh thu theo ngày</option>
                 </select>
                 <input
                   type="month"
@@ -125,20 +125,20 @@
                 </button>
               </div>
               <!-- Right side: Export Buttons -->
-              <div class="flex items-center gap-2 w-full sm:w-auto">
+              <div class="flex items-center gap-3 w-full sm:w-auto">
                 <button
                   id="export-excel"
-                  class="w-full text-sm bg-green-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors"
+                  class="flex-1 sm:flex-none sm:w-32 bg-green-600 text-white font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors shadow-md text-sm"
                 >
                   <i class="fas fa-file-excel mr-2"></i>
-                  <span>Xuất Excel</span>
+                  <span>Excel</span>
                 </button>
                 <button
                   id="export-pdf"
-                  class="w-full text-sm bg-red-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors"
+                  class="flex-1 sm:flex-none sm:w-32 bg-red-600 text-white font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors shadow-md text-sm"
                 >
                   <i class="fas fa-file-pdf mr-2"></i>
-                  <span>Xuất PDF</span>
+                  <span>PDF</span>
                 </button>
               </div>
             </div>
@@ -159,13 +159,14 @@
       const ctx = document.getElementById("reportChart").getContext("2d");
       let reportChart;
 
-      // Mapping label cho trạng thái đặt chỗ
-      const bookingStatusMapping = {
-        "Chờ xác nhận": "Chờ xác nhận",
-        "Đã xác nhận": "Đã xác nhận", 
-        "Đã thanh toán": "Đã thanh toán",
-        "Hoàn thành": "Hoàn thành",
-        "Đã hủy": "Đã hủy"
+      // Mapping label cho nguồn khách hàng
+      const marketingSourceMapping = {
+        'friend': 'Người quen giới thiệu',
+        'facebook': 'Facebook',
+        'tiktok': 'TikTok',
+        'google': 'Tìm kiếm trên Google',
+        'youtube': 'Quảng cáo YouTube',
+        'website': 'Website/Blog khác'
       };
 
       // Format số tiền
@@ -191,21 +192,16 @@
         }
       };
 
-      // Hàm vẽ biểu đồ đặt chỗ (doughnut) - sử dụng API marketing
+      // Hàm vẽ biểu đồ đặt chỗ (doughnut) - sử dụng dữ liệu thật từ API
       async function loadBookingData() {
         try {
-          const res = await fetch("/nhanvien/report/api/marketing");
-          const data = await res.json();
+          const response = await fetch("/nhanvien/report/api/bookings");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
 
-          const marketingSourceMapping = {
-            'friend': 'Người quen giới thiệu',
-            'facebook': 'Facebook',
-            'tiktok': 'Tiktok',
-            'google': 'Tìm kiếm trên Google',
-            'youtube': 'Quảng cáo Youtube',
-            'website': 'Website/Blog khác'
-          };
-          const labels = Object.keys(data).map((key) => marketingSourceMapping[key] || 'Khác');
+          const labels = Object.keys(data);
           const values = Object.values(data);
 
           if (reportChart) reportChart.destroy();
@@ -216,20 +212,20 @@
               labels: labels,
               datasets: [
                 {
-                  label: "Nguồn khách hàng",
+                  label: "Trạng thái đặt tour",
                   data: values,
                   backgroundColor: [
-                    "rgba(59, 130, 246, 0.7)",
-                    "rgba(16, 185, 129, 0.7)",
-                    "rgba(245, 158, 11, 0.7)",
-                    "rgba(34, 197, 94, 0.7)",
-                    "rgba(239, 68, 68, 0.7)",
+                    "rgba(34, 197, 94, 0.7)",   // Đã xác nhận - xanh lá
+                    "rgba(245, 158, 11, 0.7)",  // Chờ xác nhận - vàng
+                    "rgba(59, 130, 246, 0.7)",  // Đã thanh toán - xanh dương
+                    "rgba(16, 185, 129, 0.7)",  // Hoàn thành - xanh mint
+                    "rgba(239, 68, 68, 0.7)",   // Đã hủy - đỏ
                   ],
                   borderColor: [
+                    "rgba(34, 197, 94, 1)",
+                    "rgba(245, 158, 11, 1)",
                     "rgba(59, 130, 246, 1)",
                     "rgba(16, 185, 129, 1)",
-                    "rgba(245, 158, 11, 1)",
-                    "rgba(34, 197, 94, 1)",
                     "rgba(239, 68, 68, 1)",
                   ],
                   borderWidth: 1,
@@ -244,7 +240,7 @@
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      return `${context.label}: ${context.parsed} người`;
+                      return `${context.label}: ${context.parsed} tour`;
                     },
                   },
                 },
@@ -266,17 +262,7 @@
           const data = await response.json();
 
           // Xử lý dữ liệu marketing cho khách hàng
-          const labels = Object.keys(data).map(key => {
-            const sourceMapping = {
-              'friend': 'Người quen giới thiệu',
-              'facebook': 'Facebook',
-              'tiktok': 'Tiktok',
-              'google': 'Tìm kiếm trên Google',
-              'youtube': 'Quảng cáo Youtube',
-              'website': 'Website/Blog khác'
-            };
-            return sourceMapping[key] || 'Khác';
-          });
+          const labels = Object.keys(data).map(key => marketingSourceMapping[key] || 'Khác');
           const values = Object.values(data);
 
           if (reportChart) {
@@ -289,7 +275,7 @@
               labels: labels,
               datasets: [
                 {
-                  label: "Nguồn khách hàng",
+                  label: "Số lượng khách hàng",
                   data: values,
                   backgroundColor: "rgba(16, 185, 129, 0.7)",
                   borderColor: "rgba(16, 185, 129, 1)",
@@ -305,7 +291,7 @@
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      return `${context.parsed.y} người`;
+                      return `${context.parsed.y} khách hàng`;
                     },
                   },
                 },
@@ -433,12 +419,12 @@
         const dateRangeInput = document.getElementById("date-range");
 
         switch (type) {
-          case "bookings":
+          case "customers":
             chartTitle.textContent = "Biểu đồ thống kê nguồn khách hàng";
             dateRangeInput.disabled = true;
             break;
-          case "customers":
-            chartTitle.textContent = "Biểu đồ thống kê nguồn khách hàng";
+          case "bookings":
+            chartTitle.textContent = "Biểu đồ thống kê trạng thái đặt tour";
             dateRangeInput.disabled = true;
             break;
           case "revenue":
@@ -457,11 +443,11 @@
       // Hàm load dữ liệu theo loại báo cáo
       function loadReportData(type) {
         switch (type) {
-          case "bookings":
-            loadBookingData();
-            break;
           case "customers":
             loadCustomerData();
+            break;
+          case "bookings":
+            loadBookingData();
             break;
           case "revenue":
             loadRevenueData();
