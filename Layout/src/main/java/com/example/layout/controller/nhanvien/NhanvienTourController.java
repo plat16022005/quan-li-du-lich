@@ -1,5 +1,6 @@
 package com.example.layout.controller.nhanvien;
 
+import com.example.layout.dto.TourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.Tour;
 import com.example.layout.entity.User;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/nhanvien")
@@ -43,7 +45,7 @@ public class NhanvienTourController {
             @RequestParam String tenTour,
             @RequestParam BigDecimal giaCoBan,
             @RequestParam int soNgay,
-            @RequestParam(required = false) String diaDiem,
+            @RequestParam(required = false) String mota,
             @RequestParam("file") MultipartFile file,
             HttpSession session,
             RedirectAttributes redirectAttributes
@@ -72,7 +74,7 @@ public class NhanvienTourController {
             tour.setTenTour(tenTour);
             tour.setGiaCoBan(giaCoBan);
             tour.setSoNgay(soNgay);
-            tour.setMoTa(diaDiem);
+            tour.setMoTa(mota);
             tour.setHinhAnh(imageUrl);
             Tour savedTour = tourService.saveTour(tour);
 
@@ -82,6 +84,66 @@ public class NhanvienTourController {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }
         return "redirect:/nhanvien/manager_tour";
+    }
+
+    @GetMapping("/manager_tour/get/{maTour}")
+    @ResponseBody
+    public ResponseEntity<?> getTourAndChuyen(@PathVariable Integer maTour) {
+        Tour tour = tourService.getTourById(maTour);
+        //ChuyenDuLich chuyen = chuyenDuLichService.getNearestChuyen(maTour).orElse(null);
+
+        // Map<String, Object> response = new HashMap<>();
+        // response.put("tour", tour);
+        // response.put("chuyen", chuyen);
+
+        TourDTO tourDTO = new TourDTO(
+                tour.getMaTour(),
+                tour.getTenTour(),
+                tour.getGiaCoBan(),
+                tour.getSoNgay(),
+                tour.getMoTa(),
+                tour.getHinhAnh()
+        );
+
+        return ResponseEntity.ok(tourDTO);
+    }
+
+    @PutMapping("/manager_tour/update/{maTour}")
+    @ResponseBody
+    public ResponseEntity<?> updateTourAndChuyen(
+            @PathVariable Integer maTour,
+            @org.springframework.web.bind.annotation.RequestBody Map<String, Object> body) {  // ✅ ĐÃ ĐỔI annotation
+
+        try {
+            Map<String, Object> tourData = (Map<String, Object>) body.get("tour");
+            // Map<String, Object> chuyenData = (Map<String, Object>) body.get("chuyen");
+            Tour tour = tourService.getTourById(maTour);
+            if (tour == null) return ResponseEntity.notFound().build();
+
+            tour.setTenTour((String) tourData.get("tenTour"));
+            tour.setGiaCoBan(new BigDecimal(tourData.get("giaCoBan").toString()));
+            tour.setSoNgay(Integer.parseInt(tourData.get("soNgay").toString()));
+            tour.setMoTa((String) tourData.get("moTa"));
+            tour.setHinhAnh((String) tourData.get("hinhAnh"));
+            System.out.println(">>>> HINH ANH NHẬN VÀO: " + tourData.get("hinhAnh"));
+            tourService.saveTour(tour);
+
+            // if (chuyenData != null && chuyenData.get("maChuyen") != null) {
+            //     Integer maChuyen = Integer.parseInt(chuyenData.get("maChuyen").toString());
+            //     ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(maChuyen);
+            //     if (chuyen != null) {
+            //         chuyen.setNgayBatDau(LocalDate.parse(chuyenData.get("ngayBatDau").toString()));
+            //         chuyen.setNgayKetThuc(LocalDate.parse(chuyenData.get("ngayKetThuc").toString()));
+            //         chuyen.setSoLuongToiDa(Integer.parseInt(chuyenData.get("soLuongToiDa").toString()));
+            //         chuyen.setTrangThai((String) chuyenData.get("trangThai"));
+            //         chuyenDuLichService.saveChuyen(chuyen);
+            //     }
+
+            return ResponseEntity.ok("Cập nhật Tour và Chuyến thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Lỗi khi cập nhật Tour & Chuyến");
+        }
     }
 
     @PostMapping("/tour/upload-image")
