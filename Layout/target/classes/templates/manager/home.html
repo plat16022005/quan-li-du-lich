@@ -203,33 +203,54 @@
             sidebar.classList.toggle('open');
         });
         
-        // Simple script to generate a fake bar chart
-        const chartContainer = document.getElementById('revenue-chart');
-        const months = ['T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11'];
-        const data = [65, 59, 80, 81, 56, 85, 95];
-
-        months.forEach((month, index) => {
-            const barWrapper = document.createElement('div');
-            barWrapper.className = 'flex flex-col items-center h-full justify-end';
-            
-            const bar = document.createElement('div');
-            const height = (data[index] / 100) * 100;
-            bar.className = 'chart-bar w-8 md:w-10 bg-blue-500 rounded-t-lg hover:bg-blue-600';
-            bar.style.height = '0%'; // Start at 0
-            
-            const label = document.createElement('span');
-            label.className = 'text-xs text-gray-500 mt-2';
-            label.textContent = month;
-            
-            barWrapper.appendChild(bar);
-            barWrapper.appendChild(label);
-            chartContainer.appendChild(barWrapper);
-            
-            // Animate bar height
-            setTimeout(() => {
-                bar.style.height = `${height}%`;
-            }, 100 * (index + 1));
-        });
+        // Load real revenue chart data from backend
+        async function loadRevenueChart() {
+            try {
+                const response = await fetch('/manager/home/revenue-chart');
+                const data = await response.json();
+                
+                const chartContainer = document.getElementById('revenue-chart');
+                chartContainer.innerHTML = ''; // Clear existing content
+                
+                const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+                
+                // Find max value for scaling
+                const maxValue = Math.max(...months.map(month => data[month] || 0));
+                
+                months.forEach((month, index) => {
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'flex flex-col items-center h-full justify-end';
+                    
+                    const bar = document.createElement('div');
+                    const revenue = data[month] || 0;
+                    const height = maxValue > 0 ? (revenue / maxValue) * 100 : 0;
+                    bar.className = 'chart-bar w-8 md:w-10 bg-blue-500 rounded-t-lg hover:bg-blue-600 cursor-pointer';
+                    bar.style.height = '0%'; // Start at 0
+                    bar.title = `${month}: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(revenue)}`;
+                    
+                    const label = document.createElement('span');
+                    label.className = 'text-xs text-gray-500 mt-2';
+                    label.textContent = month;
+                    
+                    barWrapper.appendChild(bar);
+                    barWrapper.appendChild(label);
+                    chartContainer.appendChild(barWrapper);
+                    
+                    // Animate bar height
+                    setTimeout(() => {
+                        bar.style.height = `${height}%`;
+                    }, 100 * (index + 1));
+                });
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu biểu đồ doanh thu:', error);
+                // Fallback to show error message
+                const chartContainer = document.getElementById('revenue-chart');
+                chartContainer.innerHTML = '<div class="text-center text-gray-500">Không thể tải dữ liệu biểu đồ</div>';
+            }
+        }
+        
+        // Load chart when page loads
+        document.addEventListener('DOMContentLoaded', loadRevenueChart);
     </script>
     <script>
 fetch('/manager/home/stats')
