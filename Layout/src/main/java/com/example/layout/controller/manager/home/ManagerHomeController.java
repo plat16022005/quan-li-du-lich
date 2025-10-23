@@ -67,4 +67,14 @@ public class ManagerHomeController {
                 ))
                 .toList();
     }
+    
+    @GetMapping("/home/revenue-chart")
+    @ResponseBody
+    public Map<String, Object> getRevenueChart(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != 1) {
+            throw new RuntimeException("Không có quyền truy cập");
+        }
+        return dashboardService.getDoanhThuTheoThang();
+    }
 }

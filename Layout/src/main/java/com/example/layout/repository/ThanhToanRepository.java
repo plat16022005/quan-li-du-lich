@@ -31,4 +31,10 @@ public interface ThanhToanRepository extends JpaRepository<ThanhToan, Integer> {
     @Query("SELECT COALESCE(SUM(t.soTien), 0) FROM ThanhToan t WHERE CAST(t.ngayThanhToan AS DATE) = :date")
     BigDecimal getRevenueByDate(@Param("date") java.time.LocalDate date);
     
+    @Query(value = "SELECT MONTH(NgayThanhToan) as month, COALESCE(SUM(SoTien), 0) as revenue " +
+                   "FROM ThanhToan " +
+                   "WHERE YEAR(NgayThanhToan) = :year " +
+                   "GROUP BY MONTH(NgayThanhToan) " +
+                   "ORDER BY MONTH(NgayThanhToan)", nativeQuery = true)
+    List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 }
