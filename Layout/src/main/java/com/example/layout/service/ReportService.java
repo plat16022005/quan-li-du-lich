@@ -8,6 +8,7 @@ import com.example.layout.repository.DatChoRepository;
 import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.repository.ThanhToanRepository;
+import com.example.layout.repository.DatChoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class ReportService {
     @Autowired private LichTrinhRepository lichTrinhRepository;
     @Autowired private DatChoRepository datChoRepository;
     @Autowired private ThanhToanRepository thanhToanRepository;
+
 
     private static final Set<String> VALID_SOURCES = new HashSet<>(Arrays.asList(
         "friend", "facebook", "tiktok", "google", "youtube", "website"
@@ -139,7 +141,6 @@ public class ReportService {
 
         return result;
     }
-
     public Map<String, BigDecimal> getTripFinanceReport(Integer maChuyen) {
         ChuyenDuLich chuyen = chuyenDuLichRepository.findById(maChuyen)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi với ID: " + maChuyen));
@@ -208,5 +209,31 @@ public class ReportService {
         // Tái sử dụng phương thức bạn đã có trong repository
         return chuyenDuLichRepository.findByYearAndMonth(year, month);
     }
-
+    public Map<String, Long> thongKeTrangThaiDatCho() {
+        Map<String, Long> result = new LinkedHashMap<>();
+        
+        // Khởi tạo tất cả trạng thái với giá trị 0
+        result.put("Chờ xác nhận", 0L);
+        result.put("Đã xác nhận", 0L);
+        result.put("Đã thanh toán", 0L);
+        result.put("Hoàn thành", 0L);
+        result.put("Đã hủy", 0L);
+        
+        try {
+            List<Object[]> data = datChoRepository.countByTrangThaiGroupBy();
+            
+            for (Object[] row : data) {
+                String trangThai = (String) row[0];
+                Long soLuong = (Long) row[1];
+                
+                if (trangThai != null && soLuong != null) {
+                    result.put(trangThai, soLuong);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy thống kê trạng thái đặt chỗ: " + e.getMessage());
+        }
+        
+        return result;
+    }
 }

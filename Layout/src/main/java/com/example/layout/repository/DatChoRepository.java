@@ -112,4 +112,6 @@ public interface DatChoRepository extends JpaRepository<DatCho, Integer> {
     	""")
     	List<TopCustomerDTO> findTopCustomers();
 
+    @Query("SELECT d.trangThai, COUNT(d) FROM DatCho d GROUP BY d.trangThai")
+    List<Object[]> countByTrangThaiGroupBy();
 }
