@@ -1,5 +1,7 @@
 package com.example.layout.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +14,7 @@ public class LichTrinh {
 
     @ManyToOne
     @JoinColumn(name = "MaTour")
+    @JsonIgnore
     private Tour tour;
 
     @Column(name = "ThuTuNgay")

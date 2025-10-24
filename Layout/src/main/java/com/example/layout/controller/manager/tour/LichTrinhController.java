@@ -18,6 +18,7 @@ import com.example.layout.repository.PhuongTienRepository;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -153,6 +154,7 @@ public class LichTrinhController {
     @PutMapping("/save/{maLichTrinh}")
     @ResponseBody 
     public ResponseEntity<LichTrinh> updateLichTrinh(@PathVariable Integer maLichTrinh, @RequestBody LichTrinh updatedData) {
+    	System.out.println("Vào PUT");
         LichTrinh saved = lichTrinhService.update(maLichTrinh, updatedData); // Cần tạo hàm này trong service
         return ResponseEntity.ok(saved);
     }
@@ -161,7 +163,11 @@ public class LichTrinhController {
     @DeleteMapping("/delete/{maLichTrinh}")
     @ResponseBody
     public ResponseEntity<?> deleteLichTrinh(@PathVariable Integer maLichTrinh) {
-        lichTrinhService.deleteLichTrinh(maLichTrinh);
-        return ResponseEntity.ok().build();
+        try {
+            lichTrinhService.deleteById(maLichTrinh);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Xóa thất bại");
+        }
     }
 }

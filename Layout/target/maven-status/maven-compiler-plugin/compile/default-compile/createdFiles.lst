@@ -57,6 +57,7 @@ com\example\layout\dto\BookingHistoryDTO.class
 com\example\layout\controller\nhanvien\NhanvienCustomerController.class
 com\example\layout\LayoutApplication.class
 com\example\layout\controller\NhanVienDashboardController.class
+com\example\layout\dto\TourDTO.class
 com\example\layout\service\HdvTxService.class
 com\example\layout\config\NoCacheConfig.class
 com\example\layout\controller\BookingApiController.class

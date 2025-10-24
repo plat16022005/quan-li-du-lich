@@ -56,5 +56,8 @@ public class LichTrinhService {
     public List<LichTrinh> saveAll(List<LichTrinh> lichTrinhList) {
         return lichTrinhRepo.saveAll(lichTrinhList);
     }
+    public void deleteById(Integer id) {
+        lichTrinhRepo.deleteById(id);
+    }
     
 }

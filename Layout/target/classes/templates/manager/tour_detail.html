@@ -187,7 +187,6 @@
   async function addLichTrinhRow() {
 	  const body = document.getElementById('lich-trinh-body');
 
-	  // Lấy danh sách từ API
 	  const vehicles = await fetch('/manager/phuongtien/all').then(res => res.json());
 	  const hotels = await fetch('/manager/khachsan/all').then(res => res.json());
 	  const diadiems = await fetch('/manager/diadiem/all').then(res => res.json());
@@ -222,7 +221,6 @@
 	  `;
 	  body.appendChild(row);
 	}
-
 
   function saveAllDetails() {
     alert('Lưu toàn bộ chi tiết cho tour — bạn sẽ kết nối API ở đây.');
@@ -272,9 +270,7 @@
       document.getElementById('new-hotel-ten').value = '';
       document.getElementById('new-hotel-diachi').value = '';
       document.getElementById('new-hotel-sdt').value = '';
-      document.getElementById('new-hotel-gia').value = '';
-      saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
-      location.reload();     
+      document.getElementById('new-hotel-gia').value = ''; 
       await loadHotels(); // refresh danh sách khách sạn
     } else {
       alert('❌ Thêm khách sạn thất bại');
@@ -307,8 +303,6 @@
       document.getElementById('new-vehicle-biens').value = '';
       document.getElementById('new-vehicle-socho').value = '';
       document.getElementById('new-vehicle-gia').value = '';
-      saveLichTrinhToLocalStorage(); // ✅ Lưu tạm các hàng
-      location.reload();     
       await loadVehicles(); // refresh danh sách phương tiện
     } else {
       alert('❌ Thêm phương tiện thất bại');
@@ -347,7 +341,6 @@
   window.addEventListener('DOMContentLoaded', async () => {
     await loadHotels();
     await loadVehicles();
-    restoreLichTrinhFromLocalStorage();
     // menu button safety and active link
     try {
         const menuButton = document.getElementById('menu-button');
@@ -381,12 +374,10 @@
 	      return res.json();
 	    })
 	    .then(data => {
-	      saveLichTrinhToLocalStorage();
 	      console.log('Thêm thành công:', data);
 	      closeModal('add-dia-diem-modal');
 	      
 	      // ✅ Refresh lại trang
-	      location.reload();
 	    })
 	    .catch(err => {
 	      console.error(err);
@@ -417,61 +408,75 @@
 	}
   async function addLichTrinhRowWithData(data) {
 	  const body = document.getElementById('lich-trinh-body');
-
-	  // Lấy dữ liệu mới từ server
 	  const vehicles = await fetch('/manager/phuongtien/all').then(res => res.json());
-	  const hotels = await fetch('/manager/khachsan/all').then(res => res.json());
+	  const hotels   = await fetch('/manager/khachsan/all').then(res => res.json());
 	  const diadiems = await fetch('/manager/diadiem/all').then(res => res.json());
 
 	  const row = document.createElement('tr');
+	  row.setAttribute('data-ma-lich-trinh', data.maLichTrinh || '');
+
 	  row.innerHTML = `
-	    <td class="px-4 py-2"><input type="number" value="${data.ngay}" class="border rounded p-1 w-20"></td>
 	    <td class="px-4 py-2">
-	      <select class="border rounded p-1 w-full">
+	      <input type="number" value="${data.ngay ?? ''}" class="border rounded p-1 w-20" ${data.maLichTrinh ? 'disabled' : ''}>
+	    </td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full" ${data.maLichTrinh ? 'disabled' : ''}>
 	        <option value="">-- Chọn địa điểm --</option>
 	        ${diadiems.map(d => `<option value="${d.maDiaDiem}" ${d.maDiaDiem == data.diaDiem ? 'selected' : ''}>${d.tenDiaDiem}</option>`).join('')}
 	      </select>
 	    </td>
-	    <td class="px-4 py-2"><input type="text" value="${data.hoatDong}" class="border rounded p-1 w-full"></td>
 	    <td class="px-4 py-2">
-	      <select class="border rounded p-1 w-full">
+	      <input type="text" value="${data.hoatDong ?? ''}" class="border rounded p-1 w-full" ${data.maLichTrinh ? 'disabled' : ''}>
+	    </td>
+	    <td class="px-4 py-2">
+	      <select class="border rounded p-1 w-full" ${data.maLichTrinh ? 'disabled' : ''}>
 	        <option value="">-- Chọn phương tiện --</option>
 	        ${vehicles.map(v => `<option value="${v.maPhuongTien}" ${v.maPhuongTien == data.phuongTien ? 'selected' : ''}>${v.loaiPhuongTien} - ${v.bienSo}</option>`).join('')}
 	      </select>
 	    </td>
 	    <td class="px-4 py-2">
-	      <select class="border rounded p-1 w-full">
+	      <select class="border rounded p-1 w-full" ${data.maLichTrinh ? 'disabled' : ''}>
 	        <option value="">-- Chọn khách sạn --</option>
 	        ${hotels.map(h => `<option value="${h.maKhachSan}" ${h.maKhachSan == data.khachSan ? 'selected' : ''}>${h.tenKhachSan}</option>`).join('')}
 	      </select>
 	    </td>
-	    <td class="px-4 py-2 text-right">
-	      <button class="text-red-600 hover:text-red-800" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button>
-	    </td>
+	    <td class="px-4 py-2 text-right space-x-2">
+	    <button class="text-blue-600 hover:text-blue-800" onclick="editRow(this)">
+	      <i class="fas fa-pen"></i>
+	    </button>
+	    <button class="text-green-600 hover:text-green-800 hidden" onclick="saveEditRow(this)">
+	      <i class="fas fa-save"></i>
+	    </button>
+	    <button class="text-red-600 hover:text-red-800" onclick="deleteLichTrinh(this, '${data.maLichTrinh || ''}')">
+	      <i class="fas fa-trash"></i>
+	    </button>
+	  </td>
+
 	  `;
 	  body.appendChild(row);
 	}
+
+
   async function saveAllDetails() {
-	  const tourId = document.getElementById('tour-id-label').textContent.trim();
-	  const rows = document.querySelectorAll('#lich-trinh-body tr');
+	  const tourId = Number(document.getElementById('tour-id-label').textContent.trim());
+	  const rows = Array.from(document.querySelectorAll('#lich-trinh-body tr'))
+	    .filter(tr => !tr.getAttribute('data-ma-lich-trinh')); // ✅ chỉ row mới
 
 	  if (rows.length === 0) {
-	    alert('⚠️ Bạn chưa thêm lịch trình nào!');
+	    alert('⚠️ Không có lịch trình mới nào để lưu!');
 	    return;
 	  }
 
-	  const lichTrinhList = [];
-
-	  rows.forEach(row => {
+	  const lichTrinhList = rows.map(row => {
 	    const inputs = row.querySelectorAll('input, select');
-	    lichTrinhList.push({
-	      maTour: Number(tourId),
+	    return {
+	      maTour: tourId,
 	      thuTuNgay: Number(inputs[0].value),
 	      maDiaDiem: Number(inputs[1].value),
 	      hoatDong: inputs[2].value,
 	      maPhuongTien: Number(inputs[3].value),
 	      maKhachSan: Number(inputs[4].value)
-	    });
+	    };
 	  });
 
 	  try {
@@ -480,14 +485,12 @@
 	      headers: { 'Content-Type': 'application/json' },
 	      body: JSON.stringify(lichTrinhList)
 	    });
-
 	    if (res.ok) {
 	      alert('✅ Đã lưu chi tiết tour thành công!');
-	      localStorage.removeItem('lichTrinhRows'); // 🧹 Xóa dữ liệu tạm
-	      location.reload(); // hoặc chuyển hướng sang trang quản lý
+	      // Reload lại danh sách từ server (không cần reload trang)
+	      await loadExistingLichTrinh(tourId);
 	    } else {
-	      const errorText = await res.text();
-	      console.error('Lỗi khi lưu lịch trình:', errorText);
+	      console.error(await res.text());
 	      alert('❌ Lưu chi tiết tour thất bại!');
 	    }
 	  } catch (err) {
@@ -495,6 +498,116 @@
 	    alert('❌ Lỗi kết nối server khi lưu lịch trình');
 	  }
 	}
+  
+  window.addEventListener('DOMContentLoaded', async () => {
+	  await loadHotels();
+	  await loadVehicles();
+
+	  const tourId = getTourIdFromURL();
+	  document.getElementById('tour-id-label').textContent = tourId;
+
+	  await loadExistingLichTrinh(tourId);
+
+	  // KHÔNG dùng localStorage nữa
+
+	  try { setupSidebar && setupSidebar(); } catch(e) { /* ignore */ }
+	});
+
+  function getTourIdFromURL() {
+	  const parts = window.location.pathname.split('/');
+	  return parts[parts.length - 1]; // vị trí có số 5
+	}
+
+  async function loadExistingLichTrinh(tourId) {
+	  document.getElementById('lich-trinh-body').innerHTML = '';
+	  try {
+	    const lichTrinhList = await fetch(`/manager/lichtrinh/tour/${tourId}`).then(res => res.json());
+	    for (const item of lichTrinhList) {
+	      await addLichTrinhRowWithData({
+	        maLichTrinh: item.maLichTrinh,                   // ✅ thêm id
+	        ngay: item.thuTuNgay,
+	        diaDiem: item.diaDiem?.maDiaDiem ?? '',
+	        hoatDong: item.hoatDong,
+	        phuongTien: item.phuongTien?.maPhuongTien ?? '',
+	        khachSan: item.khachSan?.maKhachSan ?? ''
+	      });
+	    }
+	  } catch (err) {
+	    console.error('❌ Lỗi khi tải lịch trình:', err);
+	  }
+	}
+
+
+  function editRow(btn) {
+	  const tr = btn.closest('tr');
+	  const inputs = tr.querySelectorAll('input, select');
+	  inputs.forEach(el => el.removeAttribute('disabled'));
+	  btn.classList.add('hidden');
+	  tr.querySelector('.text-green-600').classList.remove('hidden');
+	}
+
+	async function saveEditRow(btn) {
+	  const tr = btn.closest('tr');
+	  const id = tr.getAttribute('data-ma-lich-trinh');
+	  const inputs = tr.querySelectorAll('input, select');
+
+	  const data = {
+	    thuTuNgay: Number(inputs[0].value),
+	    diaDiem: { maDiaDiem: Number(inputs[1].value) },
+	    hoatDong: inputs[2].value,
+	    phuongTien: { maPhuongTien: Number(inputs[3].value) },
+	    khachSan: inputs[4].value ? { maKhachSan: Number(inputs[4].value) } : null
+	  };
+
+	  try {
+	    const res = await fetch(`/manager/lichtrinh/save/${id}`, {
+	      method: 'PUT',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify(data)
+	    });
+
+	    if (res.ok) {
+	      alert('✅ Đã cập nhật thành công!');
+	      inputs.forEach(el => el.setAttribute('disabled', 'true'));
+	      btn.classList.add('hidden');
+	      tr.querySelector('.text-blue-600').classList.remove('hidden');
+	    } else {
+	      alert('❌ Cập nhật thất bại!');
+	    }
+	  } catch (e) {
+	    console.error(e);
+	    alert('⚠️ Lỗi kết nối server khi cập nhật');
+	  }
+	}
+	async function deleteLichTrinh(btn, id) {
+		  const tr = btn.closest('tr');
+
+		  // Nếu chưa có ID (tức chưa lưu DB) → chỉ xóa khỏi giao diện
+		  if (!id) {
+		    tr.remove();
+		    return;
+		  }
+
+		  if (!confirm('🗑 Bạn có chắc muốn xóa lịch trình này?')) return;
+
+		  try {
+		    const res = await fetch(`/manager/lichtrinh/delete/${id}`, {
+		      method: 'DELETE'
+		    });
+
+		    if (res.ok) {
+		      alert('✅ Đã xóa lịch trình thành công!');
+		      tr.remove();
+		    } else {
+		      const errorText = await res.text();
+		      console.error(errorText);
+		      alert('❌ Xóa lịch trình thất bại!');
+		    }
+		  } catch (err) {
+		    console.error(err);
+		    alert('⚠️ Lỗi kết nối server khi xóa lịch trình');
+		  }
+		}
 
 </script>
 
