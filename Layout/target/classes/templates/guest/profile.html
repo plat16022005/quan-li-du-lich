@@ -143,7 +143,7 @@
 						            <p class="text-sm text-gray-500">
 						                Khởi hành: <span th:text="${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"></span>
 						            </p>
-						            <p class="text-sm text-green-600 font-semibold">Trạng thái: Đã hoàn thành</p>
+						            <p th:text="'Trạng thái: '+${chuyen.trangThai}" class="text-sm text-green-600 font-semibold">Trạng thái: Đã hoàn thành</p>
 						        </div>
 						        <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
 									<a th:if="${!ratedTripIds.contains(chuyen.maChuyen)}"
@@ -174,7 +174,7 @@
 						            <p class="text-sm text-gray-500">
 						                Khởi hành: <span th:text="${#temporals.format(cho.chuyenDuLich.ngayBatDau, 'dd/MM/yyyy')}"></span>
 						            </p>
-						            <p class="text-sm text-blue-600 font-semibold">Trạng thái: Sắp khởi hành</p>
+						            <p th:text="'Trạng thái: '+${cho.chuyenDuLich.trangThai}" class="text-sm text-blue-600 font-semibold">Trạng thái: Sắp khởi hành</p>
 						        </div>
 						        <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
 								<a th:href="@{'/ticket/detail/' + ${cho.maDatCho}}"
