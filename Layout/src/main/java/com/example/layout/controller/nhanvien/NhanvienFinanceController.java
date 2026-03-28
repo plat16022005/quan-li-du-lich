@@ -16,19 +16,23 @@ import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
-import com.example.layout.service.FinanceService;
+import com.example.layout.service.IFinanceService;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/nhanvien")
 public class NhanvienFinanceController {
-	@Autowired
-	private ChuyenDuLichRepository chuyenDuLichRepository;
-	@Autowired
-	private DatChoRepository datChoRepository;
-	@Autowired
-	private FinanceService financeService;
+	private final ChuyenDuLichRepository chuyenDuLichRepository;
+	private final DatChoRepository datChoRepository;
+	private final IFinanceService financeService;
+
+    public NhanvienFinanceController(ChuyenDuLichRepository chuyenDuLichRepository, DatChoRepository datChoRepository, IFinanceService financeService) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.datChoRepository = datChoRepository;
+        this.financeService = financeService;
+    }
+
     @GetMapping("/finance")
     public String showManagerTour(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");

@@ -20,10 +20,14 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/nhanvien")
 public class NhanvienHomeController {
 
-    @Autowired
-    private DatChoRepository datChoRepository;
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final DatChoRepository datChoRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
+
+    public NhanvienHomeController(DatChoRepository datChoRepository, ChuyenDuLichRepository chuyenDuLichRepository) {
+        this.datChoRepository = datChoRepository;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+    }
+
 
 
     // Dashboard được xử lý bởi NhanVienDashboardController

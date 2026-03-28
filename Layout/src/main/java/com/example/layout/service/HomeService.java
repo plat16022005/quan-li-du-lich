@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.layout.repository.ChuyenDuLichRepository;
@@ -14,69 +14,61 @@ import com.example.layout.repository.NhanvienRepository;
 import com.example.layout.repository.ThanhToanRepository;
 
 @Service
-public class HomeService {
+public class HomeService implements IHomeService {
 
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final KhachHangRepository khachHangRepository;
+    private final NhanvienRepository nhanvienRepository;
+    private final ThanhToanRepository thanhToanRepository;
 
-    @Autowired
-    private KhachHangRepository khachHangRepository;
+    public HomeService(ChuyenDuLichRepository chuyenDuLichRepository,
+                       KhachHangRepository khachHangRepository,
+                       NhanvienRepository nhanvienRepository,
+                       ThanhToanRepository thanhToanRepository) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.nhanvienRepository = nhanvienRepository;
+        this.thanhToanRepository = thanhToanRepository;
+    }
 
-    @Autowired
-    private NhanvienRepository nhanvienRepository;
-    
-    @Autowired
-    private ThanhToanRepository thanhToanRepository;
-
+    @Override
     public long getSoChuyenDangDienRa() {
-        LocalDate today = LocalDate.now();
         return chuyenDuLichRepository.countChuyenDangDienRa();
     }
 
+    @Override
     public long getSoKhachHangMoi() {
-        LocalDate today = LocalDate.now();
-        return khachHangRepository.countKhachHangMoi(today);
+        return khachHangRepository.countKhachHangMoi(LocalDate.now());
     }
 
+    @Override
     public long getSoNhanVien() {
         return nhanvienRepository.count();
     }
 
-    /**
-     * Tổng doanh thu trong tháng hiện tại (theo ngày thanh toán)
-     * @return tổng doanh thu (VND) trong BigDecimal
-     */
-    public java.math.BigDecimal getDoanhThuThang() {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        int month = today.getMonthValue();
-        int year = today.getYear();
-        return thanhToanRepository.sumSoTienByMonthAndYear(month, year);
-    }
-    
-    /**
-     * Lấy doanh thu theo từng tháng trong năm
-     * @return Map với key là tên tháng và value là doanh thu
-     */
-    public Map<String, Object> getDoanhThuTheoThang() {
+    @Override
+    public BigDecimal getDoanhThuThang() {
         LocalDate today = LocalDate.now();
-        int year = today.getYear();
-        
+        return thanhToanRepository.sumSoTienByMonthAndYear(today.getMonthValue(), today.getYear());
+    }
+
+    @Override
+    public Map<String, Object> getDoanhThuTheoThang() {
+        int year = LocalDate.now().getYear();
         List<Object[]> results = thanhToanRepository.getMonthlyRevenueByYear(year);
         Map<String, Object> monthlyRevenue = new HashMap<>();
-        
-        // Khởi tạo tất cả các tháng với giá trị 0
-        String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
+
+        String[] monthNames = {"T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"};
         for (String monthName : monthNames) {
             monthlyRevenue.put(monthName, 0);
         }
-        
-        // Điền dữ liệu thực tế
+
         for (Object[] result : results) {
             Integer month = (Integer) result[0];
-            java.math.BigDecimal revenue = (java.math.BigDecimal) result[1];
+            BigDecimal revenue = (BigDecimal) result[1];
             monthlyRevenue.put("T" + month, revenue.doubleValue());
         }
-        
+
         return monthlyRevenue;
     }
 }

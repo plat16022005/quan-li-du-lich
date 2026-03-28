@@ -3,11 +3,12 @@ package com.example.layout.controller.manager.tour;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.repository.LichTrinhRepository;
 import com.example.layout.repository.TourRepository;
-import com.example.layout.service.DiaDiemService;
-import com.example.layout.service.KhachSanService;
-import com.example.layout.service.LichTrinhService;
-import com.example.layout.service.PhuongTienService;
-import com.example.layout.service.TourService;
+import com.example.layout.service.IDiaDiemService;
+import com.example.layout.service.IKhachSanService;
+import com.example.layout.service.ILichTrinhService;
+import com.example.layout.service.IPhuongTienService;
+import com.example.layout.service.ITourService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -31,34 +32,40 @@ import java.util.Map;
 public class LichTrinhController {
 
 
-    private final LichTrinhService lichTrinhService;
-    private final TourService tourService; 
-    private final DiaDiemService diaDiemService;
-    private final KhachSanService khachSanService;
-    private final PhuongTienService phuongTienService;
+    private final ILichTrinhService lichTrinhService;
+    private final IDiaDiemService diaDiemService;
+    private final IKhachSanService khachSanService;
+    private final IPhuongTienService phuongTienService;
+    private final ITourService tourService; 
+    
+    // Sử dụng @Autowired hoặc constructor injection cho ObjectMapper
+    private final ObjectMapper objectMapper;
 
-    public LichTrinhController(LichTrinhService lichTrinhService, TourService tourService, DiaDiemService diaDiemService, KhachSanService khachSanService, PhuongTienService phuongTienService) {
+    private final LichTrinhRepository lichTrinhRepository;
+    private final TourRepository tourRepository;
+    private final DiaDiemRepository diaDiemRepository;
+    private final KhachSanRepository khachSanRepository;
+    private final PhuongTienRepository phuongTienRepository;
+
+    public LichTrinhController(ILichTrinhService lichTrinhService, ITourService tourService, 
+                               IDiaDiemService diaDiemService, IKhachSanService khachSanService, 
+                               IPhuongTienService phuongTienService, ObjectMapper objectMapper, 
+                               LichTrinhRepository lichTrinhRepository, TourRepository tourRepository, 
+                               DiaDiemRepository diaDiemRepository, KhachSanRepository khachSanRepository, 
+                               PhuongTienRepository phuongTienRepository) {
         this.lichTrinhService = lichTrinhService;
         this.tourService = tourService;
         this.diaDiemService = diaDiemService;
         this.khachSanService = khachSanService;
         this.phuongTienService = phuongTienService;
+        this.objectMapper = objectMapper;
+        this.lichTrinhRepository = lichTrinhRepository;
+        this.tourRepository = tourRepository;
+        this.diaDiemRepository = diaDiemRepository;
+        this.khachSanRepository = khachSanRepository;
+        this.phuongTienRepository = phuongTienRepository;
     }
 
-    @Autowired
-    private LichTrinhRepository lichTrinhRepository;
-
-    @Autowired
-    private TourRepository tourRepository;
-
-    @Autowired
-    private DiaDiemRepository diaDiemRepository;
-
-    @Autowired
-    private KhachSanRepository khachSanRepository;
-
-    @Autowired
-    private PhuongTienRepository phuongTienRepository;
 
     @PostMapping("/add-multiple")
     public ResponseEntity<?> addMultiple(@RequestBody List<LichTrinhRequest> lichTrinhList, HttpSession session) {

@@ -3,10 +3,9 @@ package com.example.layout.controller.manager.home;
 import jakarta.servlet.http.HttpSession;
 
 import com.example.layout.dto.UpcomingTourDTO;
-import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.service.HomeService;
+import com.example.layout.service.IHomeService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/manager")
 public class ManagerHomeController {
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
 	@GetMapping("/home")
     public String showHomeForm(HttpSession session) {
 		User user = (User) session.getAttribute("user");
@@ -36,8 +34,13 @@ public class ManagerHomeController {
 		}
         return "manager/home";
     }
-    @Autowired
-    private HomeService dashboardService;
+    private final IHomeService homeService;
+
+    public ManagerHomeController(ChuyenDuLichRepository chuyenDuLichRepository, IHomeService homeService) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.homeService = homeService;
+    }
+
 
     @GetMapping("/home/stats")
     @ResponseBody
@@ -48,11 +51,11 @@ public class ManagerHomeController {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("chuyenDangDienRa", dashboardService.getSoChuyenDangDienRa());
-        response.put("khachHangMoi", dashboardService.getSoKhachHangMoi());
-        response.put("tongNhanVien", dashboardService.getSoNhanVien());
+        response.put("chuyenDangDienRa", homeService.getSoChuyenDangDienRa());
+        response.put("khachHangMoi", homeService.getSoKhachHangMoi());
+        response.put("tongNhanVien", homeService.getSoNhanVien());
         // totalRevenue in VND (BigDecimal) -> return as number
-        java.math.BigDecimal revenue = dashboardService.getDoanhThuThang();
+        java.math.BigDecimal revenue = homeService.getDoanhThuThang();
         response.put("totalRevenue", revenue != null ? revenue : java.math.BigDecimal.ZERO);
         return response;
     }
@@ -75,6 +78,6 @@ public class ManagerHomeController {
         if (user == null || user.getMaVaiTro() != 1) {
             throw new RuntimeException("Không có quyền truy cập");
         }
-        return dashboardService.getDoanhThuTheoThang();
+        return homeService.getDoanhThuTheoThang();
     }
 }

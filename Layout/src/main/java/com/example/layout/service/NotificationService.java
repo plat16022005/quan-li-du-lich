@@ -3,7 +3,6 @@ package com.example.layout.service;
 
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.repository.ChuyenDuLichRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -11,36 +10,31 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-public class NotificationService {
+public class NotificationService implements INotificationService {
 
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
 
-    /**
-     * Lấy các chuyến sắp khởi hành trong 7 ngày tới
-     */
+    public NotificationService(ChuyenDuLichRepository chuyenDuLichRepository) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+    }
+
+    @Override
     public List<ChuyenDuLich> getUpcomingTrips(Integer staffId, int daysAhead) {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusDays(daysAhead);
-        
         return chuyenDuLichRepository.findUpcomingTripsByStaff(today, endDate, staffId);
     }
 
-    /**
-     * Đếm số chuyến sắp khởi hành
-     */
+    @Override
     public int countUpcomingTrips(Integer staffId, int daysAhead) {
         return getUpcomingTrips(staffId, daysAhead).size();
     }
 
-    /**
-     * Tạo thông báo cho từng chuyến
-     */
+    @Override
     public String generateNotificationMessage(ChuyenDuLich trip) {
         long daysUntilStart = ChronoUnit.DAYS.between(LocalDate.now(), trip.getNgayBatDau());
-        
         String tourName = trip.getTour() != null ? trip.getTour().getTenTour() : "Chuyến #" + trip.getMaChuyen();
-        
+
         if (daysUntilStart == 0) {
             return "🚀 Chuyến '" + tourName + "' khởi hành HÔM NAY!";
         } else if (daysUntilStart == 1) {

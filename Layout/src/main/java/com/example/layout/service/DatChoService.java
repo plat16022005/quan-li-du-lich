@@ -22,7 +22,7 @@ import com.example.layout.dto.DatChoDTO;
 import jakarta.transaction.Transactional;
 
 @Service
-public class DatChoService {
+public class DatChoService implements IDatChoService {
     private final DatChoRepository datChoRepository;
     private final ChiTietDatChoRepository chiTietDatChoRepository;
     private final ChuyenDuLichRepository chuyenDuLichRepository;
@@ -38,18 +38,22 @@ public class DatChoService {
         this.khachHangRepository = khachHangRepository;
     }
 
+    @Override
     public Optional<DatCho> findById(Integer id) {
         return datChoRepository.findById(id);
     }
     
+    @Override
     public Page<DatCho> findall(Pageable pageable){
     	return datChoRepository.findAll(pageable);
     }
     
+    @Override
     public Page<DatCho> searchAndFilter(String keyword, String status, Pageable pageable) {
         return datChoRepository.searchAndFilter(keyword, status, pageable);
     }
 
+    @Override
     @Transactional
     public Page<com.example.layout.dto.BookingApiDTO> searchAndFilterDto(String keyword, String status, Pageable pageable) {
         Page<DatCho> page = datChoRepository.searchAndFilter(keyword, status, pageable);
@@ -69,11 +73,13 @@ public class DatChoService {
         });
     }
 
+    @Override
     public List<DatCho> findByKhachHangId(Integer maKhachHang) {
         return datChoRepository.findByKhachHang_MaKhachHang(maKhachHang);
     }
 
 
+    @Override
     @Transactional
     public DatCho createBooking(DatChoDTO datChoDTO) {
         ChuyenDuLich chuyen = chuyenDuLichRepository.findById(datChoDTO.getMaChuyen())
@@ -107,6 +113,7 @@ public class DatChoService {
         return savedDatCho;
     }
 
+    @Override
     @Transactional
     public com.example.layout.dto.BookingApiDTO getBookingApiDtoById(Integer bookingId) {
     DatCho dc = datChoRepository.findById(bookingId)
@@ -128,6 +135,7 @@ public class DatChoService {
     return new com.example.layout.dto.BookingApiDTO(dc.getMaDatCho(), dc.getNgayDat(), dc.getTrangThai(), kh, ch, chiTiet);
     }
 
+    @Override
     public DatCho cancelBooking(Integer maDatCho) {
         DatCho datCho = datChoRepository.findById(maDatCho)
                 .orElseThrow(() -> new RuntimeException("Đơn đặt chỗ không tồn tại"));
@@ -140,6 +148,7 @@ public class DatChoService {
         }
     }
     
+    @Override
     public DatCho confirmBooking(Integer maDatCho) {
         DatCho datCho = datChoRepository.findById(maDatCho)
                 .orElseThrow(() -> new RuntimeException("Đơn đặt chỗ không tồn tại"));
@@ -152,6 +161,7 @@ public class DatChoService {
         }
     }
     
+    @Override
     public List<BookingDTO> getBookingsByTourId(Integer tourId) {
         List<DatCho> bookings = datChoRepository.findByChuyenDuLich_Tour_MaTour(tourId);
         

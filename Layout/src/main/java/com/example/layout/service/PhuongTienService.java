@@ -8,7 +8,7 @@ import com.example.layout.repository.PhuongTienRepository;
 import java.util.*;
 
 @Service
-public class PhuongTienService {
+public class PhuongTienService implements IPhuongTienService {
     private final PhuongTienRepository phuongTienRepository;
 
     public PhuongTienService(PhuongTienRepository phuongTienRepository)

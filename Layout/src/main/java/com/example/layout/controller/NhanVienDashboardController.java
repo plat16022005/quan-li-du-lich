@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.layout.service.NhanVienDashboardService;
+import com.example.layout.service.INhanVienDashboardService;
 
 import java.util.Map;
 import java.util.List;
@@ -16,8 +16,12 @@ import java.util.List;
 @RequestMapping("/nhanvien")
 public class NhanVienDashboardController {
 
-    @Autowired
-    private NhanVienDashboardService dashboardService;
+    private final INhanVienDashboardService dashboardService;
+
+    public NhanVienDashboardController(INhanVienDashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
+
 
     @GetMapping("/dashboard")
     public String showDashboard(jakarta.servlet.http.HttpSession session) {

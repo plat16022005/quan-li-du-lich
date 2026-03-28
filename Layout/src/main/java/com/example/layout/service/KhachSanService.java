@@ -9,7 +9,7 @@ import com.example.layout.repository.KhachSanRepository;
 import com.example.layout.entity.*;
 
 @Service
-public class KhachSanService {
+public class KhachSanService implements IKhachSanService {
     private final KhachSanRepository khachSanRepository;
     private final DiaDiemRepository diaDiemRepository;
 

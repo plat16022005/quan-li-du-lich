@@ -7,9 +7,9 @@ import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
 import com.example.layout.entity.User;
 import com.example.layout.repository.KhachHangRepository;
-import com.example.layout.service.DatChoService;
-import com.example.layout.service.KhachHangService;
-import com.example.layout.service.UserService;
+import com.example.layout.service.IDatChoService;
+import com.example.layout.service.IKhachHangService;
+import com.example.layout.service.IUserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -38,12 +38,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/nhanvien/customers")
 public class NhanvienCustomerController {
 
-    private final KhachHangService khachHangService;
-    private final DatChoService datChoService;
-    private final UserService userService;
+    private final IKhachHangService khachHangService;
+    private final IDatChoService datChoService;
+    private final IUserService userService;
     private final KhachHangRepository khachHangRepository;
     
-    public NhanvienCustomerController(KhachHangService khachHangService, DatChoService datChoService, UserService userService, KhachHangRepository khachHangRepository) {
+    public NhanvienCustomerController(IKhachHangService khachHangService, IDatChoService datChoService, IUserService userService, KhachHangRepository khachHangRepository) {
         this.khachHangService = khachHangService;
 		this.datChoService = datChoService;
 		this.userService = userService;

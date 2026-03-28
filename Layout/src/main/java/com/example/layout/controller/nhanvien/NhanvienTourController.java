@@ -4,9 +4,9 @@ import com.example.layout.dto.TourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.Tour;
 import com.example.layout.entity.User;
-import com.example.layout.service.ChuyenDuLichService;
-import com.example.layout.service.NhanVienService;
-import com.example.layout.service.TourService;
+import com.example.layout.service.IChuyenDuLichService;
+import com.example.layout.service.INhanVienService;
+import com.example.layout.service.ITourService;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,11 +30,11 @@ import java.util.Map;
 @RequestMapping("/nhanvien")
 public class NhanvienTourController {
 
-    private final TourService tourService;
-    private final ChuyenDuLichService chuyenDuLichService;
-    private final NhanVienService nhanVienService;
+    private final ITourService tourService;
+    private final IChuyenDuLichService chuyenDuLichService;
+    private final INhanVienService nhanVienService;
 
-    public NhanvienTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService, NhanVienService nhanVienService) {
+    public NhanvienTourController(ITourService tourService, IChuyenDuLichService chuyenDuLichService, INhanVienService nhanVienService) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
         this.nhanVienService = nhanVienService;

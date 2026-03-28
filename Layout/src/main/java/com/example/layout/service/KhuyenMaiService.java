@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class KhuyenMaiService {
+public class KhuyenMaiService implements IKhuyenMaiService {
     private final KhuyenMaiRepository repository;
 
     public KhuyenMaiService(KhuyenMaiRepository repository) {

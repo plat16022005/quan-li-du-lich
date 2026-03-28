@@ -1,7 +1,7 @@
 package com.example.layout.controller;
 
 import com.example.layout.dto.BookingDTO;
-import com.example.layout.service.DatChoService;
+import com.example.layout.service.IDatChoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +12,12 @@ import java.util.List;
 @RequestMapping("/manager/tour")
 public class TourBookingController {
 
-    @Autowired
-    private DatChoService datChoService;
+    private final IDatChoService datChoService;
+
+    public TourBookingController(IDatChoService datChoService) {
+        this.datChoService = datChoService;
+    }
+
 
     @GetMapping("/{tourId}/bookings")
     public ResponseEntity<List<BookingDTO>> getBookings(@PathVariable Integer tourId) {

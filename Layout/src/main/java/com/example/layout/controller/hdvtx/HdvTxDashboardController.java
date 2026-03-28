@@ -9,8 +9,8 @@ import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.NhanvienRepository;
 import com.example.layout.service.HdvTxService;
-import com.example.layout.service.LichTrinhService;
-import com.example.layout.service.NotificationService;
+import com.example.layout.service.ILichTrinhService;
+import com.example.layout.service.INotificationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -33,20 +33,24 @@ import java.util.Set;
 @RequestMapping("/hdvtx")
 public class HdvTxDashboardController {
 
-	@Autowired
-	private HdvTxService hdvTxService;
-	@Autowired
-	private NhanvienRepository nhanvienRepository;
-	@Autowired
-	private ChuyenDuLichRepository chuyenDuLichRepository;
-	@Autowired
-	private KhachHangRepository khachHangRepository;
-	@Autowired
-	private LichTrinhService lichTrinhService;
+	private final HdvTxService hdvTxService;
+	private final NhanvienRepository nhanvienRepository;
+	private final ChuyenDuLichRepository chuyenDuLichRepository;
+	private final KhachHangRepository khachHangRepository;
+	private final ILichTrinhService lichTrinhService;
 	private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
 	
-	@Autowired 
-	private NotificationService notificationService;
+	private final INotificationService notificationService;
+
+    public HdvTxDashboardController(HdvTxService hdvTxService, NhanvienRepository nhanvienRepository, ChuyenDuLichRepository chuyenDuLichRepository, KhachHangRepository khachHangRepository, ILichTrinhService lichTrinhService, INotificationService notificationService) {
+        this.hdvTxService = hdvTxService;
+        this.nhanvienRepository = nhanvienRepository;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.lichTrinhService = lichTrinhService;
+        this.notificationService = notificationService;
+    }
+
 
 	public static class CurrentUserDTO {
 		private final String hoTen;

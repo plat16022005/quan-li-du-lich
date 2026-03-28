@@ -23,10 +23,14 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/manager")
 public class ManagerGuestController {
-	@Autowired
-	private PhanHoiRepository phanHoiRepository;
-	@Autowired
-	private KhachHangRepository khachHangRepository;
+	private final PhanHoiRepository phanHoiRepository;
+	private final KhachHangRepository khachHangRepository;
+
+    public ManagerGuestController(PhanHoiRepository phanHoiRepository, KhachHangRepository khachHangRepository) {
+        this.phanHoiRepository = phanHoiRepository;
+        this.khachHangRepository = khachHangRepository;
+    }
+
 	@GetMapping("/guest")
     public String showGuestForm(HttpSession session) {
 		User user = (User) session.getAttribute("user");

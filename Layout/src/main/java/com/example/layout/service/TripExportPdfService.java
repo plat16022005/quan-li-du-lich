@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-public class TripExportPdfService {
+public class TripExportPdfService implements ITripExportPdfService {
 
     private static Font TITLE_FONT;
     private static Font HEADER_FONT;

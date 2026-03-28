@@ -1,8 +1,9 @@
 package com.example.layout.controller.manager.report;
 
 import com.example.layout.entity.User;
-import com.example.layout.service.ReportService;
-import com.example.layout.service.ExportService;
+import com.example.layout.service.IReportService;
+import com.example.layout.service.IExcelExportService;
+import com.example.layout.service.IPdfExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -22,11 +23,17 @@ import com.itextpdf.text.DocumentException;
 @RequestMapping("/manager")
 public class ManagerReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final IReportService reportService;
 
-    @Autowired
-    private ExportService exportService;
+    private final IExcelExportService excelExportService;
+    private final IPdfExportService pdfExportService;
+
+    public ManagerReportController(IReportService reportService, IExcelExportService excelExportService, IPdfExportService pdfExportService) {
+        this.reportService = reportService;
+        this.excelExportService = excelExportService;
+        this.pdfExportService = pdfExportService;
+    }
+
 
     @GetMapping("/report")
     public String showReportForm(HttpSession session) {
@@ -76,7 +83,7 @@ public class ManagerReportController {
                 }
             }
             
-            byte[] excelFile = exportService.exportToExcel(reportType, date, null);
+            byte[] excelFile = excelExportService.exportToExcel(reportType, date, null);
             
             String filename = String.format("bao-cao-%s-%s.xlsx", 
                 reportType, 
@@ -114,7 +121,7 @@ public class ManagerReportController {
                 }
             }
             
-            byte[] pdfFile = exportService.exportToPDF(reportType, date, null);
+            byte[] pdfFile = pdfExportService.exportToPDF(reportType, date, null);
             
             String filename = String.format("bao-cao-%s-%s.pdf", 
                 reportType, 

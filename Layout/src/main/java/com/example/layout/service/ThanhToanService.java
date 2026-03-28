@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Service
-public class ThanhToanService {
+public class ThanhToanService implements IThanhToanService {
     private final ThanhToanRepository thanhToanRepository;
     private final DatChoRepository datChoRepository;
     private final ChiTietDatChoRepository chiTietDatChoRepository;

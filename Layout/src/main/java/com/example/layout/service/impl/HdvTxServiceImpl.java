@@ -7,8 +7,8 @@ import com.example.layout.entity.Nhanvien;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.NhanvienRepository;
 import com.example.layout.service.HdvTxService;
+import com.example.layout.utils.TripStatusChecker;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +24,16 @@ import org.slf4j.LoggerFactory;
 @Service
 public class HdvTxServiceImpl implements HdvTxService {
 
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
-    @Autowired
-    private NhanvienRepository nhanvienRepository;
-    
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final NhanvienRepository nhanvienRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(HdvTxServiceImpl.class);
+
+    public HdvTxServiceImpl(ChuyenDuLichRepository chuyenDuLichRepository,
+                            NhanvienRepository nhanvienRepository) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.nhanvienRepository = nhanvienRepository;
+    }
 
     public List<ChuyenDuLich> getAvailableTrips(CurrentUserDTO currentUser) {
         String trangThai = "Sắp diễn ra";
@@ -121,9 +125,7 @@ public class HdvTxServiceImpl implements HdvTxService {
 
         // ✅ Chặn hủy nếu chuyến đang diễn ra hoặc đã hoàn thành
         String trangThai = chuyen.getTrangThai();
-        if ("Đang diễn ra".equals(trangThai) || 
-            "Đã hoàn thành".equals(trangThai) || 
-            "Đã kết thúc".equals(trangThai)) {
+        if (TripStatusChecker.isNonCancellable(trangThai)) {
             throw new IllegalStateException("Không thể hủy chuyến đi đang diễn ra hoặc đã hoàn thành!");
         }
 

@@ -3,7 +3,6 @@ package com.example.layout.controller.hdvtx.api;
 import java.time.LocalDate;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.entity.User;
-import com.example.layout.service.ChuyenDuLichService;
-import com.example.layout.service.NhanVienService;
+import com.example.layout.service.INhanVienService;
+import com.example.layout.service.ISalaryStatService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,11 +21,14 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/hdvtx/api/salary")
 public class HdvTxSalaryApiController {
 
-    @Autowired
-    private NhanVienService nhanVienService;
+    private final INhanVienService nhanVienService;
+    private final ISalaryStatService salaryStatService;
 
-    @Autowired
-    private ChuyenDuLichService chuyenDuLichService;
+    public HdvTxSalaryApiController(INhanVienService nhanVienService,
+                                    ISalaryStatService salaryStatService) {
+        this.nhanVienService = nhanVienService;
+        this.salaryStatService = salaryStatService;
+    }
 
     @GetMapping("/year")
     public ResponseEntity<Map<String, Object>> getSalaryByYear(
@@ -44,7 +46,7 @@ public class HdvTxSalaryApiController {
             return ResponseEntity.status(404).build();
         }
 
-        Map<String, Object> result = chuyenDuLichService.getYearlyStats(year, nhanVien.getMaNhanVien());
+        Map<String, Object> result = salaryStatService.getYearlyStats(year, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
     }
 
@@ -64,7 +66,7 @@ public class HdvTxSalaryApiController {
             return ResponseEntity.status(404).build();
         }
 
-        Map<String, Object> result = chuyenDuLichService.getMonthlyStats(year, month, nhanVien.getMaNhanVien());
+        Map<String, Object> result = salaryStatService.getMonthlyStats(year, month, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
     }
 
@@ -84,7 +86,7 @@ public class HdvTxSalaryApiController {
             return ResponseEntity.status(404).build();
         }
 
-        Map<String, Object> result = chuyenDuLichService.getPeriodStats(from, to, nhanVien.getMaNhanVien());
+        Map<String, Object> result = salaryStatService.getPeriodStats(from, to, nhanVien.getMaNhanVien());
         return ResponseEntity.ok(result);
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class LichTrinhService {
+public class LichTrinhService implements ILichTrinhService {
 
     private final LichTrinhRepository lichTrinhRepo;
 

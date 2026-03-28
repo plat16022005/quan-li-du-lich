@@ -9,13 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.layout.entity.LichTrinh;
-import com.example.layout.service.LichTrinhService;
+import com.example.layout.service.ILichTrinhService;
 
 @RestController
 @RequestMapping("/api/manager/lichtrinh")
 public class UpdateLichTrinhController {
-	@Autowired
-	private LichTrinhService lichTrinhService;
+	private final ILichTrinhService lichTrinhService;
+
+    public UpdateLichTrinhController(ILichTrinhService lichTrinhService) {
+        this.lichTrinhService = lichTrinhService;
+    }
+
 	  @PutMapping("/{maLichTrinh}")
 	  public ResponseEntity<LichTrinh> update(@PathVariable Integer maLichTrinh,
 	                                          @RequestBody LichTrinh updatedData)

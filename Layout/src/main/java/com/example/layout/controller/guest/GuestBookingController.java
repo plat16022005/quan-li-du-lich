@@ -32,26 +32,30 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class GuestBookingController {
 	
-	@Autowired
-	private ChuyenDuLichRepository chuyenDuLichRepository;
+	private final ChuyenDuLichRepository chuyenDuLichRepository;
 
-	@Autowired
-	private TourRepository tourRepository;
+	private final TourRepository tourRepository;
 	
-	@Autowired
-	private KhachHangRepository khachHangRepository;
+	private final KhachHangRepository khachHangRepository;
 	
-	@Autowired
-	private ChiTietDatChoRepository chiTietDatChoRepository;
+	private final ChiTietDatChoRepository chiTietDatChoRepository;
 	
-	@Autowired
-	private KhuyenMaiRepository khuyenMaiRepository;
+	private final KhuyenMaiRepository khuyenMaiRepository;
 	
-	@Autowired
-	private DatChoRepository datChoRepository;
+	private final DatChoRepository datChoRepository;
 	
-	@Autowired
-	private ThanhToanRepository thanhToanRepository;
+	private final ThanhToanRepository thanhToanRepository;
+
+    public GuestBookingController(ChuyenDuLichRepository chuyenDuLichRepository, TourRepository tourRepository, KhachHangRepository khachHangRepository, ChiTietDatChoRepository chiTietDatChoRepository, KhuyenMaiRepository khuyenMaiRepository, DatChoRepository datChoRepository, ThanhToanRepository thanhToanRepository) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.tourRepository = tourRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.chiTietDatChoRepository = chiTietDatChoRepository;
+        this.khuyenMaiRepository = khuyenMaiRepository;
+        this.datChoRepository = datChoRepository;
+        this.thanhToanRepository = thanhToanRepository;
+    }
+
 	
 	@GetMapping("/tour/booking/{maChuyen}")
 	public String bookingPage(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {

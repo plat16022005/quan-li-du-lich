@@ -4,8 +4,9 @@ import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.ThanhToanRepository;
-import com.example.layout.service.ReportService;
-import com.example.layout.service.ExportService;
+import com.example.layout.service.IReportService;
+import com.example.layout.service.IExcelExportService;
+import com.example.layout.service.IPdfExportService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,17 +30,23 @@ import com.itextpdf.text.DocumentException;
 @RequestMapping("/nhanvien")
 public class NhanvienReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final IReportService reportService;
 
-    @Autowired
-    private ExportService exportService;
+    private final IExcelExportService excelExportService;
+    private final IPdfExportService pdfExportService;
 
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
 
-    @Autowired
-    private ThanhToanRepository thanhToanRepository;
+    private final ThanhToanRepository thanhToanRepository;
+
+    public NhanvienReportController(IReportService reportService, IExcelExportService excelExportService, IPdfExportService pdfExportService, ChuyenDuLichRepository chuyenDuLichRepository, ThanhToanRepository thanhToanRepository) {
+        this.reportService = reportService;
+        this.excelExportService = excelExportService;
+        this.pdfExportService = pdfExportService;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.thanhToanRepository = thanhToanRepository;
+    }
+
 
 
 
@@ -170,7 +177,7 @@ public class NhanvienReportController {
                 }
             }
             
-            byte[] excelFile = exportService.exportToExcel(reportType, date, null);
+            byte[] excelFile = excelExportService.exportToExcel(reportType, date, null);
             
             String filename = String.format("bao-cao-%s-%s.xlsx", 
                 reportType, 
@@ -214,7 +221,7 @@ public class NhanvienReportController {
                 }
             }
             
-            byte[] pdfFile = exportService.exportToPDF(reportType, date, null);
+            byte[] pdfFile = pdfExportService.exportToPDF(reportType, date, null);
             
             String filename = String.format("bao-cao-%s-%s.pdf", 
                 reportType, 

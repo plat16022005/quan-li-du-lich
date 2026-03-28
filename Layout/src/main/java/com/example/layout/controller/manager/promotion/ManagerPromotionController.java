@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.layout.entity.KhuyenMai;
 import com.example.layout.entity.User;
 import com.example.layout.repository.KhuyenMaiRepository;
-import com.example.layout.service.KhuyenMaiService;
+import com.example.layout.service.IKhuyenMaiService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,10 +21,14 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/manager")
 public class ManagerPromotionController {
 
-    @Autowired
-    private KhuyenMaiService khuyenMaiService;
-    @Autowired
-    private KhuyenMaiRepository khuyenMaiRepository;
+    private final IKhuyenMaiService khuyenMaiService;
+    private final KhuyenMaiRepository khuyenMaiRepository;
+
+    public ManagerPromotionController(IKhuyenMaiService khuyenMaiService, KhuyenMaiRepository khuyenMaiRepository) {
+        this.khuyenMaiService = khuyenMaiService;
+        this.khuyenMaiRepository = khuyenMaiRepository;
+    }
+
 
     // ✅ Trang danh sách khuyến mãi (kiểm tra quyền truy cập)
     @GetMapping("/promotion")

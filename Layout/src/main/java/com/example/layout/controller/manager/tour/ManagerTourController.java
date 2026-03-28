@@ -7,10 +7,10 @@ import com.example.layout.entity.Tour;
 import com.example.layout.dto.TourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
-import com.example.layout.service.TourService;
-import com.example.layout.service.ChuyenDuLichService;
-import com.example.layout.service.LichTrinhService;
-import com.example.layout.service.NhanVienService;
+import com.example.layout.service.ITourService;
+import com.example.layout.service.IChuyenDuLichService;
+import com.example.layout.service.ILichTrinhService;
+import com.example.layout.service.INhanVienService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -38,17 +38,19 @@ import java.nio.file.StandardCopyOption;
 @RequestMapping("/manager")
 public class ManagerTourController {
 
-    private final TourService tourService;
-    private final ChuyenDuLichService chuyenDuLichService;
-    private final NhanVienService nhanVienService;
-    private final LichTrinhService lichTrinhService;
+    private final ITourService tourService;
+    private final IChuyenDuLichService chuyenDuLichService;
+    private final INhanVienService nhanVienService;
+    private final ILichTrinhService lichTrinhService;
     private final LichTrinhRepository lichTrinhRepository;
-    public ManagerTourController(TourService tourService, ChuyenDuLichService chuyenDuLichService, NhanVienService nhanVienService, LichTrinhService lichTrinhService, LichTrinhRepository lichTrinhRepository) {
+    private final com.example.layout.repository.DatChoRepository datChoRepository;
+    public ManagerTourController(ITourService tourService, IChuyenDuLichService chuyenDuLichService, INhanVienService nhanVienService, ILichTrinhService lichTrinhService, LichTrinhRepository lichTrinhRepository, com.example.layout.repository.DatChoRepository datChoRepository) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
         this.nhanVienService = nhanVienService;
         this.lichTrinhService = lichTrinhService;
         this.lichTrinhRepository = lichTrinhRepository;
+        this.datChoRepository = datChoRepository;
     }
 
     @GetMapping("/tour")
@@ -79,8 +81,7 @@ public class ManagerTourController {
         return "manager/tour";
     }
 
-    @Autowired
-    private com.example.layout.repository.DatChoRepository datChoRepository;
+
 
     @GetMapping("/tour/{maTour}/bookings")
     @ResponseBody

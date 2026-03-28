@@ -25,14 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class GuestTourController {
 
-    @Autowired
-    private TourRepository tourRepository;
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
-    @Autowired
-    private DatChoRepository datChoRepository;
-	@Autowired
-	private PhanHoiRepository phanHoiRepository;
+    private final TourRepository tourRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final DatChoRepository datChoRepository;
+	private final PhanHoiRepository phanHoiRepository;
     @GetMapping("home/tour/{id}")
     public String getTourDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {
     	User user = (User) session.getAttribute("user");
@@ -70,8 +66,16 @@ public class GuestTourController {
 
 
     
-    @Autowired
-    private LichTrinhRepository lichTrinhRepository;
+    private final LichTrinhRepository lichTrinhRepository;
+
+    public GuestTourController(TourRepository tourRepository, ChuyenDuLichRepository chuyenDuLichRepository, DatChoRepository datChoRepository, PhanHoiRepository phanHoiRepository, LichTrinhRepository lichTrinhRepository) {
+        this.tourRepository = tourRepository;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.datChoRepository = datChoRepository;
+        this.phanHoiRepository = phanHoiRepository;
+        this.lichTrinhRepository = lichTrinhRepository;
+    }
+
 
     @GetMapping("/home/tour/{id}/list")
     public String getChuyenDetail(@PathVariable("id") Integer id, Model model, HttpSession session) {

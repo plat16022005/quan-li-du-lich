@@ -11,8 +11,12 @@ import java.util.List;
 @RequestMapping("/manager/diadiem")
 public class DiaDiemController {
 
-    @Autowired
-    private DiaDiemRepository diaDiemRepository;
+    private final DiaDiemRepository diaDiemRepository;
+
+    public DiaDiemController(DiaDiemRepository diaDiemRepository) {
+        this.diaDiemRepository = diaDiemRepository;
+    }
+
 
     // 📌 Lấy toàn bộ danh sách địa điểm
     @GetMapping("/all")

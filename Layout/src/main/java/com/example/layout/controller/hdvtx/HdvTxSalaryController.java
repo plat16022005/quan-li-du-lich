@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.layout.controller.hdvtx.HdvTxDashboardController.CurrentUserDTO;
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.entity.User;
-import com.example.layout.service.NhanVienService;
+import com.example.layout.service.INhanVienService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -17,8 +17,12 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/hdvtx")
 public class HdvTxSalaryController {
 
-    @Autowired
-    private NhanVienService nhanVienService;
+    private final INhanVienService nhanVienService;
+
+    public HdvTxSalaryController(INhanVienService nhanVienService) {
+        this.nhanVienService = nhanVienService;
+    }
+
 
     @GetMapping("/thong-ke-thu-lao")
     public String viewSalaryStats(Model model, HttpSession session) {

@@ -2,15 +2,18 @@ package com.example.layout.service;
 
 import com.example.layout.entity.User;
 import com.example.layout.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service // 👈 BẮT BUỘC CÓ DÒNG NÀY
-public class UserService {
+@Service
+public class UserService implements IUserService {
 
-	@Autowired
-    private UserRepository userRepository;
-    
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
     public User login(String username, String password) {
         User user = userRepository.findByTenDangNhap(username);
         if (user != null && user.getMatKhau().equals(password)) {
@@ -18,20 +21,16 @@ public class UserService {
         }
         return null;
     }
-    public User getConfirm(String email)
-    {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            return user;
-        }
-        return null;
+
+    @Override
+    public User getConfirm(String email) {
+        return userRepository.findByEmail(email);
     }
-    
-    public boolean register(String username, String password, String hoten, String email, String sodienthoai)
-    {
+
+    @Override
+    public boolean register(String username, String password, String hoten, String email, String sodienthoai) {
         User tonTai = userRepository.findByTenDangNhap(username);
-        if (tonTai != null)
-        {
+        if (tonTai != null) {
             return false;
         }
         if (userRepository.existsByEmail(email)) {
@@ -48,8 +47,9 @@ public class UserService {
         userRepository.save(user);
         return true;
     }
-    public void resetpass(String email, String password)
-    {
+
+    @Override
+    public void resetpass(String email, String password) {
         User user = userRepository.findByEmail(email);
         user.setMatKhau(password);
         userRepository.save(user);

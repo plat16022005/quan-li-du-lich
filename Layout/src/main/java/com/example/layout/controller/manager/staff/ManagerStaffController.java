@@ -25,17 +25,21 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/manager")
 public class ManagerStaffController {
 
-    @Autowired
-    private NhanvienRepository nhanvienRepository;
+    private final NhanvienRepository nhanvienRepository;
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
-    @Autowired
-    private UserRepository taiKhoanRepository;
+    private final UserRepository taiKhoanRepository;
     
-    @Autowired
-    private VaiTroRepository vaiTroRepository;
+    private final VaiTroRepository vaiTroRepository;
+
+    public ManagerStaffController(NhanvienRepository nhanvienRepository, UserRepository userRepository, UserRepository taiKhoanRepository, VaiTroRepository vaiTroRepository) {
+        this.nhanvienRepository = nhanvienRepository;
+        this.userRepository = userRepository;
+        this.taiKhoanRepository = taiKhoanRepository;
+        this.vaiTroRepository = vaiTroRepository;
+    }
+
     
     // ✅ Vào trang quản lý nhân viên
     @GetMapping("/staff")

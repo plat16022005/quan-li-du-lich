@@ -5,8 +5,8 @@ import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.KhachHangRepository;
-import com.example.layout.service.LichTrinhService;
-import com.example.layout.service.TripExportPdfService;
+import com.example.layout.service.ILichTrinhService;
+import com.example.layout.service.ITripExportPdfService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,17 +24,21 @@ import java.util.List;
 @RequestMapping("/hdvtx/trip-details")
 public class TripPdfExportController {
 
-    @Autowired
-    private ChuyenDuLichRepository chuyenDuLichRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
 
-    @Autowired
-    private KhachHangRepository khachHangRepository;
+    private final KhachHangRepository khachHangRepository;
 
-    @Autowired
-    private LichTrinhService lichTrinhService;
+    private final ILichTrinhService lichTrinhService;
 
-    @Autowired
-    private TripExportPdfService tripExportPdfService;
+    private final ITripExportPdfService tripExportPdfService;
+
+    public TripPdfExportController(ChuyenDuLichRepository chuyenDuLichRepository, KhachHangRepository khachHangRepository, ILichTrinhService lichTrinhService, ITripExportPdfService tripExportPdfService) {
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.lichTrinhService = lichTrinhService;
+        this.tripExportPdfService = tripExportPdfService;
+    }
+
 
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> downloadTripPdf(@PathVariable("id") Integer tripId) {

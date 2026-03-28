@@ -43,20 +43,24 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/")
 public class GuestHomeController {
-	@Autowired
-	private TourRepository tourRepository;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private KhachHangRepository khachHangRepository;
-	@Autowired
-	private ChuyenDuLichRepository chuyenDuLichRepository;
-	@Autowired
-	private KhuyenMaiRepository khuyenMaiRepository;
-	@Autowired
-	private DatChoRepository datChoRepository;
-	@Autowired
-	private PhanHoiRepository phanHoiRepository;
+	private final TourRepository tourRepository;
+	private final UserRepository userRepository;
+	private final KhachHangRepository khachHangRepository;
+	private final ChuyenDuLichRepository chuyenDuLichRepository;
+	private final KhuyenMaiRepository khuyenMaiRepository;
+	private final DatChoRepository datChoRepository;
+	private final PhanHoiRepository phanHoiRepository;
+
+    public GuestHomeController(TourRepository tourRepository, UserRepository userRepository, KhachHangRepository khachHangRepository, ChuyenDuLichRepository chuyenDuLichRepository, KhuyenMaiRepository khuyenMaiRepository, DatChoRepository datChoRepository, PhanHoiRepository phanHoiRepository) {
+        this.tourRepository = tourRepository;
+        this.userRepository = userRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.khuyenMaiRepository = khuyenMaiRepository;
+        this.datChoRepository = datChoRepository;
+        this.phanHoiRepository = phanHoiRepository;
+    }
+
 	@GetMapping("/home")
     public String showHomeForm(HttpSession session, Model model) {
 		User user = (User) session.getAttribute("user");

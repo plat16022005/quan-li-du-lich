@@ -2,7 +2,7 @@ package com.example.layout.controller.manager.tour;
 
 import com.example.layout.entity.*;
 import com.example.layout.repository.*;
-import com.example.layout.service.LichTrinhService;
+import com.example.layout.service.ILichTrinhService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,14 +11,14 @@ import java.util.List;
 @RequestMapping("/manager/tour/detail")
 public class TourDetailController {
 
-    private final LichTrinhService lichTrinhService;
+    private final ILichTrinhService lichTrinhService;
     private final DiaDiemRepository diaDiemRepo;
     private final PhuongTienRepository phuongTienRepo;
     private final KhachSanRepository khachSanRepo;
     private final TourRepository tourRepo;
 
     public TourDetailController(
-            LichTrinhService lichTrinhService,
+            ILichTrinhService lichTrinhService,
             DiaDiemRepository diaDiemRepo,
             PhuongTienRepository phuongTienRepo,
             KhachSanRepository khachSanRepo,

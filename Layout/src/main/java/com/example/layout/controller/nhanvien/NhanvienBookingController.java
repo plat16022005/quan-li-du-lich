@@ -27,10 +27,10 @@ import com.example.layout.dto.DatChoDTO;
 import com.example.layout.dto.ThanhToanDTO;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.ThanhToan;
-import com.example.layout.service.ChuyenDuLichService;
-import com.example.layout.service.DatChoService;
-import com.example.layout.service.KhachHangService;
-import com.example.layout.service.ThanhToanService;
+import com.example.layout.service.IChuyenDuLichService;
+import com.example.layout.service.IDatChoService;
+import com.example.layout.service.IKhachHangService;
+import com.example.layout.service.IThanhToanService;
 
 import jakarta.validation.Valid;
 
@@ -38,13 +38,13 @@ import jakarta.validation.Valid;
 @RequestMapping("/nhanvien/bookings")
 public class NhanvienBookingController {
     private static final Logger logger = LoggerFactory.getLogger(NhanvienBookingController.class);
-	private final DatChoService datChoService;
-    private final ThanhToanService thanhToanService;
-    private final KhachHangService khachHangService;
-    private final ChuyenDuLichService chuyenDuLichService;
+	private final IDatChoService datChoService;
+	private final IThanhToanService thanhToanService;
+    private final IKhachHangService khachHangService;
+    private final IChuyenDuLichService chuyenDuLichService;
 
-    public NhanvienBookingController(DatChoService datChoService, ThanhToanService thanhToanService,
-    							KhachHangService khachHangService, ChuyenDuLichService chuyenDuLichService) {
+    public NhanvienBookingController(IDatChoService datChoService, IThanhToanService thanhToanService,
+    							IKhachHangService khachHangService, IChuyenDuLichService chuyenDuLichService) {
         this.datChoService = datChoService;
 		this.thanhToanService = thanhToanService;
 		this.khachHangService = khachHangService;

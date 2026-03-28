@@ -14,19 +14,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.layout.entity.User;
 import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.service.EmailService;
-import com.example.layout.service.UserService;
+import com.example.layout.service.IUserService;
 import com.example.layout.entity.KhachHang;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private KhachHangRepository khachHangRepository;
-    @Autowired
-    private EmailService emailService;
+    private final IUserService userService;
+    private final KhachHangRepository khachHangRepository;
+    private final EmailService emailService;
+
+    public UserController(IUserService userService, KhachHangRepository khachHangRepository, EmailService emailService) {
+        this.userService = userService;
+        this.khachHangRepository = khachHangRepository;
+        this.emailService = emailService;
+    }
+
    
     
     @GetMapping("/login")

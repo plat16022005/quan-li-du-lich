@@ -9,7 +9,7 @@ import com.example.layout.entity.DiaDiem;
 import com.example.layout.repository.DiaDiemRepository;
 
 @Service
-public class DiaDiemService {
+public class DiaDiemService implements IDiaDiemService {
     private final DiaDiemRepository diaDiemRepository;
 
     public DiaDiemService(DiaDiemRepository diaDiemRepository) {

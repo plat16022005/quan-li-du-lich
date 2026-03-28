@@ -19,11 +19,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hdvtx/profile")
 public class ProfileController {
 
-    @Autowired
-    private NhanvienRepository nhanvienRepository;
+    private final NhanvienRepository nhanvienRepository;
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public ProfileController(NhanvienRepository nhanvienRepository, UserRepository userRepository) {
+        this.nhanvienRepository = nhanvienRepository;
+        this.userRepository = userRepository;
+    }
+
 
     /**
      * Hiển thị trang thông tin cá nhân
