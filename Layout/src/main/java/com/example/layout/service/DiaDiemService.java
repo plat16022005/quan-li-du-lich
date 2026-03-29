@@ -24,8 +24,8 @@ public class DiaDiemService implements IDiaDiemService {
         return diaDiemRepository.findById(maDiaDiem);
     }
 
-    public void save(DiaDiem diaDiem){
-        diaDiemRepository.save(diaDiem);
+    public DiaDiem save(DiaDiem diaDiem){
+        return diaDiemRepository.save(diaDiem);
     }
 
     public void deleteById(Integer maDiaDiem) {

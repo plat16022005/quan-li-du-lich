@@ -1,10 +1,13 @@
 package com.example.layout.service;
 
+import com.example.layout.dto.HanhKhachDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.repository.ChuyenDuLichRepository;
 import com.example.layout.repository.DatChoRepository;
+import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.repository.NhanvienRepository;
+import com.example.layout.utils.VaiTroConstants;
 
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -16,18 +19,21 @@ import java.util.Optional;
 @Service
 public class ChuyenDuLichService implements IChuyenDuLichService {
     private final ChuyenDuLichRepository chuyenDuLichRepository;
-    private final NhanVienService nhanVienService;
     private final NhanvienRepository nhanVienRepository;
     private final DatChoRepository datChoRepository;
+    private final INhanVienService nhanVienService;
+    private final KhachHangRepository khachHangRepository;
 
-    public ChuyenDuLichService(ChuyenDuLichRepository chuyenDuLichRepository, 
-                               NhanVienService nhanVienService,
+    public ChuyenDuLichService(ChuyenDuLichRepository chuyenDuLichRepository,
+                               INhanVienService nhanVienService,
                                NhanvienRepository nhanVienRepository,
-                               DatChoRepository datChoRepository) {
+                               DatChoRepository datChoRepository,
+                               KhachHangRepository khachHangRepository) {
         this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.nhanVienService = nhanVienService;
-        this.nhanVienRepository = nhanVienRepository;
-        this.datChoRepository = datChoRepository;
+        this.nhanVienService        = nhanVienService;
+        this.nhanVienRepository     = nhanVienRepository;
+        this.datChoRepository       = datChoRepository;
+        this.khachHangRepository    = khachHangRepository;
     }
 
     // === CÁC PHƯƠNG THỨC CƠ BẢN ===
@@ -60,6 +66,11 @@ public class ChuyenDuLichService implements IChuyenDuLichService {
     @Override
     public List<ChuyenDuLich> findAlltrips() {
         return chuyenDuLichRepository.findAllWithTour();
+    }
+
+    @Override
+    public List<ChuyenDuLich> findAllCompletedTrips() {
+        return chuyenDuLichRepository.findAllCompletedTrips();
     }
 
     @Override
@@ -111,7 +122,7 @@ public class ChuyenDuLichService implements IChuyenDuLichService {
 
     @Override
     public List<ChuyenDuLich> getAvailableTripsByRole(int maVaiTro) {
-        if (maVaiTro == 3 || maVaiTro == 5) {
+        if (maVaiTro == VaiTroConstants.HUONG_DAN_VIEN || maVaiTro == VaiTroConstants.TAI_XE) {
             return chuyenDuLichRepository.findByHuongDanVienIsNullAndTrangThai("Sắp diễn ra");
         }
         return Collections.emptyList();
@@ -119,7 +130,7 @@ public class ChuyenDuLichService implements IChuyenDuLichService {
 
     @Override
     public List<ChuyenDuLich> getAssignedTripsByEmployee(int maNhanVien, int maVaiTro) {
-        if (maVaiTro == 3 || maVaiTro == 5) {
+        if (maVaiTro == VaiTroConstants.HUONG_DAN_VIEN || maVaiTro == VaiTroConstants.TAI_XE) {
             return chuyenDuLichRepository.findByHuongDanVien_MaNhanVien(maNhanVien);
         }
         return Collections.emptyList();
@@ -133,12 +144,12 @@ public class ChuyenDuLichService implements IChuyenDuLichService {
         Nhanvien nhanVien = nhanVienRepository.findById(maNhanVien)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với mã: " + maNhanVien));
 
-        if (maVaiTro == 3) {
+        if (maVaiTro == VaiTroConstants.HUONG_DAN_VIEN) {
             if (chuyen.getHuongDanVien() != null) {
                 throw new IllegalStateException("Chuyến đi này đã có Hướng dẫn viên nhận.");
             }
             chuyen.setHuongDanVien(nhanVien);
-        } else if (maVaiTro == 5) {
+        } else if (maVaiTro == VaiTroConstants.TAI_XE) {
             if (chuyen.getTaiXe() != null) {
                 throw new IllegalStateException("Chuyến đi này đã có Tài xế nhận.");
             }
@@ -164,5 +175,10 @@ public class ChuyenDuLichService implements IChuyenDuLichService {
             c.setSoLuongHienTai(daDat);
         });
         return danhSach;
+    }
+
+    @Override
+    public List<HanhKhachDTO> getHanhKhachByMaChuyen(Integer maChuyen) {
+        return khachHangRepository.findHanhKhachByMaChuyen(maChuyen);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface IDiaDiemService {
     List<DiaDiem> findAll();
     Optional<DiaDiem> findById(Integer maDiaDiem);
-    void save(DiaDiem diaDiem);
+    DiaDiem save(DiaDiem diaDiem);
     void deleteById(Integer maDiaDiem);
     List<DiaDiem> searchByTen(String keyword);
 }

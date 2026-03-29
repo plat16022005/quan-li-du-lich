@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.DatChoRepository;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -20,12 +19,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/nhanvien")
 public class NhanvienHomeController {
 
-    private final DatChoRepository datChoRepository;
-    private final ChuyenDuLichRepository chuyenDuLichRepository;
-
-    public NhanvienHomeController(DatChoRepository datChoRepository, ChuyenDuLichRepository chuyenDuLichRepository) {
-        this.datChoRepository = datChoRepository;
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
+    public NhanvienHomeController() {
     }
 
 
@@ -35,7 +29,7 @@ public class NhanvienHomeController {
     @GetMapping("/manager_tour")
     public String showManagerTour(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
         return "nhanvien/manager_tour";
@@ -44,7 +38,7 @@ public class NhanvienHomeController {
     @GetMapping("/add_tour")
     public String showAddTour(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
         return "nhanvien/add_tour";

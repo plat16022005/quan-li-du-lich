@@ -21,4 +21,10 @@ public interface INhanVienService {
     List<Nhanvien> getAvailableStaff(Vaitro role, LocalDate startDate, LocalDate endDate);
     User findTaiKhoanByUsername(String username);
     Nhanvien findByMaTaiKhoan(Integer maTaiKhoan);
+
+    void addStaff(String hoTen, String tenDangNhap, String matKhau, String email, Integer maVaiTro, String soDienThoai, LocalDate ngayVaoLam);
+    void saveSalary(Integer maNhanVien, java.math.BigDecimal luongCoBan, Integer soNgayLam, java.math.BigDecimal phuCap);
+    java.math.BigDecimal getCurrentSalary(Integer maNhanVien);
+    void deleteStaff(Integer maTaiKhoan);
+    void updateStaff(Integer maNhanVien, String hoTen, String email, String soDienThoai, String chucVu, LocalDate ngayVaoLam);
 }

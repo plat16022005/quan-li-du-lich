@@ -6,7 +6,6 @@ import com.example.layout.dto.NewCustomerDTO;
 import com.example.layout.entity.DatCho;
 import com.example.layout.entity.KhachHang;
 import com.example.layout.entity.User;
-import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.service.IDatChoService;
 import com.example.layout.service.IKhachHangService;
 import com.example.layout.service.IUserService;
@@ -41,13 +40,11 @@ public class NhanvienCustomerController {
     private final IKhachHangService khachHangService;
     private final IDatChoService datChoService;
     private final IUserService userService;
-    private final KhachHangRepository khachHangRepository;
     
-    public NhanvienCustomerController(IKhachHangService khachHangService, IDatChoService datChoService, IUserService userService, KhachHangRepository khachHangRepository) {
+    public NhanvienCustomerController(IKhachHangService khachHangService, IDatChoService datChoService, IUserService userService) {
         this.khachHangService = khachHangService;
 		this.datChoService = datChoService;
 		this.userService = userService;
-		this.khachHangRepository = khachHangRepository;
     } 
 
     @GetMapping

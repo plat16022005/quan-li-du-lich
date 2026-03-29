@@ -3,7 +3,6 @@ package com.example.layout.controller;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 //import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.layout.entity.User;
-import com.example.layout.repository.KhachHangRepository;
 import com.example.layout.service.EmailService;
+import com.example.layout.service.IKhachHangService;
+import com.example.layout.utils.VaiTroConstants;
 import com.example.layout.service.IUserService;
 import com.example.layout.entity.KhachHang;
 
@@ -22,12 +22,12 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class UserController {
     private final IUserService userService;
-    private final KhachHangRepository khachHangRepository;
+    private final IKhachHangService khachHangService;
     private final EmailService emailService;
 
-    public UserController(IUserService userService, KhachHangRepository khachHangRepository, EmailService emailService) {
+    public UserController(IUserService userService, IKhachHangService khachHangService, EmailService emailService) {
         this.userService = userService;
-        this.khachHangRepository = khachHangRepository;
+        this.khachHangService = khachHangService;
         this.emailService = emailService;
     }
 
@@ -45,22 +45,18 @@ public class UserController {
   							HttpSession session) {
         User user = userService.login(username, password);
         
-        if (user != null && user.getTrangThai() == true) {
+        if (user != null && user.getTrangThai() != null && user.getTrangThai() == true) {
         	session.setAttribute("user", user);
-        	if (user.getMaVaiTro() == 1)
+        	if (user.getMaVaiTro() == VaiTroConstants.ADMIN)
         		return "redirect:/manager/home";
-        	else if (user.getMaVaiTro() == 2)
+        	else if (user.getMaVaiTro() == VaiTroConstants.QUAN_LY_TOUR)
         		return "redirect:/nhanvien/dashboard";
-
-        	else if (user.getMaVaiTro() == 3 || user.getMaVaiTro() == 5) { // HUONGDANVIEN hoặc TAIXE
+        	else if (user.getMaVaiTro() == VaiTroConstants.HUONG_DAN_VIEN || user.getMaVaiTro() == VaiTroConstants.TAI_XE) {
         		return "redirect:/hdvtx/dashboard";
             }
-
-        	else if (user.getMaVaiTro() == 5)
-        		return "redirect:/hdvtx/dashboard";
         	else
         	{
-        		KhachHang kh = khachHangRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan());
+        		KhachHang kh = khachHangService.getKhachHangByTaiKhoan(user.getMaTaiKhoan());
         		if (kh != null)
         			return "redirect:/home";
         		else return "redirect:/get-info";
@@ -216,7 +212,7 @@ public class UserController {
     	kh.setGioiTinh(gender);
     	kh.setBietDen(source);
     	kh.setNgayThamGia(LocalDate.now());
-    	khachHangRepository.save(kh);
+    	khachHangService.save(kh);
     	return "redirect:/home";
     }
 

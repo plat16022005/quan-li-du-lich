@@ -1,23 +1,19 @@
 package com.example.layout.controller.manager.tour;
 
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.LichTrinhRepository;
-import com.example.layout.entity.Tour;
 import com.example.layout.dto.TourDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
+import com.example.layout.entity.Tour;
+import com.example.layout.service.IDatChoService;
 import com.example.layout.service.ITourService;
 import com.example.layout.service.IChuyenDuLichService;
 import com.example.layout.service.ILichTrinhService;
 import com.example.layout.service.INhanVienService;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springdoc.core.converters.models.Pageable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,22 +38,25 @@ public class ManagerTourController {
     private final IChuyenDuLichService chuyenDuLichService;
     private final INhanVienService nhanVienService;
     private final ILichTrinhService lichTrinhService;
-    private final LichTrinhRepository lichTrinhRepository;
-    private final com.example.layout.repository.DatChoRepository datChoRepository;
-    public ManagerTourController(ITourService tourService, IChuyenDuLichService chuyenDuLichService, INhanVienService nhanVienService, ILichTrinhService lichTrinhService, LichTrinhRepository lichTrinhRepository, com.example.layout.repository.DatChoRepository datChoRepository) {
+    private final IDatChoService datChoService;
+
+    public ManagerTourController(ITourService tourService, 
+                                 IChuyenDuLichService chuyenDuLichService, 
+                                 INhanVienService nhanVienService, 
+                                 ILichTrinhService lichTrinhService, 
+                                 IDatChoService datChoService) {
         this.tourService = tourService;
         this.chuyenDuLichService = chuyenDuLichService;
         this.nhanVienService = nhanVienService;
         this.lichTrinhService = lichTrinhService;
-        this.lichTrinhRepository = lichTrinhRepository;
-        this.datChoRepository = datChoRepository;
+        this.datChoService = datChoService;
     }
 
     @GetMapping("/tour")
     public String showTourForm(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         // Cho phép Admin (1) hoặc Quản lý tour (2)
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -87,11 +86,11 @@ public class ManagerTourController {
     @ResponseBody
     public ResponseEntity<?> getBookingsByTour(@PathVariable Integer maTour, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return ResponseEntity.status(403).body("Không có quyền");
         }
 
-        List<com.example.layout.entity.DatCho> bookings = datChoRepository.findByChuyenDuLich_Tour_MaTour(maTour);
+        List<com.example.layout.entity.DatCho> bookings = datChoService.findByChuyenDuLich_Tour_MaTour(maTour);
 
         // Map to lightweight DTO
         List<java.util.Map<String, Object>> response = bookings.stream().map(dc -> {
@@ -313,7 +312,7 @@ public class ManagerTourController {
     public String showTourDetailForm(@PathVariable("maTour") String maTour,HttpSession session)
     {
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
     	session.setAttribute("matour", maTour);
@@ -328,7 +327,7 @@ public class ManagerTourController {
         }
 
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -351,7 +350,7 @@ public class ManagerTourController {
         }
 
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -366,7 +365,7 @@ public class ManagerTourController {
     @GetMapping("/tour/trips/{maChuyen}")
     public String showTripDetailPage(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -386,7 +385,7 @@ public class ManagerTourController {
     @GetMapping("/tour/trips/edit/{maChuyen}")
     public String showEditTripForm(@PathVariable("maChuyen") Integer maChuyen, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 

@@ -2,6 +2,7 @@ package com.example.layout.service.impl;
 
 import com.example.layout.service.IPdfExportService;
 import com.example.layout.service.IReportService;
+import com.example.layout.utils.MarketingSourceUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -135,7 +136,7 @@ public class PdfExportServiceImpl implements IPdfExportService {
         com.itextpdf.text.Font contentFont = createVietnameseFont(12, com.itextpdf.text.Font.NORMAL);
         Map<String, Long> marketingData = reportService.thongKeNguonKhachHang();
         for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
-            table.addCell(new PdfPCell(new Phrase(processVietnameseText(getMarketingSourceLabel(entry.getKey())), contentFont)));
+            table.addCell(new PdfPCell(new Phrase(processVietnameseText(MarketingSourceUtils.getLabel(entry.getKey())), contentFont)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(entry.getValue()), contentFont)));
         }
 
@@ -188,15 +189,4 @@ public class PdfExportServiceImpl implements IPdfExportService {
         document.add(table);
     }
 
-    private String getMarketingSourceLabel(String key) {
-        return switch (key) {
-            case "friend" -> "Người quen giới thiệu";
-            case "facebook" -> "Facebook";
-            case "tiktok" -> "TikTok";
-            case "google" -> "Tìm kiếm trên Google";
-            case "youtube" -> "Quảng cáo YouTube";
-            case "website" -> "Website/Blog khác";
-            default -> "Khác";
-        };
-    }
 }

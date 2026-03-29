@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.layout.entity.KhuyenMai;
 import com.example.layout.entity.User;
-import com.example.layout.repository.KhuyenMaiRepository;
 import com.example.layout.service.IKhuyenMaiService;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,11 +22,9 @@ import jakarta.servlet.http.HttpSession;
 public class ManagerPromotionController {
 
     private final IKhuyenMaiService khuyenMaiService;
-    private final KhuyenMaiRepository khuyenMaiRepository;
 
-    public ManagerPromotionController(IKhuyenMaiService khuyenMaiService, KhuyenMaiRepository khuyenMaiRepository) {
+    public ManagerPromotionController(IKhuyenMaiService khuyenMaiService) {
         this.khuyenMaiService = khuyenMaiService;
-        this.khuyenMaiRepository = khuyenMaiRepository;
     }
 
 
@@ -38,12 +36,12 @@ public class ManagerPromotionController {
                                     @RequestParam(defaultValue = "5") int size) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return "redirect:/access_denied";
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<KhuyenMai> promotionsPage = khuyenMaiRepository.findAll(pageable);
+        Page<KhuyenMai> promotionsPage = khuyenMaiService.findAll(pageable);
 
         model.addAttribute("promotions", promotionsPage.getContent());
         model.addAttribute("currentPage", page);
@@ -58,7 +56,7 @@ public class ManagerPromotionController {
     @PostMapping("/promotion/add")
     public String addPromotion(HttpSession session, @ModelAttribute KhuyenMai km) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return "redirect:/access_denied";
         }
 
@@ -70,7 +68,7 @@ public class ManagerPromotionController {
     @PostMapping("/promotion/update")
     public String updatePromotion(HttpSession session, @ModelAttribute KhuyenMai km) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return "redirect:/access_denied";
         }
 
@@ -82,7 +80,7 @@ public class ManagerPromotionController {
     @GetMapping("/promotion/delete/{id}")
     public String deletePromotion(HttpSession session, @PathVariable Integer id) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return "redirect:/access_denied";
         }
 
@@ -95,7 +93,7 @@ public class ManagerPromotionController {
     @ResponseBody
     public KhuyenMai getPromotionById(HttpSession session, @PathVariable Integer id) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return null;
         }
 

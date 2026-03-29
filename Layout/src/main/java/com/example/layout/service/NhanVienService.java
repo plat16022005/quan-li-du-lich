@@ -81,4 +81,79 @@ public class NhanVienService implements INhanVienService {
     public Nhanvien findByMaTaiKhoan(Integer maTaiKhoan) {
         return nhanvienRepository.findByTaiKhoan_MaTaiKhoan(maTaiKhoan).orElse(null);
     }
+
+    @Override
+    public void addStaff(String hoTen, String tenDangNhap, String matKhau, String email, Integer maVaiTro, String soDienThoai, LocalDate ngayVaoLam) {
+        if (userRepository.findByTenDangNhap(tenDangNhap) != null) {
+            throw new RuntimeException("Tên đăng nhập " + tenDangNhap + " đã tồn tại!");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email " + email + " đã tồn tại!");
+        }
+
+        User taiKhoan = new User();
+        taiKhoan.setTenDangNhap(tenDangNhap);
+        taiKhoan.setMatKhau(matKhau);
+        taiKhoan.setHoTen(hoTen);
+        taiKhoan.setEmail(email);
+        taiKhoan.setSoDienThoai(soDienThoai);
+        taiKhoan.setTrangThai(true);
+        taiKhoan.setMaVaiTro(maVaiTro);
+
+        userRepository.save(taiKhoan);
+
+        Nhanvien nv = new Nhanvien();
+        nv.setTaiKhoan(taiKhoan);
+        if (maVaiTro == com.example.layout.utils.VaiTroConstants.QUAN_LY_TOUR) {
+            nv.setChucVu("Điều hành Tour");
+        } else if (maVaiTro == com.example.layout.utils.VaiTroConstants.HUONG_DAN_VIEN) {
+            nv.setChucVu("Hướng dẫn viên");
+        } else if (maVaiTro == com.example.layout.utils.VaiTroConstants.TAI_XE) {
+            nv.setChucVu("Tài xế");
+        }
+        nv.setNgayVaoLam(ngayVaoLam);
+
+        nhanvienRepository.save(nv);
+    }
+
+    @Override
+    public void saveSalary(Integer maNhanVien, java.math.BigDecimal luongCoBan, Integer soNgayLam, java.math.BigDecimal phuCap) {
+        Nhanvien nv = nhanvienRepository.findById(maNhanVien).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
+        java.math.BigDecimal tongLuong = luongCoBan
+            .add(new java.math.BigDecimal(soNgayLam).multiply(new java.math.BigDecimal(200000)))
+            .add(phuCap);
+        nv.setLuongCoBan(tongLuong);
+        nhanvienRepository.save(nv);
+    }
+
+    @Override
+    public java.math.BigDecimal getCurrentSalary(Integer maNhanVien) {
+        Nhanvien nv = nhanvienRepository.findById(maNhanVien).orElse(null);
+        if (nv == null || nv.getLuongCoBan() == null) {
+            return java.math.BigDecimal.ZERO;
+        }
+        return nv.getLuongCoBan();
+    }
+
+    @Override
+    public void deleteStaff(Integer maTaiKhoan) {
+        User taiKhoan = userRepository.findById(maTaiKhoan).orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+        taiKhoan.setTrangThai(!taiKhoan.getTrangThai());
+        userRepository.save(taiKhoan);
+    }
+
+    @Override
+    public void updateStaff(Integer maNhanVien, String hoTen, String email, String soDienThoai, String chucVu, LocalDate ngayVaoLam) {
+        Nhanvien nv = nhanvienRepository.findById(maNhanVien).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
+
+        User tk = nv.getTaiKhoan();
+        tk.setHoTen(hoTen);
+        tk.setEmail(email);
+        tk.setSoDienThoai(soDienThoai);
+        userRepository.save(tk);
+
+        nv.setChucVu(chucVu);
+        nv.setNgayVaoLam(ngayVaoLam);
+        nhanvienRepository.save(nv);
+    }
 }

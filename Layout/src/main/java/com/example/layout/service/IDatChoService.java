@@ -21,4 +21,7 @@ public interface IDatChoService {
     DatCho cancelBooking(Integer maDatCho);
     DatCho confirmBooking(Integer maDatCho);
     List<BookingDTO> getBookingsByTourId(Integer tourId);
+    Long getSoldTicketCount(Integer maChuyen);
+    List<com.example.layout.dto.TopCustomerDTO> findTopCustomers();
+    List<DatCho> findByChuyenDuLich_Tour_MaTour(Integer maTour);
 }

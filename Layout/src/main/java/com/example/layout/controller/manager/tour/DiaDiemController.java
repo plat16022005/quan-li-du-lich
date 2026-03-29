@@ -1,8 +1,7 @@
 package com.example.layout.controller.manager.tour;
 
 import com.example.layout.entity.DiaDiem;
-import com.example.layout.repository.DiaDiemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.layout.service.IDiaDiemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,38 +10,38 @@ import java.util.List;
 @RequestMapping("/manager/diadiem")
 public class DiaDiemController {
 
-    private final DiaDiemRepository diaDiemRepository;
+    private final IDiaDiemService diaDiemService;
 
-    public DiaDiemController(DiaDiemRepository diaDiemRepository) {
-        this.diaDiemRepository = diaDiemRepository;
+    public DiaDiemController(IDiaDiemService diaDiemService) {
+        this.diaDiemService = diaDiemService;
     }
 
 
     // 📌 Lấy toàn bộ danh sách địa điểm
     @GetMapping("/all")
     public List<DiaDiem> getAll() {
-        return diaDiemRepository.findAll();
+        return diaDiemService.findAll();
     }
 
     // ➕ Thêm mới địa điểm
     @PostMapping("/add")
     public DiaDiem addDiaDiem(@RequestBody DiaDiem diaDiem) {
-        return diaDiemRepository.save(diaDiem);
+        return diaDiemService.save(diaDiem);
     }
 
     // 🗑️ Xóa địa điểm
     @DeleteMapping("/{id}")
     public void deleteDiaDiem(@PathVariable Integer id) {
-        diaDiemRepository.deleteById(id);
+        diaDiemService.deleteById(id);
     }
 
     // ✏️ Sửa địa điểm
     @PutMapping("/{id}")
     public DiaDiem updateDiaDiem(@PathVariable Integer id, @RequestBody DiaDiem newData) {
-        return diaDiemRepository.findById(id).map(d -> {
+        return diaDiemService.findById(id).map(d -> {
             d.setTenDiaDiem(newData.getTenDiaDiem());
             d.setDiaChi(newData.getDiaChi());
-            return diaDiemRepository.save(d);
+            return diaDiemService.save(d);
         }).orElseThrow(() -> new RuntimeException("Không tìm thấy địa điểm với ID: " + id));
     }
 }

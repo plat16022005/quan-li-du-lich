@@ -2,6 +2,8 @@ package com.example.layout.service;
 
 import com.example.layout.entity.KhuyenMai;
 import com.example.layout.repository.KhuyenMaiRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -37,5 +39,9 @@ public class KhuyenMaiService implements IKhuyenMaiService {
 
     public KhuyenMai getById(Integer id) {
         return repository.findById(id).orElse(null);
+    }
+
+    public Page<KhuyenMai> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 }

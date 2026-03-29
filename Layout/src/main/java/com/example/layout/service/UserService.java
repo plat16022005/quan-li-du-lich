@@ -54,4 +54,41 @@ public class UserService implements IUserService {
         user.setMatKhau(password);
         userRepository.save(user);
     }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public void updateProfile(Integer userId, String hoTen, String email, String soDienThoai) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+        existingUser.setHoTen(hoTen);
+        existingUser.setEmail(email);
+        existingUser.setSoDienThoai(soDienThoai);
+        userRepository.save(existingUser);
+    }
+
+    @Override
+    public void changePassword(Integer userId, String currentPassword, String newPassword) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+
+        if (!existingUser.getMatKhau().equals(currentPassword)) {
+            throw new RuntimeException("Mật khẩu hiện tại không đúng!");
+        }
+
+        if (newPassword.length() < 6) {
+            throw new RuntimeException("Mật khẩu phải có ít nhất 6 ký tự!");
+        }
+
+        existingUser.setMatKhau(newPassword);
+        userRepository.save(existingUser);
+    }
 }

@@ -2,6 +2,7 @@ package com.example.layout.service.impl;
 
 import com.example.layout.service.IExcelExportService;
 import com.example.layout.service.IReportService;
+import com.example.layout.utils.MarketingSourceUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -83,7 +84,7 @@ public class ExcelExportServiceImpl implements IExcelExportService {
             csvContent.append("Nguồn khách hàng,Số lượng khách\n");
             Map<String, Long> marketingData = reportService.thongKeNguonKhachHang();
             for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
-                csvContent.append(getMarketingSourceLabel(entry.getKey())).append(",").append(entry.getValue()).append("\n");
+                csvContent.append(MarketingSourceUtils.getLabel(entry.getKey())).append(",").append(entry.getValue()).append("\n");
             }
         } else if ("bookings".equals(reportType)) {
             csvContent.append("Trạng thái đặt tour,Số lượng\n");
@@ -133,7 +134,7 @@ public class ExcelExportServiceImpl implements IExcelExportService {
         int rowNum = 1;
         for (Map.Entry<String, Long> entry : marketingData.entrySet()) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(getMarketingSourceLabel(entry.getKey()));
+            row.createCell(0).setCellValue(MarketingSourceUtils.getLabel(entry.getKey()));
             row.createCell(1).setCellValue(entry.getValue());
         }
     }
@@ -184,15 +185,4 @@ public class ExcelExportServiceImpl implements IExcelExportService {
         }
     }
 
-    private String getMarketingSourceLabel(String key) {
-        return switch (key) {
-            case "friend" -> "Người quen giới thiệu";
-            case "facebook" -> "Facebook";
-            case "tiktok" -> "TikTok";
-            case "google" -> "Tìm kiếm trên Google";
-            case "youtube" -> "Quảng cáo YouTube";
-            case "website" -> "Website/Blog khác";
-            default -> "Khác";
-        };
-    }
 }

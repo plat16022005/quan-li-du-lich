@@ -2,11 +2,10 @@ package com.example.layout.controller.nhanvien;
 
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.ThanhToanRepository;
 import com.example.layout.service.IReportService;
 import com.example.layout.service.IExcelExportService;
 import com.example.layout.service.IPdfExportService;
+import com.example.layout.utils.VaiTroConstants;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,20 +30,15 @@ import com.itextpdf.text.DocumentException;
 public class NhanvienReportController {
 
     private final IReportService reportService;
-
     private final IExcelExportService excelExportService;
     private final IPdfExportService pdfExportService;
 
-    private final ChuyenDuLichRepository chuyenDuLichRepository;
-
-    private final ThanhToanRepository thanhToanRepository;
-
-    public NhanvienReportController(IReportService reportService, IExcelExportService excelExportService, IPdfExportService pdfExportService, ChuyenDuLichRepository chuyenDuLichRepository, ThanhToanRepository thanhToanRepository) {
+    public NhanvienReportController(IReportService reportService,
+                                    IExcelExportService excelExportService,
+                                    IPdfExportService pdfExportService) {
         this.reportService = reportService;
         this.excelExportService = excelExportService;
         this.pdfExportService = pdfExportService;
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.thanhToanRepository = thanhToanRepository;
     }
 
 
@@ -53,7 +47,7 @@ public class NhanvienReportController {
     @GetMapping("/report")
     public String showReportForm(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
         return "nhanvien/report";
@@ -64,7 +58,7 @@ public class NhanvienReportController {
     @ResponseBody
     public Map<String, Long> getMarketingReport(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return null;
         }
         return reportService.thongKeNguonKhachHang();
@@ -74,7 +68,7 @@ public class NhanvienReportController {
     @ResponseBody
     public Map<String, Long> getBookingStatusReport(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return null;
         }
         return reportService.thongKeTrangThaiDatCho();
@@ -87,7 +81,7 @@ public class NhanvienReportController {
             @RequestParam(required = false, defaultValue = "0") int month,
             HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return null;
         }
         return reportService.thongKeChiPhi(year, month);
@@ -98,7 +92,7 @@ public class NhanvienReportController {
     @ResponseBody
     public ResponseEntity<?> getTripFinance(@PathVariable Integer maChuyen, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).body("Không có quyền truy cập");
         }
         try {
@@ -116,7 +110,7 @@ public class NhanvienReportController {
     @ResponseBody
     public ResponseEntity<?> getLocationStats(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).body("Không có quyền truy cập");
         }
         List<Map<String, Object>> stats = reportService.getLocationStatistics();
@@ -127,7 +121,7 @@ public class NhanvienReportController {
     @ResponseBody
     public ResponseEntity<?> getTourPopularity(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).body("Không có quyền truy cập");
         }
         List<Map<String, Object>> stats = reportService.getTourPopularity();
@@ -161,7 +155,7 @@ public class NhanvienReportController {
             HttpSession session) {
         
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).build();
         }
         
@@ -205,7 +199,7 @@ public class NhanvienReportController {
             HttpSession session) {
         
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).build();
         }
         

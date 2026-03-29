@@ -2,9 +2,8 @@ package com.example.layout.controller.nhanvien;
 
 import com.example.layout.dto.TopCustomerDTO;
 import com.example.layout.dto.TripFinanceSummaryDTO;
-import com.example.layout.repository.DatChoRepository;
+import com.example.layout.service.IDatChoService;
 import com.example.layout.service.IFinanceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -18,16 +17,16 @@ public class ReportApiController {
     public List<TripFinanceSummaryDTO> getTripExpenseReport() {
         return financeService.getAllTripsFinanceReport();
     }
-    private final DatChoRepository datChoRepository;
+    private final IDatChoService datChoService;
 
-    public ReportApiController(IFinanceService financeService, DatChoRepository datChoRepository) {
+    public ReportApiController(IFinanceService financeService, IDatChoService datChoService) {
         this.financeService = financeService;
-        this.datChoRepository = datChoRepository;
+        this.datChoService = datChoService;
     }
 
 
     @GetMapping("/top-customers")
     public List<TopCustomerDTO> getTopCustomers() {
-        return datChoRepository.findTopCustomers();
+        return datChoService.findTopCustomers();
     }
 }

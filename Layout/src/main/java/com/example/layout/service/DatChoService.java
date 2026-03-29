@@ -177,4 +177,18 @@ public class DatChoService implements IDatChoService {
         }).collect(Collectors.toList());
     }
     
+    @Override
+    public Long getSoldTicketCount(Integer maChuyen) {
+        return datChoRepository.getSoldTicketCount(maChuyen);
+    }
+
+    @Override
+    public List<com.example.layout.dto.TopCustomerDTO> findTopCustomers() {
+        return datChoRepository.findTopCustomers();
+    }
+
+    @Override
+    public List<DatCho> findByChuyenDuLich_Tour_MaTour(Integer maTour) {
+        return datChoRepository.findByChuyenDuLich_Tour_MaTour(maTour);
+    }
 }

@@ -4,8 +4,9 @@ import jakarta.servlet.http.HttpSession;
 
 import com.example.layout.dto.UpcomingTourDTO;
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
+import com.example.layout.service.IChuyenDuLichService;
 import com.example.layout.service.IHomeService;
+import com.example.layout.utils.VaiTroConstants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/manager")
 public class ManagerHomeController {
-    private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final IChuyenDuLichService chuyenDuLichService;
+    private final IHomeService homeService;
+
+    public ManagerHomeController(IChuyenDuLichService chuyenDuLichService, IHomeService homeService) {
+        this.chuyenDuLichService = chuyenDuLichService;
+        this.homeService = homeService;
+    }
+
 	@GetMapping("/home")
     public String showHomeForm(HttpSession session) {
 		User user = (User) session.getAttribute("user");
@@ -28,17 +36,11 @@ public class ManagerHomeController {
 		{
 			return "redirect:/access_denied";
 		}
-		if (user.getMaVaiTro() != 1)
+		if (user.getMaVaiTro() != VaiTroConstants.ADMIN)
 		{
 			return "redirect:/access_denied";
 		}
         return "manager/home";
-    }
-    private final IHomeService homeService;
-
-    public ManagerHomeController(ChuyenDuLichRepository chuyenDuLichRepository, IHomeService homeService) {
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.homeService = homeService;
     }
 
 
@@ -62,7 +64,7 @@ public class ManagerHomeController {
     @GetMapping("/home/upcoming-tours")
     @ResponseBody
     public List<UpcomingTourDTO> getUpcomingTours() {
-        return chuyenDuLichRepository.findByTrangThai("Sắp diễn ra")
+        return chuyenDuLichService.findByTrangThai("Sắp diễn ra")
                 .stream()
                 .map(chuyen -> new UpcomingTourDTO(
                         chuyen.getTour() != null ? chuyen.getTour().getTenTour() : "Không xác định",
@@ -75,7 +77,7 @@ public class ManagerHomeController {
     @ResponseBody
     public Map<String, Object> getRevenueChart(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             throw new RuntimeException("Không có quyền truy cập");
         }
         return homeService.getDoanhThuTheoThang();

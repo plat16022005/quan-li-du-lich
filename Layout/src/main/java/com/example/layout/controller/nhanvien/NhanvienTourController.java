@@ -7,6 +7,7 @@ import com.example.layout.entity.User;
 import com.example.layout.service.IChuyenDuLichService;
 import com.example.layout.service.INhanVienService;
 import com.example.layout.service.ITourService;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,7 +53,7 @@ public class NhanvienTourController {
     ) {
         // Kiểm tra quyền truy cập
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
 
@@ -151,7 +152,7 @@ public class NhanvienTourController {
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file, HttpSession session) {
         // Kiểm tra quyền truy cập
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return ResponseEntity.status(403).body("Không có quyền truy cập");
         }
 
@@ -179,7 +180,7 @@ public class NhanvienTourController {
         }
 
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -215,7 +216,7 @@ public class NhanvienTourController {
         }
 
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
 
@@ -229,7 +230,7 @@ public class NhanvienTourController {
     public String showTourDetailForm(@PathVariable("maTour") String maTour,HttpSession session)
     {
         User user = (User) session.getAttribute("user");
-        if (user == null || (user.getMaVaiTro() != 1 && user.getMaVaiTro() != 2)) {
+        if (user == null || (user.getMaVaiTro() != VaiTroConstants.ADMIN && user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR)) {
             return "redirect:/access_denied";
         }
     	session.setAttribute("matour", maTour);

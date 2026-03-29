@@ -6,6 +6,7 @@ import com.example.layout.service.IExcelExportService;
 import com.example.layout.service.IPdfExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.example.layout.utils.VaiTroConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ManagerReportController {
     @GetMapping("/report")
     public String showReportForm(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 1) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
             return "redirect:/access_denied";
         }
         return "manager/report";

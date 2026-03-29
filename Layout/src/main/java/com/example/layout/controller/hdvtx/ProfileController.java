@@ -3,8 +3,8 @@ package com.example.layout.controller.hdvtx;
 
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.entity.User;
-import com.example.layout.repository.NhanvienRepository;
-import com.example.layout.repository.UserRepository;
+import com.example.layout.service.INhanVienService;
+import com.example.layout.service.IUserService;
 import com.example.layout.controller.hdvtx.HdvTxDashboardController.CurrentUserDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +19,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hdvtx/profile")
 public class ProfileController {
 
-    private final NhanvienRepository nhanvienRepository;
-    
-    private final UserRepository userRepository;
+    private final INhanVienService nhanVienService;
+    private final IUserService userService;
 
-    public ProfileController(NhanvienRepository nhanvienRepository, UserRepository userRepository) {
-        this.nhanvienRepository = nhanvienRepository;
-        this.userRepository = userRepository;
+    public ProfileController(INhanVienService nhanVienService, IUserService userService) {
+        this.nhanVienService = nhanVienService;
+        this.userService = userService;
     }
 
 
@@ -39,8 +38,7 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        Nhanvien nhanvien = nhanvienRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan())
-                .orElse(null);
+        Nhanvien nhanvien = nhanVienService.findByMaTaiKhoan(user.getMaTaiKhoan());
 
         if (nhanvien == null) {
             return "redirect:/hdvtx/dashboard";
@@ -78,14 +76,8 @@ public class ProfileController {
         }
 
         try {
-            User existingUser = userRepository.findById(user.getMaTaiKhoan())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
-
-            existingUser.setHoTen(hoTen);
-            existingUser.setEmail(email);
-            existingUser.setSoDienThoai(soDienThoai);
-
-            userRepository.save(existingUser);
+            userService.updateProfile(user.getMaTaiKhoan(), hoTen, email, soDienThoai);
+            User existingUser = userService.findById(user.getMaTaiKhoan());
             session.setAttribute("user", existingUser);
 
             redirectAttributes.addFlashAttribute("successMessage", 
@@ -115,29 +107,13 @@ public class ProfileController {
         }
 
         try {
-            User existingUser = userRepository.findById(user.getMaTaiKhoan())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
-
-            if (!existingUser.getMatKhau().equals(currentPassword)) {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "❌ Mật khẩu hiện tại không đúng!");
-                return "redirect:/hdvtx/profile?tab=password";
-            }
-
             if (!newPassword.equals(confirmPassword)) {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "❌ Mật khẩu mới và xác nhận không khớp!");
+                redirectAttributes.addFlashAttribute("errorMessage", "❌ Mật khẩu mới và xác nhận không khớp!");
                 return "redirect:/hdvtx/profile?tab=password";
             }
 
-            if (newPassword.length() < 6) {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "❌ Mật khẩu phải có ít nhất 6 ký tự!");
-                return "redirect:/hdvtx/profile?tab=password";
-            }
-
-            existingUser.setMatKhau(newPassword);
-            userRepository.save(existingUser);
+            userService.changePassword(user.getMaTaiKhoan(), currentPassword, newPassword);
+            User existingUser = userService.findById(user.getMaTaiKhoan());
             session.setAttribute("user", existingUser);
 
             redirectAttributes.addFlashAttribute("successMessage", 

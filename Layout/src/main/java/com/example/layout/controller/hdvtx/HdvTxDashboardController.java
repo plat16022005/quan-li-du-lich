@@ -5,16 +5,15 @@ import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
 import com.example.layout.entity.Nhanvien;
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.KhachHangRepository;
-import com.example.layout.repository.NhanvienRepository;
 import com.example.layout.service.HdvTxService;
+import com.example.layout.service.IChuyenDuLichService;
 import com.example.layout.service.ILichTrinhService;
 import com.example.layout.service.INotificationService;
+import com.example.layout.service.INhanVienService;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,323 +24,265 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Controller dành cho Hướng dẫn viên / Tài xế.
+ *
+ * Áp dụng SRP:
+ *   - Không còn chứa private method findConflictingTripIds() — dùng hdvTxService.findConflictingTripIds()
+ *   - Không còn inject repository trực tiếp.
+ *
+ * Áp dụng DIP:
+ *   - Tất cả dependency đều là interface (HdvTxService sẽ là interface sau khi có I-prefix).
+ *   - Dùng VaiTroConstants thay cho magic numbers.
+ */
 @Controller
 @RequestMapping("/hdvtx")
 public class HdvTxDashboardController {
 
-	private final HdvTxService hdvTxService;
-	private final NhanvienRepository nhanvienRepository;
-	private final ChuyenDuLichRepository chuyenDuLichRepository;
-	private final KhachHangRepository khachHangRepository;
-	private final ILichTrinhService lichTrinhService;
-	private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
-	
-	private final INotificationService notificationService;
+    private final HdvTxService         hdvTxService;
+    private final IChuyenDuLichService  chuyenDuLichService;
+    private final INhanVienService      nhanVienService;
+    private final ILichTrinhService     lichTrinhService;
+    private final INotificationService  notificationService;
 
-    public HdvTxDashboardController(HdvTxService hdvTxService, NhanvienRepository nhanvienRepository, ChuyenDuLichRepository chuyenDuLichRepository, KhachHangRepository khachHangRepository, ILichTrinhService lichTrinhService, INotificationService notificationService) {
-        this.hdvTxService = hdvTxService;
-        this.nhanvienRepository = nhanvienRepository;
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.khachHangRepository = khachHangRepository;
-        this.lichTrinhService = lichTrinhService;
+    private static final Logger logger = LoggerFactory.getLogger(HdvTxDashboardController.class);
+
+    public HdvTxDashboardController(HdvTxService hdvTxService,
+                                     IChuyenDuLichService chuyenDuLichService,
+                                     INhanVienService nhanVienService,
+                                     ILichTrinhService lichTrinhService,
+                                     INotificationService notificationService) {
+        this.hdvTxService        = hdvTxService;
+        this.chuyenDuLichService = chuyenDuLichService;
+        this.nhanVienService     = nhanVienService;
+        this.lichTrinhService    = lichTrinhService;
         this.notificationService = notificationService;
     }
 
+    // =========================================================
+    // DTO nội bộ — thông tin người dùng đăng nhập hiện tại
+    // =========================================================
+    public static class CurrentUserDTO {
+        private final String hoTen;
+        private final String chucVu;
+        private final int    maVaiTro;
+        private final int    maNhanVien;
 
-	public static class CurrentUserDTO {
-		private final String hoTen;
-		private final String chucVu;
-		private final int maVaiTro;
-		private final int maNhanVien;
+        public CurrentUserDTO(String hoTen, String chucVu, int maVaiTro, int maNhanVien) {
+            this.hoTen      = hoTen;
+            this.chucVu     = chucVu;
+            this.maVaiTro   = maVaiTro;
+            this.maNhanVien = maNhanVien;
+        }
 
-		public CurrentUserDTO(String hoTen, String chucVu, int maVaiTro, int maNhanVien) {
-			this.hoTen = hoTen;
-			this.chucVu = chucVu;
-			this.maVaiTro = maVaiTro;
-			this.maNhanVien = maNhanVien;
-		}
+        public String getHoTen()      { return hoTen; }
+        public String getChucVu()     { return chucVu; }
+        public int    getMaVaiTro()   { return maVaiTro; }
+        public int    getMaNhanVien() { return maNhanVien; }
+    }
 
-		public String getHoTen() {
-			return hoTen;
-		}
+    // =========================================================
+    // Endpoints
+    // =========================================================
 
-		public String getChucVu() {
-			return chucVu;
-		}
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model, HttpSession session, HttpServletRequest request) {
+        CurrentUserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) return "redirect:/login";
 
-		public int getMaVaiTro() {
-			return maVaiTro;
-		}
+        List<ChuyenDuLich> availableTrips = hdvTxService.getAvailableTrips(currentUser);
+        List<ChuyenDuLich> assignedTrips  = hdvTxService.getAssignedTrips(currentUser);
 
-		public int getMaNhanVien() {
-			return maNhanVien;
-		}
-	}
+        // Dùng INotificationService thay vì inject ChuyenDuLichRepository (DIP)
+        List<ChuyenDuLich> upcomingTrips = notificationService.getUpcomingTrips(
+                currentUser.getMaNhanVien(), 7);
 
-	@GetMapping("/dashboard")
-	public String showDashboard(Model model, HttpSession session, HttpServletRequest request) {
-		CurrentUserDTO currentUser = getCurrentUser(session);
-		if (currentUser == null) {
-			return "redirect:/login";
-		}
+        model.addAttribute("availableTrips",  availableTrips);
+        model.addAttribute("assignedTrips",   assignedTrips);
+        model.addAttribute("upcomingTrips",   upcomingTrips);
+        model.addAttribute("upcomingCount",   upcomingTrips.size());
+        model.addAttribute("currentUser",     currentUser);
+        model.addAttribute("currentUri",      request.getRequestURI());
 
-		List<ChuyenDuLich> availableTrips = hdvTxService.getAvailableTrips(currentUser);
-		List<ChuyenDuLich> assignedTrips = hdvTxService.getAssignedTrips(currentUser);
-		
-	    LocalDate today = LocalDate.now();
-	    LocalDate sevenDaysLater = today.plusDays(7);
-	    
-	    List<ChuyenDuLich> upcomingTrips = chuyenDuLichRepository.findUpcomingTripsByStaff(
-	        today, 
-	        sevenDaysLater, 
-	        currentUser.getMaNhanVien()
-	    );
+        return "hdvtx/dashboard";
+    }
 
-		model.addAttribute("availableTrips", availableTrips);
-		model.addAttribute("assignedTrips", assignedTrips);
-	    model.addAttribute("upcomingTrips", upcomingTrips);
-	    model.addAttribute("upcomingCount", upcomingTrips.size());
-		model.addAttribute("currentUser", currentUser);
-		model.addAttribute("currentUri", request.getRequestURI());
+    @GetMapping("/assigned-trips")
+    public String showAssignedTrips(
+            @RequestParam(required = false) String trangThai,
+            @RequestParam(required = false) String tenTour,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay,
+            Model model, HttpSession session, HttpServletRequest request) {
 
-		return "hdvtx/dashboard";
-	}
+        CurrentUserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) return "redirect:/login";
 
-	@GetMapping("/assigned-trips")
-	public String showAssignedTrips(@RequestParam(required = false) String trangThai,
-			@RequestParam(required = false) String tenTour,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay,
-			Model model, HttpSession session, HttpServletRequest request) {
+        boolean hasFilter = (trangThai != null && !trangThai.isEmpty())
+                || (tenTour != null && !tenTour.isEmpty())
+                || tuNgay != null || denNgay != null;
 
-		CurrentUserDTO currentUser = getCurrentUser(session);
-		if (currentUser == null)
-			return "redirect:/login";
+        List<ChuyenDuLich> assignedTrips = hasFilter
+                ? hdvTxService.searchAssignedTrips(currentUser, trangThai, tenTour, tuNgay, denNgay)
+                : hdvTxService.getAssignedTrips(currentUser);
 
-		List<ChuyenDuLich> assignedTrips;
+        // Cập nhật số lượng hành khách qua IChuyenDuLichService (không inject repository)
+        assignedTrips.forEach(chuyen ->
+                chuyen.setSoLuongHienTai(chuyenDuLichService.getTotalParticipants(chuyen.getMaChuyen())));
 
-		boolean hasFilter = (trangThai != null && !trangThai.isEmpty()) || (tenTour != null && !tenTour.isEmpty())
-				|| tuNgay != null || denNgay != null;
+        // SRP: dùng hdvTxService để tìm chuyến trùng lịch — không duplicate logic trong controller
+        Set<Integer> conflictingTripIds = hdvTxService.findConflictingTripIds(assignedTrips);
 
-		if (hasFilter) {
-			assignedTrips = hdvTxService.searchAssignedTrips(currentUser, trangThai, tenTour, tuNgay, denNgay);
-		} else {
-			assignedTrips = hdvTxService.getAssignedTrips(currentUser);
-		}
+        model.addAttribute("assignedTrips",     assignedTrips);
+        model.addAttribute("conflictingTripIds", conflictingTripIds);
+        model.addAttribute("currentUser",       currentUser);
+        model.addAttribute("currentUri",        request.getRequestURI());
+        model.addAttribute("filterTrangThai",   trangThai);
+        model.addAttribute("filterTenTour",     tenTour);
+        model.addAttribute("filterTuNgay",      tuNgay);
+        model.addAttribute("filterDenNgay",     denNgay);
 
-		// ✅ Load số lượng hành khách
-		assignedTrips.forEach(
-				chuyen -> chuyen.setSoLuongHienTai(chuyenDuLichRepository.getTotalParticipants(chuyen.getMaChuyen())));
+        return "hdvtx/assigned_trips";
+    }
 
-		// ✅ GIỮ NGUYÊN: Tìm chuyến trùng lịch
-		Set<Integer> conflictingTripIds = findConflictingTripIds(assignedTrips);
+    @GetMapping("/available-trips")
+    public String showAvailableTrips(
+            @RequestParam(required = false) String tenTour,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay,
+            Model model, HttpSession session, HttpServletRequest request) {
 
-		model.addAttribute("assignedTrips", assignedTrips);
-		model.addAttribute("conflictingTripIds", conflictingTripIds); // ← QUAN TRỌNG
-		model.addAttribute("currentUser", currentUser);
-		model.addAttribute("currentUri", request.getRequestURI());
+        CurrentUserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) return "redirect:/login";
 
-		// ✅ Giữ lại giá trị filter
-		model.addAttribute("filterTrangThai", trangThai);
-		model.addAttribute("filterTenTour", tenTour);
-		model.addAttribute("filterTuNgay", tuNgay);
-		model.addAttribute("filterDenNgay", denNgay);
+        List<ChuyenDuLich> availableTrips = (tenTour != null || tuNgay != null || denNgay != null)
+                ? hdvTxService.searchAvailableTrips(currentUser, tenTour, tuNgay, denNgay)
+                : hdvTxService.getAvailableTrips(currentUser);
 
-		return "hdvtx/assigned_trips";
-	}
+        availableTrips.forEach(chuyen ->
+                chuyen.setSoLuongHienTai(chuyenDuLichService.getTotalParticipants(chuyen.getMaChuyen())));
 
-	/**
-	 * ✅ CẬP NHẬT: Hiển thị chuyến cần nhận + Tìm kiếm/Lọc
-	 */
-	@GetMapping("/available-trips")
-	public String showAvailableTrips(@RequestParam(required = false) String tenTour,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay,
-			Model model, HttpSession session, HttpServletRequest request) {
+        model.addAttribute("availableTrips", availableTrips);
+        model.addAttribute("currentUser",    currentUser);
+        model.addAttribute("currentUri",     request.getRequestURI());
+        model.addAttribute("filterTenTour",  tenTour);
+        model.addAttribute("filterTuNgay",   tuNgay);
+        model.addAttribute("filterDenNgay",  denNgay);
 
-		CurrentUserDTO currentUser = getCurrentUser(session);
-		if (currentUser == null)
-			return "redirect:/login";
+        return "hdvtx/available_trips";
+    }
 
-		List<ChuyenDuLich> availableTrips;
+    @GetMapping("/trip-details/{id}")
+    public String showTripDetails(@PathVariable("id") Integer tripId,
+                                   Model model, HttpSession session, HttpServletRequest request) {
+        logger.info("=== BẮT ĐẦU XEM CHI TIẾT CHUYẾN ĐI {} ===", tripId);
+        try {
+            CurrentUserDTO currentUser = getCurrentUser(session);
+            if (currentUser == null) {
+                logger.warn("User chưa đăng nhập, redirect về /login");
+                return "redirect:/login";
+            }
+            logger.info("User đăng nhập: {} - Vai trò: {}", currentUser.getHoTen(), currentUser.getMaVaiTro());
 
-		// ✅ Nếu có filter, dùng search
-		if (tenTour != null || tuNgay != null || denNgay != null) {
-			availableTrips = hdvTxService.searchAvailableTrips(currentUser, tenTour, tuNgay, denNgay);
-		} else {
-			availableTrips = hdvTxService.getAvailableTrips(currentUser);
-		}
+            // Dùng IChuyenDuLichService thay vì inject ChuyenDuLichRepository (DIP)
+            ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(tripId);
+            if (chuyen == null) {
+                logger.error("KHÔNG TÌM THẤY chuyến đi với ID: {}", tripId);
+                return "redirect:/hdvtx/available-trips";
+            }
 
-		// ✅ Load số lượng hành khách
-		availableTrips.forEach(
-				chuyen -> chuyen.setSoLuongHienTai(chuyenDuLichRepository.getTotalParticipants(chuyen.getMaChuyen())));
+            int soLuongHanhKhach = chuyenDuLichService.getTotalParticipants(tripId);
+            logger.info("Số lượng hành khách: {}", soLuongHanhKhach);
 
-		model.addAttribute("availableTrips", availableTrips);
-		model.addAttribute("currentUser", currentUser);
-		model.addAttribute("currentUri", request.getRequestURI());
+            // Dùng IChuyenDuLichService thay vì inject KhachHangRepository (DIP)
+            List<HanhKhachDTO> danhSachHanhKhach = chuyenDuLichService.getHanhKhachByMaChuyen(tripId);
+            logger.info("Số lượng records hành khách: {}", danhSachHanhKhach.size());
 
-		// ✅ Giữ lại giá trị filter
-		model.addAttribute("filterTenTour", tenTour);
-		model.addAttribute("filterTuNgay", tuNgay);
-		model.addAttribute("filterDenNgay", denNgay);
+            List<LichTrinh> lichTrinh = Collections.emptyList();
+            if (chuyen.getTour() != null && chuyen.getTour().getMaTour() != null) {
+                Integer maTour = chuyen.getTour().getMaTour();
+                logger.info("Đang lấy lịch trình cho tour ID: {}", maTour);
+                try {
+                    lichTrinh = lichTrinhService.getLichTrinhByTour(maTour);
+                    logger.info("Tìm thấy {} lịch trình", lichTrinh.size());
+                } catch (Exception e) {
+                    logger.error("LỖI khi lấy lịch trình: ", e);
+                }
+            } else {
+                logger.warn("Chuyến đi không có tour, không lấy lịch trình");
+            }
 
-		return "hdvtx/available_trips";
-	}
+            model.addAttribute("chuyen",            chuyen);
+            model.addAttribute("soLuongHanhKhach",  soLuongHanhKhach);
+            model.addAttribute("danhSachHanhKhach", danhSachHanhKhach);
+            model.addAttribute("lichTrinh",         lichTrinh);
+            model.addAttribute("currentUser",       currentUser);
+            model.addAttribute("currentUri",        request.getRequestURI());
 
-	@GetMapping("/trip-details/{id}")
-	public String showTripDetails(@PathVariable("id") Integer tripId, Model model, HttpSession session,
-			HttpServletRequest request) {
-		logger.info("=== BẮT ĐẦU XEM CHI TIẾT CHUYẾN ĐI {} ===", tripId);
+            logger.info("=== HOÀN THÀNH XỬ LÝ, RENDER VIEW trip-details ===");
+            return "trip-details";
 
-		try {
-			CurrentUserDTO currentUser = getCurrentUser(session);
-			if (currentUser == null) {
-				logger.warn("User chưa đăng nhập, redirect về /login");
-				return "redirect:/login";
-			}
-			logger.info("User đăng nhập: {} - Vai trò: {}", currentUser.getHoTen(), currentUser.getMaVaiTro());
+        } catch (Exception e) {
+            logger.error("LỖI NGHIÊM TRỌNG khi xử lý trip-details: ", e);
+            return "redirect:/hdvtx/dashboard";
+        }
+    }
 
-			ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId).orElse(null);
-			if (chuyen == null) {
-				logger.error("KHÔNG TÌM THẤY chuyến đi với ID: {}", tripId);
-				return "redirect:/hdvtx/available-trips";
-			}
+    @PostMapping("/trips/assign/{tripId}")
+    public String assignTrip(@PathVariable("tripId") int tripId,
+                              RedirectAttributes redirectAttributes, HttpSession session) {
+        CurrentUserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) return "redirect:/login";
+        try {
+            hdvTxService.assignTripToEmployee(tripId, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Nhận chuyến thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/hdvtx/available-trips";
+    }
 
-			// Force load tour nếu có
-			if (chuyen.getTour() != null) {
-				logger.info("Chuyến có tour: {}", chuyen.getTour().getTenTour());
-				chuyen.getTour().getMaTour();
-			} else {
-				logger.info("Chuyến không có tour (chuyến riêng lẻ)");
-			}
+    @PostMapping("/trips/cancel/{tripId}")
+    public String cancelTrip(@PathVariable("tripId") int tripId,
+                              RedirectAttributes redirectAttributes, HttpSession session) {
+        CurrentUserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) return "redirect:/login";
+        try {
+            hdvTxService.cancelTripAssignment(tripId, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Hủy nhận chuyến thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/hdvtx/assigned-trips";
+    }
 
-			int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
-			logger.info("Số lượng hành khách: {}", soLuongHanhKhach);
+    // =========================================================
+    // Private helpers
+    // =========================================================
 
-			List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
-			logger.info("Số lượng records hành khách: {}", danhSachHanhKhach.size());
+    /**
+     * Lấy thông tin người dùng hiện tại từ session.
+     * Áp dụng OCP: dùng VaiTroConstants thay magic numbers 3, 5.
+     */
+    private CurrentUserDTO getCurrentUser(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null
+                || (user.getMaVaiTro() != VaiTroConstants.HUONG_DAN_VIEN
+                && user.getMaVaiTro() != VaiTroConstants.TAI_XE)) {
+            return null;
+        }
 
-			List<LichTrinh> lichTrinh;
-			if (chuyen.getTour() != null && chuyen.getTour().getMaTour() != null) {
-				Integer maTour = chuyen.getTour().getMaTour();
-				logger.info("Đang lấy lịch trình cho tour ID: {}", maTour);
-				try {
-					lichTrinh = lichTrinhService.getLichTrinhByTour(maTour);
-					logger.info("Tìm thấy {} lịch trình", lichTrinh.size());
-				} catch (Exception e) {
-					logger.error("LỖI khi lấy lịch trình: ", e);
-					lichTrinh = java.util.Collections.emptyList();
-				}
-			} else {
-				logger.warn("Chuyến đi không có tour, không lấy lịch trình");
-				lichTrinh = java.util.Collections.emptyList();
-			}
-
-			if (lichTrinh == null) {
-				lichTrinh = java.util.Collections.emptyList();
-				logger.warn("lichTrinh was null, setting to empty list");
-			}
-
-			logger.info("Đang thêm dữ liệu vào model...");
-			model.addAttribute("chuyen", chuyen);
-			model.addAttribute("soLuongHanhKhach", soLuongHanhKhach);
-			model.addAttribute("danhSachHanhKhach", danhSachHanhKhach);
-			model.addAttribute("lichTrinh", lichTrinh);
-			model.addAttribute("currentUser", currentUser);
-			model.addAttribute("currentUri", request.getRequestURI());
-
-			logger.info("=== HOÀN THÀNH XỬ LÝ, RENDER VIEW trip-details ===");
-			return "trip-details";
-
-		} catch (Exception e) {
-			logger.error("LỖI NGHIÊM TRỌNG khi xử lý trip-details: ", e);
-			e.printStackTrace();
-			return "redirect:/hdvtx/dashboard";
-		}
-	}
-
-	@PostMapping("/trips/assign/{tripId}")
-	public String assignTrip(@PathVariable("tripId") int tripId, RedirectAttributes redirectAttributes,
-			HttpSession session) {
-		CurrentUserDTO currentUser = getCurrentUser(session);
-		if (currentUser == null)
-			return "redirect:/login";
-
-		try {
-			hdvTxService.assignTripToEmployee(tripId, currentUser);
-			redirectAttributes.addFlashAttribute("successMessage", "Nhận chuyến thành công!");
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
-		}
-
-		return "redirect:/hdvtx/available-trips";
-	}
-
-	@PostMapping("/trips/cancel/{tripId}")
-	public String cancelTrip(@PathVariable("tripId") int tripId, RedirectAttributes redirectAttributes,
-			HttpSession session) {
-		CurrentUserDTO currentUser = getCurrentUser(session);
-		if (currentUser == null)
-			return "redirect:/login";
-
-		try {
-			hdvTxService.cancelTripAssignment(tripId, currentUser);
-			redirectAttributes.addFlashAttribute("successMessage", "Hủy nhận chuyến thành công!");
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
-		}
-
-		return "redirect:/hdvtx/assigned-trips";
-	}
-
-	/**
-	 * ✅ GIỮ NGUYÊN: Method tìm chuyến trùng lịch
-	 */
-	private Set<Integer> findConflictingTripIds(List<ChuyenDuLich> trips) {
-		Set<Integer> conflictIds = new HashSet<>();
-
-		for (int i = 0; i < trips.size(); i++) {
-			ChuyenDuLich trip1 = trips.get(i);
-			if (trip1.getNgayBatDau() == null || trip1.getNgayKetThuc() == null) {
-				continue;
-			}
-
-			for (int j = i + 1; j < trips.size(); j++) {
-				ChuyenDuLich trip2 = trips.get(j);
-				if (trip2.getNgayBatDau() == null || trip2.getNgayKetThuc() == null) {
-					continue;
-				}
-
-				// Kiểm tra overlap: 2 chuyến trùng lịch nếu:
-				// trip1.end >= trip2.start AND trip1.start <= trip2.end
-				boolean hasOverlap = !(trip1.getNgayKetThuc().isBefore(trip2.getNgayBatDau())
-						|| trip1.getNgayBatDau().isAfter(trip2.getNgayKetThuc()));
-
-				if (hasOverlap) {
-					logger.warn("⚠️ Phát hiện trùng lịch: Chuyến {} ({} - {}) <=> Chuyến {} ({} - {})",
-							trip1.getMaChuyen(), trip1.getNgayBatDau(), trip1.getNgayKetThuc(), trip2.getMaChuyen(),
-							trip2.getNgayBatDau(), trip2.getNgayKetThuc());
-
-					conflictIds.add(trip1.getMaChuyen());
-					conflictIds.add(trip2.getMaChuyen());
-				}
-			}
-		}
-
-		return conflictIds;
-	}
-
-	private CurrentUserDTO getCurrentUser(HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		if (user == null || (user.getMaVaiTro() != 3 && user.getMaVaiTro() != 5)) {
-			return null;
-		}
-
-		Nhanvien nhanvien = nhanvienRepository.findByTaiKhoan_MaTaiKhoan(user.getMaTaiKhoan()).orElse(new Nhanvien());
-		return new CurrentUserDTO(user.getHoTen(), nhanvien.getChucVu(), user.getMaVaiTro(), nhanvien.getMaNhanVien());
-	}
+        // Dùng INhanVienService thay vì inject NhanvienRepository (DIP)
+        Nhanvien nhanvien = nhanVienService.findByMaTaiKhoan(user.getMaTaiKhoan());
+        if (nhanvien == null) {
+            nhanvien = new Nhanvien();
+        }
+        return new CurrentUserDTO(
+                user.getHoTen(), nhanvien.getChucVu(),
+                user.getMaVaiTro(), nhanvien.getMaNhanVien());
+    }
 }

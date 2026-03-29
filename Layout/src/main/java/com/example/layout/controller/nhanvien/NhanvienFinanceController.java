@@ -1,45 +1,44 @@
 package com.example.layout.controller.nhanvien;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.layout.dto.FinanceReportDTO;
-import com.example.layout.dto.TripFinanceSummaryDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.User;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.DatChoRepository;
+import com.example.layout.service.IChuyenDuLichService;
+import com.example.layout.service.IDatChoService;
 import com.example.layout.service.IFinanceService;
+import com.example.layout.utils.VaiTroConstants;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/nhanvien")
 public class NhanvienFinanceController {
-	private final ChuyenDuLichRepository chuyenDuLichRepository;
-	private final DatChoRepository datChoRepository;
+	private final IChuyenDuLichService chuyenDuLichService;
+	private final IDatChoService datChoService;
 	private final IFinanceService financeService;
 
-    public NhanvienFinanceController(ChuyenDuLichRepository chuyenDuLichRepository, DatChoRepository datChoRepository, IFinanceService financeService) {
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.datChoRepository = datChoRepository;
+    public NhanvienFinanceController(IChuyenDuLichService chuyenDuLichService, IDatChoService datChoService, IFinanceService financeService) {
+        this.chuyenDuLichService = chuyenDuLichService;
+        this.datChoService = datChoService;
         this.financeService = financeService;
     }
 
     @GetMapping("/finance")
     public String showManagerTour(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
-        List<ChuyenDuLich> completedTrips = chuyenDuLichRepository.findAllCompletedTrips();
+        List<ChuyenDuLich> completedTrips = chuyenDuLichService.findAllCompletedTrips();
         model.addAttribute("completedTrips", completedTrips);        
         return "nhanvien/finance";
     }
@@ -48,17 +47,17 @@ public class NhanvienFinanceController {
                                     HttpSession session,
                                     Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || user.getMaVaiTro() != 2) {
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.QUAN_LY_TOUR) {
             return "redirect:/access_denied";
         }
 
         // ✅ Lấy thông tin chuyến
-        ChuyenDuLich trip = chuyenDuLichRepository.findById(maChuyen)
+        ChuyenDuLich trip = Optional.ofNullable(chuyenDuLichService.getChuyenById(maChuyen))
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến có mã " + maChuyen));
 
         // ✅ Lấy báo cáo tài chính cho chuyến
         FinanceReportDTO report = financeService.getFinanceReport(maChuyen);
-        Long soVe = datChoRepository.getSoldTicketCount(maChuyen);
+        Long soVe = datChoService.getSoldTicketCount(maChuyen);
 
         // ✅ Đưa dữ liệu ra view
         model.addAttribute("trip", trip);

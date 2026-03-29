@@ -3,8 +3,7 @@ package com.example.layout.controller.hdvtx;
 import com.example.layout.dto.HanhKhachDTO;
 import com.example.layout.entity.ChuyenDuLich;
 import com.example.layout.entity.LichTrinh;
-import com.example.layout.repository.ChuyenDuLichRepository;
-import com.example.layout.repository.KhachHangRepository;
+import com.example.layout.service.IChuyenDuLichService;
 import com.example.layout.service.ILichTrinhService;
 import com.example.layout.service.ITripExportPdfService;
 
@@ -24,17 +23,14 @@ import java.util.List;
 @RequestMapping("/hdvtx/trip-details")
 public class TripPdfExportController {
 
-    private final ChuyenDuLichRepository chuyenDuLichRepository;
-
-    private final KhachHangRepository khachHangRepository;
-
+    private final IChuyenDuLichService chuyenDuLichService;
     private final ILichTrinhService lichTrinhService;
-
     private final ITripExportPdfService tripExportPdfService;
 
-    public TripPdfExportController(ChuyenDuLichRepository chuyenDuLichRepository, KhachHangRepository khachHangRepository, ILichTrinhService lichTrinhService, ITripExportPdfService tripExportPdfService) {
-        this.chuyenDuLichRepository = chuyenDuLichRepository;
-        this.khachHangRepository = khachHangRepository;
+    public TripPdfExportController(IChuyenDuLichService chuyenDuLichService,
+                                   ILichTrinhService lichTrinhService,
+                                   ITripExportPdfService tripExportPdfService) {
+        this.chuyenDuLichService = chuyenDuLichService;
         this.lichTrinhService = lichTrinhService;
         this.tripExportPdfService = tripExportPdfService;
     }
@@ -44,14 +40,14 @@ public class TripPdfExportController {
     public ResponseEntity<byte[]> downloadTripPdf(@PathVariable("id") Integer tripId) {
         try {
 
-            ChuyenDuLich chuyen = chuyenDuLichRepository.findById(tripId)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+            ChuyenDuLich chuyen = chuyenDuLichService.getChuyenById(tripId);
+            if (chuyen == null) {
+                throw new RuntimeException("Không tìm thấy chuyến đi");
+            }
 
-
-            int soLuongHanhKhach = chuyenDuLichRepository.getTotalParticipants(tripId);
-
+            int soLuongHanhKhach = chuyenDuLichService.getTotalParticipants(tripId);
             
-            List<HanhKhachDTO> danhSachHanhKhach = khachHangRepository.findHanhKhachByMaChuyen(tripId);
+            List<HanhKhachDTO> danhSachHanhKhach = chuyenDuLichService.getHanhKhachByMaChuyen(tripId);
 
 
             List<LichTrinh> lichTrinh = java.util.Collections.emptyList();
