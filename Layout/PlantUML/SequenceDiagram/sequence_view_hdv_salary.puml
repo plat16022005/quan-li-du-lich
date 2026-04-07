@@ -1,0 +1,46 @@
+@startuml
+title Sequence Diagram - Quy trình Xem Bảng lương HDV/TX
+
+actor "HDV / Tài xế" as NV
+boundary "Giao diện Bảng lương" as UI
+participant "HdvTxSalaryController" as Ctrl
+participant "HdvTxService" as Svc
+participant "NhanvienRepository" as NVRepo
+participant "ChuyenDuLichRepository" as ChuyenRepo
+database "Database" as DB
+
+NV -> UI : Truy cập menu "Bảng lương"\nChọn Tháng/Năm
+activate UI
+
+UI -> Ctrl : GET /hdvtx/salary?month=...&year=...
+activate Ctrl
+
+Ctrl -> Svc : getSalaryStatement(userId, month, year)
+activate Svc
+
+Svc -> NVRepo : findByTaiKhoanId(userId)
+activate NVRepo
+NVRepo -> DB : SELECT * FROM Nhanvien WHERE ...
+DB --> NVRepo : return Nhanvien
+NVRepo --> Svc : return NhanvienEntity
+deactivate NVRepo
+
+Svc -> ChuyenRepo : findCompletedTripsByNhanvien(maNV, month, year)
+activate ChuyenRepo
+ChuyenRepo -> DB : SELECT * FROM ChuyenDuLich WHERE ...
+DB --> ChuyenRepo : List<ChuyenDuLich>
+ChuyenRepo --> Svc : return Trips
+deactivate ChuyenRepo
+
+Svc -> Svc : Tính Tổng Ngày Đi Tour
+Svc -> Svc : Lương = Lương Cơ Bản + (Tổng Ngày Khách * Thù Lao/Ngày)
+Svc --> Ctrl : return SalaryDetailDTO
+deactivate Svc
+
+Ctrl --> UI : Render View kèm SalaryDetailDTO
+deactivate Ctrl
+
+UI --> NV : Hiển thị Chi Tiết Bảng Lương tháng
+deactivate UI
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+title Activity Diagram - Quy trình Xem và Xuất Lịch trình (Hướng dẫn viên / Tài xế)
+
+|Hướng dẫn viên / Tài xế|
+start
+:Đăng nhập hệ thống;
+:Truy cập Dashboard HDV/TX;
+
+|Hệ thống|
+:Truy vấn danh sách Chuyến Du Lịch\nmà HDV/TX được phân công;
+:Hiển thị danh sách Chuyến đi (Sắp tới, Đang chạy, Đã hoàn thành);
+
+|Hướng dẫn viên / Tài xế|
+:Chọn một Chuyến đi cụ thể;
+
+|Hệ thống|
+:Tải thông tin chi tiết Lịch trình (LichTrinh, DiaDiem, KhachSan);
+:Hiển thị danh sách Khách hàng trong chuyến;
+
+|Hướng dẫn viên / Tài xế|
+if (Muốn xuất file lịch trình?) then (Có)
+    :Bấm nút "Xuất PDF / In Lịch trình";
+    
+    |Hệ thống|
+    :Gọi dịch vụ Xuất PDF (TripExportPdfService);
+    :Biên dịch dữ liệu Tour, Lịch trình, Danh sách Khách;
+    :Tạo và trả về file PDF;
+    
+    |Hướng dẫn viên / Tài xế|
+    :Tải file PDF xuống thiết bị;
+else (Không)
+endif
+
+|Hướng dẫn viên / Tài xế|
+:Thực hiện theo dõi và hướng dẫn;
+stop
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+title Activity Diagram - Quy trình Đặt Tour (Booking)
+
+|Khách hàng|
+start
+:Xem chi tiết Chuyến du lịch;
+:Bấm nút "Đặt Tour ngay";
+
+|Hệ thống|
+:Kiểm tra số lượng vé còn lại;
+if (Còn đủ chỗ?) then (Có)
+    |Khách hàng|
+    :Nhập thông tin người đặt mua;
+    :Nhập danh sách hành khách (Chi tiết đặt chỗ);
+    
+    |Hệ thống|
+    :Tính toán tổng tiền tạm tính;
+    :Kiểm tra Khuyến mãi (nếu có áp dụng);
+    :Cập nhật Tổng tiền cuối cùng;
+    
+    |Khách hàng|
+    :Xác nhận hóa đơn và chọn phương thức Thanh toán;
+    
+    |Hệ thống|
+    if (Thanh toán trực tuyến?) then (Có)
+        :Chuyển hướng đến Cổng thanh toán (VNPay/...);
+        |Hệ thống Thanh toán|
+        :Xử lý giao dịch;
+        if (Giao dịch thành công?) then (Thành công)
+            |Hệ thống|
+            :Tạo bản ghi Đặt chỗ (Trạng thái: Đã thanh toán);
+            :Tạo bản ghi Thanh toán / Giao dịch;
+            :Gửi Email xác nhận đặt tour thành công;
+        else (Thất bại)
+            |Hệ thống|
+            :Hủy tiến trình đặt chỗ;
+            |Khách hàng|
+            :Nhận thông báo "Thanh toán thất bại";
+            stop
+        endif
+    else (Thanh toán tiền mặt/Tại quầy)
+        |Hệ thống|
+        :Tạo bản ghi Đặt chỗ (Trạng thái: Chờ thanh toán / Chờ duyệt);
+        :Gửi Email thông báo đặt tour thành công và chờ xử lý;
+    endif
+    
+    |Khách hàng|
+    :Chuyển hướng về trang Lịch sử đặt Tour;
+    stop
+
+else (Không)
+    |Hệ thống|
+    :Hiển thị thông báo "Đã hết chỗ trống hoặc không đủ số lượng yêu cầu";
+    |Khách hàng|
+    stop
+endif
+@enduml

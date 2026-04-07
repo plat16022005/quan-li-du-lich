@@ -1,0 +1,59 @@
+@startuml
+title Sequence Diagram - Quy trình Duyệt Đặt Tour (Quản lý / Nhân viên)
+
+actor "Nhân viên / Quản lý" as NV
+boundary "Giao diện Quản lý Booking" as UI
+participant "ManagerCustomerController" as Ctrl
+participant "DatChoService" as Svc
+participant "DatChoRepository" as Repo
+participant "EmailService" as EmailSvc
+database "Database" as DB
+
+NV -> UI : Bấm nút "Duyệt" trên 1 Đặt chỗ
+activate UI
+
+UI -> Ctrl : POST /approve-booking/{maDatCho}
+activate Ctrl
+
+Ctrl -> Svc : approveBooking(maDatCho)
+activate Svc
+
+Svc -> Repo : findById(maDatCho)
+activate Repo
+Repo -> DB : SELECT * FROM DatCho WHERE MaDatCho = ?
+DB --> Repo : return DatCho entity
+Repo --> Svc : return DatCho
+deactivate Repo
+
+alt Trạng thái thanh toán không hợp lệ
+    Svc --> Ctrl : throw Exception("Booking chưa thanh toán")
+else Hợp lệ
+    Svc -> Svc : setTrangThai("Thành công")
+    
+    Svc -> Repo : save(DatCho)
+    activate Repo
+    Repo -> DB : UPDATE DatCho SET TrangThai = 'Thành công' ...
+    DB --> Repo : Success
+    Repo --> Svc : return saved entity
+    deactivate Repo
+    
+    Svc -> EmailSvc : sendConfirmationEmail(DatCho.getKhachHang())
+    activate EmailSvc
+    EmailSvc --> Svc : email sent
+    deactivate EmailSvc
+    
+    Svc --> Ctrl : return Success
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Trả về thông báo "Duyệt thành công"
+else Thất bại
+    Ctrl -> UI : Trả về thông báo lỗi
+end
+deactivate Ctrl
+
+UI --> NV : Hiển thị kết quả & Tải lại bảng
+deactivate UI
+
+@enduml

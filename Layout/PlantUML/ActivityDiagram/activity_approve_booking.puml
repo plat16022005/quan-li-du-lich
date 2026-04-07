@@ -1,0 +1,42 @@
+@startuml
+title Activity Diagram - Quy trình Duyệt Đặt Chỗ (Nhân viên / Quản lý)
+
+|Nhân viên / Quản lý|
+start
+:Truy cập trang "Quản lý Đặt chỗ (Booking)";
+
+|Hệ thống|
+:Lấy danh sách các Đặt chỗ (DatCho);
+:Hiển thị danh sách (có thể lọc theo trạng thái "Chờ duyệt", "Đã thanh toán", "Đã hủy");
+
+|Nhân viên / Quản lý|
+:Chọn một Booking cần xử lý;
+
+|Hệ thống|
+:Hiển thị Chi tiết Đặt chỗ\n(Thông tin KH, Số lượng, Loại vé, Tổng tiền, Trạng thái Thanh toán);
+
+|Nhân viên / Quản lý|
+if (Quyết định xử lý?) then (Duyệt)
+    :Bấm nút "Duyệt Booking";
+    |Hệ thống|
+    if (Trạng thái thanh toán hợp lệ?) then (Có)
+        :Cập nhật trạng thái DatCho thành "Thành công";
+        :Trừ số lượng chỗ trống trong ChuyenDuLich;
+        :Gửi Email xác nhận cho Khách hàng;
+    else (Chưa thanh toán)
+        :Hiển thị thông báo "Cần thanh toán trước khi duyệt";
+    endif
+
+else (Hủy Booking)
+    |Nhân viên / Quản lý|
+    :Bấm nút "Hủy Booking" và nhập lý do;
+    |Hệ thống|
+    :Cập nhật trạng thái DatCho thành "Đã hủy";
+    :Cập nhật trạng thái Thanh toán (nếu cần hoàn tiền);
+    :Gửi Email thông báo Hủy cho Khách hàng;
+endif
+
+|Nhân viên / Quản lý|
+:Hoàn tất quá trình xử lý;
+stop
+@enduml

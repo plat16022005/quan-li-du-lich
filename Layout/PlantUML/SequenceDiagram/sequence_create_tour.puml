@@ -1,0 +1,47 @@
+@startuml
+title Sequence Diagram - Quy trình Thêm Mới Tour (Quản lý / Nhân viên)
+
+actor "Nhân viên" as NV
+boundary "Giao diện Quản lý Tour" as UI
+participant "TourController" as Ctrl
+participant "TourService" as Svc
+participant "TourRepository" as Repo
+database "Database" as DB
+
+NV -> UI : Điền form thông tin Tour mới\nBấm "Thêm Mới"
+activate UI
+
+UI -> Ctrl : POST /api/tours (TourDTO)
+activate Ctrl
+
+Ctrl -> Svc : createTour(TourDTO)
+activate Svc
+
+Svc -> Svc : Validate dữ liệu (Ngày, Giá, Tên Tour)
+alt Dữ liệu không hợp lệ
+    Svc --> Ctrl : throw ValidationException
+else Hợp lệ
+    Svc -> Svc : Convert TourDTO -> Tour Entity
+    
+    Svc -> Repo : save(TourEntity)
+    activate Repo
+    Repo -> DB : INSERT INTO Tour (Ten, Gia, ...)
+    DB --> Repo : Success (Tour ID)
+    Repo --> Svc : return savedEdition
+    deactivate Repo
+    
+    Svc --> Ctrl : return success(Tour)
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Trả về mã HTTP 200 OK
+    UI --> NV : Thông báo "Thêm Tour thành công"\nHiển thị trong danh sách
+else Thất bại
+    Ctrl -> UI : Trả về mã HTTP 400 Bad Request
+    UI --> NV : Hiển thị lỗi Validation
+end
+deactivate Ctrl
+
+deactivate UI
+@enduml

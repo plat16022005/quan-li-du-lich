@@ -1,0 +1,41 @@
+@startuml
+title Sequence Diagram - Quy trình Tìm kiếm và Lọc Tour (Khách hàng)
+
+actor "Khách hàng" as KH
+boundary "Trang chủ / Tìm kiếm" as UI
+participant "GuestTourController" as Ctrl
+participant "TourService" as Svc
+participant "TourRepository" as Repo
+database "Database" as DB
+
+KH -> UI : Nhập từ khóa, Mức giá, Số ngày\nBấm "Tìm kiếm"
+activate UI
+
+UI -> Ctrl : GET /search-tours?keyword=...&minPrice=...
+activate Ctrl
+
+Ctrl -> Svc : searchTours(keyword, minPrice, maxPrice, days)
+activate Svc
+
+Svc -> Repo : findByCriteria(keyword, minPrice, maxPrice, days)
+activate Repo
+
+Repo -> DB : SELECT * FROM Tour JOIN ... WHERE ...
+activate DB
+DB --> Repo : Trả về Danh sách Tour phù hợp
+deactivate DB
+
+Repo --> Svc : List<TourEntity>
+deactivate Repo
+
+Svc -> Svc : Sắp xếp và Tính toán giá khuyến mãi (nếu có)
+Svc --> Ctrl : List<TourDTO>
+deactivate Svc
+
+Ctrl --> UI : Render View kèm ModelAttribute (List<TourDTO>)
+deactivate Ctrl
+
+UI --> KH : Hiển thị Danh sách Tour tương ứng
+deactivate UI
+
+@enduml

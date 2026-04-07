@@ -1,0 +1,47 @@
+@startuml
+title Activity Diagram - Quy trình Quản lý Danh Mục (Địa điểm, Khách sạn, Phương tiện)
+
+|Quản lý|
+start
+:Menu Trạm Quản Lý Danh Mục (DiaDiem, KhachSan, PhuongTien);
+:Hiển thị Datatable tương ứng;
+
+|Quản lý|
+:Lựa chọn Thao tác (Thêm, Sửa, Xóa);
+
+split
+    -[Create (Thêm)]->
+    :Nhập thông tin danh mục mới;
+    :Bấm xác nhận;
+    
+    |Hệ thống|
+    :Thực thi lệnh Insert vào CSDL tương ứng;
+    
+split again
+    -[Update (Sửa)]->
+    :Bấm 'Sửa' dọc theo row trong bảng;
+    :Chỉnh sửa thông tin;
+    :Bấm 'Upload/Lưu';
+    
+    |Hệ thống|
+    :Cập nhật bản ghi trong CSDL;
+
+split again
+    -[Delete (Xóa)]->
+    :Bấm 'Xóa';
+    |Hệ thống|
+    :Kiểm tra xem danh mục đó (Xe, KS, Điểm đến) \nđã được gán vào 'LichTrinh' của Tour nào chưa?;
+    if (Đã được sử dụng trong LichTrinh?) then (Có)
+        :Báo lỗi "Không thể xóa vì danh mục đang nằm trong Lịch trình của một Tour.";
+    else (Không)
+        :Xóa bản ghi (Lệnh Delete);
+    endif
+end split
+
+|Hệ thống|
+:Hiển thị thông báo (Thành công / Lỗi);
+:Cập nhật lại giao diện Bảng danh mục;
+
+|Quản lý|
+stop
+@enduml

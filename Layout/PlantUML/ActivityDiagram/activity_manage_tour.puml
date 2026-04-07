@@ -1,0 +1,59 @@
+@startuml
+title Activity Diagram - Quy trình Quản lý Tour (Nhân viên / Quản lý)
+
+|Người quản lý / Nhân viên|
+start
+:Đăng nhập hệ thống;
+:Truy cập menu "Quản lý Tour";
+:Lựa chọn chức năng;
+
+split
+    -[Thêm Mới Tour]->
+    :Nhập thông tin cơ bản của Tour\n(Tên, Mô tả, Số ngày, Giá cơ bản, Hình ảnh);
+    :Chọn danh sách Địa điểm (Tour_DiaDiem);
+    
+    |Hệ thống|
+    :Lưu bản ghi Tour vào Cơ sở dữ liệu;
+    
+    |Người quản lý / Nhân viên|
+    :Nhập danh sách Lịch trình chi tiết từng ngày;
+    |Hệ thống|
+    :Lưu danh sách Lịch Trình;
+    
+split again
+    -[Cập nhật Tour]->
+    :Chọn Tour cần sửa;
+    :Cập nhật các thông tin muốn thay đổi;
+    
+    |Hệ thống|
+    :Cập nhật thông tin trong Cơ sở dữ liệu;
+    
+split again
+    -[Thêm Chuyến Du Lịch (Mở bán)]->
+    :Chọn Tour;
+    :Tạo Chuyến đi mới (ChuyenDuLich);
+    :Nhập thông tin Ngày bắt đầu, Kết thúc, Số vé tối đa;
+    :Phân công HDV và Tài xế (nếu có);
+    
+    |Hệ thống|
+    :Lưu Chuyến Du Lịch vào CSDL;
+
+split again
+    -[Xóa / Vô hiệu hóa]->
+    :Chọn Tour cần xóa;
+    |Hệ thống|
+    :Kiểm tra quy tắc ràng buộc;
+    if (Tour đã có Lịch trình hoặc Booking?) then (Có)
+        :Báo lỗi không thể xóa (Chỉ có thể ẩn);
+    else (Không)
+        :Xóa bản ghi khỏi cơ sở dữ liệu;
+    endif
+end split
+
+|Hệ thống|
+:Hiển thị thông báo "Thao tác thành công / lỗi";
+|Người quản lý / Nhân viên|
+:Tải lại giao diện Danh sách Tour;
+
+stop
+@enduml

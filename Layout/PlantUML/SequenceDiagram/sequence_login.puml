@@ -1,0 +1,58 @@
+@startuml
+title Sequence Diagram - Quy trình Đăng nhập (Login)
+
+actor "Người Dùng" as Actor
+boundary "Web Browser / UI" as UI
+participant "UserController" as Ctrl
+participant "UserService" as Svc
+participant "UserRepository" as Repo
+database "Database" as DB
+
+Actor -> UI : Nhập Tên đăng nhập & Mật khẩu\nBấm "Đăng nhập"
+activate UI
+
+UI -> Ctrl : POST /login (username, password)
+activate Ctrl
+
+Ctrl -> Svc : authenticate(username, password)
+activate Svc
+
+Svc -> Repo : findByTenDangNhap(username)
+activate Repo
+
+Repo -> DB : SELECT * FROM User WHERE TenDangNhap = ?
+activate DB
+DB --> Repo : return UserEntity (hoặc null)
+deactivate DB
+
+Repo --> Svc : return UserEntity
+deactivate Repo
+
+alt Nếu UserEntity == null
+    Svc --> Ctrl : throw Exception("Tài khoản không tồn tại")
+else Nếu UserEntity tồn tại
+    Svc -> Svc : So khớp Mật khẩu (Bcrypt.check)
+    alt Khớp mật khẩu
+        Svc -> Svc : Kiểm tra trạng thái tài khoản
+        alt Trạng thái == Active
+            Svc --> Ctrl : return UserDetails (Token / Session)
+        else Bị khóa
+            Svc --> Ctrl : throw Exception("Tài khoản bị khóa")
+        end
+    else Mật khẩu sai
+        Svc --> Ctrl : throw Exception("Mật khẩu không đúng")
+    end
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Redirect tới Dashboard/Trang chủ\nkèm theo Phân quyền (Role)
+else Thất bại
+    Ctrl -> UI : Trả về thông báo lỗi
+end
+deactivate Ctrl
+
+UI --> Actor : Hiển thị Giao diện tương ứng / Lỗi
+deactivate UI
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+title Activity Diagram - Quy trình Xem Báo Cáo Thống Kê (Quản lý)
+
+|Quản lý|
+start
+:Truy cập menu "Báo cáo Thống kê";
+
+|Hệ thống|
+:Lấy dữ liệu tổng quan cơ bản\n(Doanh thu tháng, Sô lượng khách, Chuyến đi);
+:Hiển thị Dashboard Thống kê;
+
+|Quản lý|
+:Chọn loại báo cáo mong muốn\n(Doanh thu, Mật độ đặt Tour, Lương nhân viên);
+:Lựa chọn khoảng thời gian (Từ ngày - Đến ngày);
+:Bấm nút "Xem Báo cáo" / "Lọc";
+
+|Hệ thống|
+:Tổng hợp dữ liệu từ Cơ sở dữ liệu (ChiTietDatCho, DatCho, ChuyenDuLich);
+:Tính toán các chỉ số tài chính (SalaryStatService, FinanceService);
+
+if (Có dữ liệu trong khoảng thời gian?) then (Có)
+    :Sinh Biểu đồ / Bảng dữ liệu chi tiết;
+    |Quản lý|
+    :Hiển thị Báo cáo chi tiết;
+    if (Yêu cầu xuất file?) then (Xuất Excel/PDF)
+        |Hệ thống|
+        :Trích xuất dữ liệu ra định dạng Excel/PDF (IExcelExportService);
+        :Tải file xuống máy tính Quản lý;
+    else (Không)
+    endif
+else (Không)
+    |Hệ thống|
+    :Hiển thị thông báo "Không có dữ liệu trong khoảng thời gian này";
+endif
+
+|Quản lý|
+stop
+@enduml

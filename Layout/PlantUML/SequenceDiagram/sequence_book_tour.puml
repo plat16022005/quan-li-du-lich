@@ -1,0 +1,65 @@
+@startuml
+title Sequence Diagram - Quy trình Đặt Tour (Khách hàng)
+
+actor "Khách hàng" as KH
+boundary "Giao diện Đặt Tour" as UI
+participant "GuestBookingController" as Ctrl
+participant "DatChoService" as Svc
+participant "KhuyenMaiRepository" as KMRepo
+participant "ChuyenDuLichRepository" as ChuyenRepo
+participant "DatChoRepository" as DatChoRepo
+database "Database" as DB
+
+KH -> UI : Nhập thông tin khách, Chọn chuyến, Áp dụng KM\nBấm "Đặt Tour"
+activate UI
+
+UI -> Ctrl : POST /book-tour (BookingDTO)
+activate Ctrl
+
+Ctrl -> Svc : processBooking(BookingDTO)
+activate Svc
+
+Svc -> ChuyenRepo : findById(BookingDTO.chuyenId)
+activate ChuyenRepo
+ChuyenRepo -> DB : SELECT * FROM ChuyenDuLich
+DB --> ChuyenRepo : return ChuyenDuLich
+ChuyenRepo --> Svc : return entity
+deactivate ChuyenRepo
+
+Svc -> Svc : Kiểm tra số lượng chỗ trống
+
+alt Hết chỗ
+    Svc --> Ctrl : throw Exception("Đã hết chỗ trống")
+else Còn chỗ
+    opt Có mã Khuyến Mãi
+        Svc -> KMRepo : findByMaKM(BookingDTO.maKM)
+        activate KMRepo
+        KMRepo --> Svc : return KhuyenMai
+        deactivate KMRepo
+        Svc -> Svc : Tính toán số tiền được giảm
+    end
+
+    Svc -> Svc : Tính Tổng tiền (Tổng tiền - Khuyến mãi)
+
+    Svc -> DatChoRepo : save(DatChoEntity)
+    activate DatChoRepo
+    DatChoRepo -> DB : INSERT INTO DatCho, ChiTietDatCho...
+    DB --> DatChoRepo : Success
+    DatChoRepo --> Svc : return SavedDatCho
+    deactivate DatChoRepo
+
+    Svc --> Ctrl : return SavedDatCho
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Chuyển hướng sang Giao diện Thanh toán
+else Thất bại
+    Ctrl -> UI : Hiển thị lỗi (Cảnh báo hết chỗ/Lỗi)
+end
+deactivate Ctrl
+
+UI --> KH : Giao dịch chờ thanh toán / Lỗi
+deactivate UI
+
+@enduml

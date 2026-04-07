@@ -1,0 +1,59 @@
+@startuml
+title Sequence Diagram - Quy trình Quản lý Khuyến mãi (Promotion)
+
+actor "Quản lý" as NV
+boundary "Giao diện Quản lý Khuyến Mãi" as UI
+participant "ManagerPromotionController" as Ctrl
+participant "KhuyenMaiService" as Svc
+participant "KhuyenMaiRepository" as Repo
+database "Database" as DB
+
+NV -> UI : Điền Form Thêm / Cập nhật Khuyến mãi
+activate UI
+
+UI -> Ctrl : POST /manage/promotion/save (KhuyenMaiDTO)
+activate Ctrl
+
+Ctrl -> Svc : savePromotion(KhuyenMaiDTO)
+activate Svc
+
+Svc -> Svc : Validate logic\n(NgayKetThuc > NgayBatDau?)
+alt Invalid Dates
+    Svc --> Ctrl : throw ValidationException
+else Valid
+    alt Thêm mới
+        Svc -> Repo : checkDuplicateMã(KhuyenMaiDTO.maKM)
+        activate Repo
+        Repo -> DB : SELECT ...
+        DB --> Repo : false (No duplicate)
+        Repo --> Svc : OK
+        deactivate Repo
+    else Cập nhật
+        Svc -> Repo : findById(...)
+        activate Repo
+        Repo -> DB : SELECT ...
+        DB --> Repo : Entity
+        Repo --> Svc : Entity
+        deactivate Repo
+    end
+
+    Svc -> Svc : Map DTO -> Entity
+    
+    Svc -> Repo : save(KhuyenMaiEntity)
+    activate Repo
+    Repo -> DB : INSERT / UPDATE
+    DB --> Repo : Success
+    Repo --> Svc : Saved Entity
+    deactivate Repo
+    
+    Svc --> Ctrl : return Success
+end
+deactivate Svc
+
+Ctrl -> UI : Trả kết quả (Thông báo thành công / Lỗi)
+deactivate Ctrl
+
+UI --> NV : Hiển thị bảng Danh sách Voucher mới
+deactivate UI
+
+@enduml
