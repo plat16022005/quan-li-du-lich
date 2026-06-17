@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hồ sơ người dùng</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --primary: #2563EB;
+        --primary-hover: #1D4ED8;
+        --text-main: #0F172A;
+        --text-muted: #64748B;
+        --border: #E2E8F0;
+        --success: #10B981;
+        --danger: #EF4444;
+        --warning: #F59E0B;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 40px 20px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .header h1 {
+        font-size: 32px;
+        background: linear-gradient(to right, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header button {
+        padding: 10px 20px;
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .header button:hover {
+        background: #dc2626;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .profile-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .avatar {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 700;
+      }
+
+      .profile-info h2 {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .profile-info p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .role-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid var(--primary);
+        border-radius: 20px;
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .profile-field {
+        margin-bottom: 24px;
+      }
+
+      .profile-field label {
+        display: block;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .profile-field p {
+        color: var(--text-main);
+        font-size: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        background: #FFFFFF;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-main);
+        font-size: 14px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .btn-save {
+        background: linear-gradient(to right, var(--primary), #8b5cf6);
+        color: white;
+      }
+
+      .btn-save:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-cancel {
+        background: rgba(148, 163, 184, 0.1);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+      }
+
+      .btn-cancel:hover {
+        background: rgba(148, 163, 184, 0.2);
+      }
+
+      .edit-mode-hidden {
+        display: none;
+      }
+
+      .view-mode-hidden {
+        display: none;
+      }
+
+      .status-message {
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        font-weight: 500;
+        display: none;
+      }
+
+      .status-message.success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--success);
+        color: var(--success);
+      }
+
+      .status-message.error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger);
+        color: var(--danger);
+      }
+
+      @media (max-width: 600px) {
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .profile-header {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>👤 Hồ sơ của tôi</h1>
+      <button onclick="logout()">Đăng xuất</button>
+    </div>
+
+    <div class="container">
+      <div id="statusMessage" class="status-message"></div>
+
+      <div class="profile-card">
+        <!-- View Mode -->
+        <div id="viewMode">
+          <div class="profile-header">
+            <div class="avatar" id="avatarInitial">U</div>
+            <div class="profile-info">
+              <h2 id="displayName">Người dùng</h2>
+              <p id="displayEmail">user@example.com</p>
+              <span class="role-badge" id="displayRole">User</span>
+            </div>
+          </div>
+
+          <div class="profile-field">
+            <label>Email</label>
+            <p id="viewEmail">user@example.com</p>
+          </div>
+
+          <div class="profile-field">
+            <label>Họ và tên</label>
+            <p id="viewName">Người dùng</p>
+          </div>
+
+          <div class="profile-field">
+            <label>Số điện thoại</label>
+            <p id="viewPhone">Chưa cập nhật</p>
+          </div>
+
+          <div class="profile-field">
+            <label>Địa chỉ</label>
+            <p id="viewAddress">Chưa cập nhật</p>
+          </div>
+
+          <div class="profile-field">
+            <label>Giới tính</label>
+            <p id="viewGender">Chưa cập nhật</p>
+          </div>
+
+          <button
+            class="btn btn-save"
+            onclick="enterEditMode()"
+            style="width: 200px; margin-top: 24px"
+          >
+            ✏️ Chỉnh sửa thông tin
+          </button>
+        </div>
+
+        <!-- Edit Mode -->
+        <div id="editMode" class="edit-mode-hidden">
+          <h2 style="margin-bottom: 24px">Chỉnh sửa hồ sơ</h2>
+
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="editName">Họ và tên</label>
+              <input
+                type="text"
+                id="editName"
+                name="name"
+                placeholder="Nhập họ và tên"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="editPhone">Số điện thoại</label>
+              <input
+                type="tel"
+                id="editPhone"
+                name="phoneNumber"
+                placeholder="Nhập số điện thoại"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="editAddress">Địa chỉ</label>
+              <input
+                type="text"
+                id="editAddress"
+                name="address"
+                placeholder="Nhập địa chỉ"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="editGender">Giới tính</label>
+              <select id="editGender" name="gender">
+                <option value="">-- Chọn giới tính --</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
+              </select>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-save">
+                💾 Lưu thay đổi
+              </button>
+              <button
+                type="button"
+                class="btn btn-cancel"
+                onclick="exitEditMode()"
+              >
+                ✕ Hủy
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Thông tin phòng & Hóa đơn của tôi -->
+      <div class="profile-card" style="margin-top: 24px;">
+        <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">🏠 Thông tin phòng & Hóa đơn của tôi</h2>
+        
+        <!-- Nếu chưa được gán phòng -->
+        <div id="noRoomSection" style="display: none; padding: 20px; background: rgba(239, 68, 68, 0.05); border: 1px dashed var(--danger); border-radius: 12px; color: var(--text-muted); text-align: center;">
+          <p>⚠️ Bạn chưa được gán phòng trọ nào trong hệ thống. Vui lòng liên hệ với Ban quản lý (Admin) để đăng ký phòng.</p>
+        </div>
+
+        <!-- Nếu đã được gán phòng -->
+        <div id="hasRoomSection" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; background: rgba(59, 130, 246, 0.05); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px;">
+            <div>Số phòng thuê: <strong id="myRoomNumber" style="font-size: 18px; color: var(--primary);">--</strong></div>
+            <div>Giá phòng cơ bản: <strong id="myRoomPrice" style="font-size: 18px;">--</strong> VND</div>
+            <div>Trạng thái phòng: <strong id="myRoomStatus">--</strong></div>
+            <div>Liên hệ Ban quản lý: <strong>admin@example.com</strong></div>
+          </div>
+
+          <h3 style="margin-bottom: 12px; font-size: 18px;">🧾 Lịch sử hóa đơn hàng tháng</h3>
+          <table style="width: 100%; border-collapse: collapse; color: var(--text-main); font-size: 14px;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+                <th style="padding: 10px; color: var(--text-muted);">Tháng</th>
+                <th style="padding: 10px; color: var(--text-muted);">Điện nước tiêu thụ</th>
+                <th style="padding: 10px; color: var(--text-muted);">Phí dịch vụ + Xe</th>
+                <th style="padding: 10px; color: var(--text-muted);">Phạt / Khấu trừ</th>
+                <th style="padding: 10px; color: var(--text-muted);">Tổng hóa đơn</th>
+                <th style="padding: 10px; color: var(--text-muted);">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="myInvoicesTableBody">
+              <tr>
+                <td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Đang tải danh sách hóa đơn...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Đường dẫn đầy đủ các chức năng -->
+      <div class="profile-card" style="margin-top: 24px;">
+        <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">🚀 Danh sách API Chức năng & Kiểm thử</h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          Dưới đây là đường dẫn đầy đủ của các chức năng yêu cầu (dùng cho Admin / Postman):
+        </p>
+        <div style="display: grid; gap: 12px; font-size: 14px;">
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>1. Hóa đơn phòng tháng:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/:id/invoice</span>
+          </div>
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>2. Hủy phòng & Hoàn cọc:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/cancel-refund</span>
+          </div>
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>3. Phạt & Đền bù thiết bị:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/test-fine</span>
+          </div>
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>4. Xét duyệt tín nhiệm & Gia hạn:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/test-credit</span>
+          </div>
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>5. Tính lương & Thưởng nhân viên:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/test-salary</span>
+          </div>
+          <div style="padding: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;">
+            <strong>6. Dự toán chi phí cải tạo:</strong> <br> <span style="color: var(--primary);">POST http://localhost:6969/api/rooms/test-renovation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", loadProfile);
+
+      async function loadProfile() {
+        try {
+          const response = await fetch("/api/user/profile", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              window.location.href = "/login";
+              return;
+            }
+            throw new Error("Failed to load profile");
+          }
+
+          const result = await response.json();
+          const user = result.data;
+
+          // Cập nhật view mode
+          document.getElementById("displayName").textContent =
+            user.name || "Người dùng";
+          document.getElementById("displayEmail").textContent =
+            user.email || "user@example.com";
+          document.getElementById("displayRole").textContent = (
+            user.role || "user"
+          ).toUpperCase();
+          document.getElementById("avatarInitial").textContent = (
+            user.name || "U"
+          )
+            .charAt(0)
+            .toUpperCase();
+
+          document.getElementById("viewEmail").textContent =
+            user.email || "user@example.com";
+          document.getElementById("viewName").textContent =
+            user.name || "Người dùng";
+          document.getElementById("viewPhone").textContent =
+            user.phoneNumber || "Chưa cập nhật";
+          document.getElementById("viewAddress").textContent =
+            user.address || "Chưa cập nhật";
+          document.getElementById("viewGender").textContent =
+            formatGender(user.gender) || "Chưa cập nhật";
+
+          // Cập nhật edit mode
+          document.getElementById("editName").value = user.name || "";
+          document.getElementById("editPhone").value = user.phoneNumber || "";
+          document.getElementById("editAddress").value = user.address || "";
+          document.getElementById("editGender").value = user.gender || "";
+
+          // Tải thêm thông tin phòng và hóa đơn của chính mình
+          loadMyRoom();
+          loadMyInvoices();
+        } catch (error) {
+          console.error("Load profile error:", error);
+          showStatus("Lỗi khi tải hồ sơ!", "error");
+        }
+      }
+
+      async function loadMyRoom() {
+        try {
+          const res = await fetch("/api/rooms/my-room", { credentials: "include" });
+          if (!res.ok) throw new Error("Không thể tải thông tin phòng");
+          const result = await res.json();
+          const room = result.data;
+
+          if (!room) {
+            document.getElementById("noRoomSection").style.display = "block";
+            document.getElementById("hasRoomSection").style.display = "none";
+            return;
+          }
+
+          document.getElementById("noRoomSection").style.display = "none";
+          document.getElementById("hasRoomSection").style.display = "block";
+          
+          document.getElementById("myRoomNumber").textContent = room.roomNumber;
+          document.getElementById("myRoomPrice").textContent = Number(room.basePrice).toLocaleString();
+          
+          let statusText = "Hoạt động";
+          if (room.status === "maintenance") statusText = "Đang bảo trì";
+          document.getElementById("myRoomStatus").textContent = statusText;
+        } catch (error) {
+          console.error("Load my room error:", error);
+        }
+      }
+
+      async function loadMyInvoices() {
+        try {
+          const res = await fetch("/api/rooms/my-invoices", { credentials: "include" });
+          if (!res.ok) throw new Error("Không thể tải lịch sử hóa đơn");
+          const result = await res.json();
+          const invoices = result.data;
+
+          const tbody = document.getElementById("myInvoicesTableBody");
+          tbody.innerHTML = "";
+
+          if (!invoices || invoices.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Bạn chưa có hóa đơn nào. Hóa đơn sẽ được Admin kết xuất hàng tháng.</td></tr>`;
+            return;
+          }
+
+          invoices.forEach(inv => {
+            const tr = document.createElement("tr");
+            tr.style.borderBottom = "1px solid var(--border)";
+            
+            const elecWaterUsage = `Điện: ${inv.oldElec} → ${inv.newElec} kWh (${(inv.newElec - inv.oldElec)} kWh)<br>Nước: ${inv.oldWater} → ${inv.newWater} m³ (${(inv.newWater - inv.oldWater)} m³)`;
+            
+            const fees = `Dịch vụ: ${Number(inv.serviceFee).toLocaleString()}đ<br>Xe máy: ${Number(inv.vehicleFee).toLocaleString()}đ`;
+            
+            const adjust = `Phạt trễ: ${Number(inv.penalty).toLocaleString()}đ<br>Khấu trừ: -${Number(inv.discount).toLocaleString()}đ`;
+            
+            const statusBadge = inv.status === "paid" 
+              ? `<span style="color: var(--success); background: rgba(16,185,129,0.1); padding: 4px 8px; border-radius: 4px; font-size: 12px;">Đã thanh toán</span>`
+              : `<span style="color: var(--danger); background: rgba(239,68,68,0.1); padding: 4px 8px; border-radius: 4px; font-size: 12px;">Chưa thanh toán</span>`;
+
+            tr.innerHTML = `
+              <td style="padding: 10px; font-weight: 600; vertical-align: top;">Tháng ${inv.month}</td>
+              <td style="padding: 10px; vertical-align: top; line-height: 1.5;">${elecWaterUsage}</td>
+              <td style="padding: 10px; vertical-align: top; line-height: 1.5;">${fees}</td>
+              <td style="padding: 10px; vertical-align: top; line-height: 1.5;">${adjust}</td>
+              <td style="padding: 10px; vertical-align: top; font-weight: 700; color: var(--primary);">${Number(inv.totalBill).toLocaleString()} VND</td>
+              <td style="padding: 10px; vertical-align: top;">${statusBadge}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Load invoices error:", error);
+          const tbody = document.getElementById("myInvoicesTableBody");
+          tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--danger);">Không thể tải dữ liệu hóa đơn</td></tr>`;
+        }
+      }
+
+      function formatGender(gender) {
+        const genderMap = { male: "Nam", female: "Nữ", other: "Khác" };
+        return genderMap[gender] || "Chưa cập nhật";
+      }
+
+      function enterEditMode() {
+        document.getElementById("viewMode").classList.add("view-mode-hidden");
+        document
+          .getElementById("editMode")
+          .classList.remove("edit-mode-hidden");
+      }
+
+      function exitEditMode() {
+        document.getElementById("editMode").classList.add("edit-mode-hidden");
+        document
+          .getElementById("viewMode")
+          .classList.remove("view-mode-hidden");
+      }
+
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = {
+            name: document.getElementById("editName").value,
+            phoneNumber: document.getElementById("editPhone").value,
+            address: document.getElementById("editAddress").value,
+            gender: document.getElementById("editGender").value,
+          };
+
+          try {
+            const response = await fetch("/api/user/profile", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+              credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              showStatus(data.message || "Cập nhật thất bại!", "error");
+              return;
+            }
+
+            showStatus("✅ Cập nhật hồ sơ thành công!", "success");
+            setTimeout(() => {
+              exitEditMode();
+              loadProfile();
+            }, 1500);
+          } catch (error) {
+            console.error("Update error:", error);
+            showStatus("❌ Lỗi kết nối. Vui lòng thử lại!", "error");
+          }
+        });
+
+      async function logout() {
+        try {
+          const response = await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+
+          if (response.ok) {
+            alert("✅ Đã đăng xuất thành công!");
+            window.location.href = "/login";
+          } else {
+            alert("❌ Lỗi khi đăng xuất!");
+          }
+        } catch (error) {
+          console.error("Logout error:", error);
+          alert("❌ Lỗi kết nối!");
+        }
+      }
+
+      function showStatus(message, type) {
+        const element = document.getElementById("statusMessage");
+        element.textContent = message;
+        element.className = `status-message ${type}`;
+        element.style.display = "block";
+
+        setTimeout(() => {
+          element.style.display = "none";
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>

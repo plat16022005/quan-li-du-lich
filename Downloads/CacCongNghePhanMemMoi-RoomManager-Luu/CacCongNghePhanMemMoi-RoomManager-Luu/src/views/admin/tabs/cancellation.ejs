@@ -1,0 +1,86 @@
+<!-- Hủy phòng & Hoàn cọc Tab -->
+<div id="cancellationTab" style="display: none">
+  <div class="section-header">
+    <h2><i class="fa-solid fa-file-signature"></i> Thanh lý Hợp đồng & Hoàn cọc</h2>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px">
+    <!-- Form nhập dữ liệu -->
+    <div class="section">
+      <h3><i class="fa-solid fa-calculator"></i> Tính toán Hoàn cọc</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">
+        Nhập thông tin hợp đồng để hệ thống tự động tính toán số tiền cọc được hoàn trả và phí phạt vi phạm (nếu có).
+      </p>
+      <form id="cancellationForm" onsubmit="handleCalculateCancellation(event)">
+        <div class="form-group">
+          <label>Tiền cọc ban đầu (VND)</label>
+          <input type="number" id="cancelDepositAmount" class="form-control" value="1000000" required />
+        </div>
+        <div class="form-group">
+          <label>Số ngày thông báo trước khi chuyển đi</label>
+          <input type="number" id="cancelDaysBeforeCheckIn" class="form-control" value="20" required />
+        </div>
+        <div class="form-group">
+          <label>Lý do thanh lý</label>
+          <select id="cancelReason" class="form-control">
+            <option value="personal">Lý do cá nhân</option>
+            <option value="force_majeure">Trường hợp bất khả kháng</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Phát sinh phụ phí vệ sinh / sửa chữa?</label>
+          <select id="cancelHasSurcharge" class="form-control">
+            <option value="false">Không</option>
+            <option value="true">Có (Phụ phí: 150,000 VND)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Trùng vào các ngày Lễ / Tết?</label>
+          <select id="cancelIsHoliday" class="form-control">
+            <option value="false">Không</option>
+            <option value="true">Có (Phụ thu 10% phí dịch vụ)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" type="submit">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i> Thực hiện Tính toán
+        </button>
+      </form>
+    </div>
+
+    <!-- Kết quả tính hủy phòng -->
+    <div class="section" style="display: flex; flex-direction: column;">
+      <h3><i class="fa-solid fa-file-invoice"></i> Kết quả Thanh lý</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">
+        Chi tiết bảng kê hoàn trả tiền cọc cho khách thuê.
+      </p>
+
+      <div id="cancellationResultSection" class="result-box" style="display: none; flex: 1;">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 16px; font-size: 16px;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <span style="color: var(--text-muted)">Tiền cọc gốc:</span>
+            <strong><span id="resCancelDeposit">0</span> VND</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <span style="color: var(--text-muted)">Tổng phí phạt & phụ thu:</span>
+            <strong style="color: var(--danger);"><span id="resCancelPenalty">0</span> VND</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <span style="color: var(--text-muted)">Trạng thái duyệt:</span>
+            <strong style="color: var(--warning);"><span id="resCancelStatus">--</span></strong>
+          </div>
+          <div class="total" style="display: flex; justify-content: space-between; margin-top: auto;">
+            <span style="color: var(--text-muted)">Tiền Cọc Hoàn Lại:</span>
+            <strong style="color: var(--success); font-size: 24px;"><span id="resCancelRefund">0</span> VND</strong>
+          </div>
+        </div>
+      </div>
+
+      <div id="cancellationPlaceholder" style="padding: 60px 40px; text-align: center; color: var(--text-muted); border: 2px dashed var(--border); border-radius: 16px; flex: 1; display: flex; align-items: center; justify-content: center;">
+        <div>
+          <i class="fa-solid fa-file-circle-question" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+          <p>Chưa có dữ liệu. Vui lòng nhập thông tin hợp đồng để hệ thống xử lý.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
