@@ -1,0 +1,105 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #F9F9F9
+    BorderColor Black
+}
+
+' ================= ACTOR =================
+actor "Khách hàng" as Guest
+actor "Nhân viên" as Staff
+actor "Quản lý" as Manager
+actor "HDV / Tài xế" as HDVTX
+
+' ================= SYSTEM =================
+rectangle "Hệ thống Quản lý Du lịch" {
+
+    ' ===== CHUNG =====
+    package "Chức năng chung" {
+        usecase "Đăng nhập / Đăng xuất" as UC_Auth
+        usecase "Quản lý tài khoản cá nhân" as UC_Profile
+    }
+
+    ' ===== KHÁCH HÀNG =====
+    package "Khách hàng" {
+        usecase "Xem danh sách Tour" as UC_ViewTours
+        usecase "Tìm kiếm & Lọc Tour" as UC_SearchTours
+        usecase "Xem chi tiết Tour" as UC_TourDetail
+        usecase "Đặt Tour (Booking)" as UC_BookTour
+    }
+
+    ' ===== HDV / TÀI XẾ =====
+    package "HDV / Tài xế" {
+        usecase "Xem Dashboard" as UC_HdvDashboard
+        usecase "Xem lịch trình công tác" as UC_HdvSchedule
+        usecase "Xuất lịch trình (PDF)" as UC_ExportSchedule
+        usecase "Xem bảng lương" as UC_HdvSalary
+    }
+
+    ' ===== NHÂN VIÊN =====
+    package "Nhân viên" {
+        usecase "Xem Dashboard" as UC_StaffDashboard
+        usecase "Quản lý Tour (Cơ bản)" as UC_StaffManageTour
+        usecase "Quản lý Khách hàng" as UC_ManageCustomer
+        usecase "Quản lý Booking" as UC_ManageBooking
+        usecase "Quản lý Tài chính (Cơ bản)" as UC_StaffFinance
+        usecase "Xem Báo cáo" as UC_StaffReport
+    }
+
+    ' ===== QUẢN LÝ =====
+    package "Quản lý" {
+        usecase "Xem Dashboard" as UC_ManagerDashboard
+        usecase "Quản lý Nhân sự" as UC_ManageStaff
+        usecase "Quản lý Tour & Lịch trình" as UC_ManageTourDetail
+        usecase "Quản lý Danh mục" as UC_ManageCategories
+        usecase "Quản lý Khuyến mãi" as UC_ManagePromotion
+        usecase "Báo cáo Thống kê" as UC_ManagerReport
+    }
+}
+
+' ================= RELATION =================
+
+' --- Auth ---
+Guest --> UC_Auth
+Staff --> UC_Auth
+Manager --> UC_Auth
+HDVTX --> UC_Auth
+
+' --- Profile ---
+Staff --> UC_Profile
+Manager --> UC_Profile
+HDVTX --> UC_Profile
+
+' --- Guest ---
+Guest --> UC_ViewTours
+Guest --> UC_SearchTours
+Guest --> UC_TourDetail
+Guest --> UC_BookTour
+
+' --- HDV/TX ---
+HDVTX --> UC_HdvDashboard
+HDVTX --> UC_HdvSchedule
+HDVTX --> UC_ExportSchedule
+HDVTX --> UC_HdvSalary
+
+' --- Staff ---
+Staff --> UC_StaffDashboard
+Staff --> UC_StaffManageTour
+Staff --> UC_ManageCustomer
+Staff --> UC_ManageBooking
+Staff --> UC_StaffFinance
+Staff --> UC_StaffReport
+
+' --- Manager ---
+Manager --> UC_ManagerDashboard
+Manager --> UC_ManageStaff
+Manager --> UC_ManageTourDetail
+Manager --> UC_ManageCategories
+Manager --> UC_ManagePromotion
+Manager --> UC_ManagerReport
+
+' --- Inheritance ---
+Manager --|> Staff
+
+@enduml

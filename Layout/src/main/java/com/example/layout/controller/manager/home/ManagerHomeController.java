@@ -1,0 +1,85 @@
+package com.example.layout.controller.manager.home;
+
+import jakarta.servlet.http.HttpSession;
+
+import com.example.layout.dto.UpcomingTourDTO;
+import com.example.layout.entity.User;
+import com.example.layout.service.IChuyenDuLichService;
+import com.example.layout.service.IHomeService;
+import com.example.layout.utils.VaiTroConstants;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@RequestMapping("/manager")
+public class ManagerHomeController {
+    private final IChuyenDuLichService chuyenDuLichService;
+    private final IHomeService homeService;
+
+    public ManagerHomeController(IChuyenDuLichService chuyenDuLichService, IHomeService homeService) {
+        this.chuyenDuLichService = chuyenDuLichService;
+        this.homeService = homeService;
+    }
+
+	@GetMapping("/home")
+    public String showHomeForm(HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user == null)
+		{
+			return "redirect:/access_denied";
+		}
+		if (user.getMaVaiTro() != VaiTroConstants.ADMIN)
+		{
+			return "redirect:/access_denied";
+		}
+        return "manager/home";
+    }
+
+
+    @GetMapping("/home/stats")
+    @ResponseBody
+    public Map<String, Object> getDashboardStats(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != 1) {
+            throw new RuntimeException("Không có quyền truy cập");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("chuyenDangDienRa", homeService.getSoChuyenDangDienRa());
+        response.put("khachHangMoi", homeService.getSoKhachHangMoi());
+        response.put("tongNhanVien", homeService.getSoNhanVien());
+        // totalRevenue in VND (BigDecimal) -> return as number
+        java.math.BigDecimal revenue = homeService.getDoanhThuThang();
+        response.put("totalRevenue", revenue != null ? revenue : java.math.BigDecimal.ZERO);
+        return response;
+    }
+    @GetMapping("/home/upcoming-tours")
+    @ResponseBody
+    public List<UpcomingTourDTO> getUpcomingTours() {
+        return chuyenDuLichService.findByTrangThai("Sắp diễn ra")
+                .stream()
+                .map(chuyen -> new UpcomingTourDTO(
+                        chuyen.getTour() != null ? chuyen.getTour().getTenTour() : "Không xác định",
+                        chuyen.getNgayBatDau()
+                ))
+                .toList();
+    }
+    
+    @GetMapping("/home/revenue-chart")
+    @ResponseBody
+    public Map<String, Object> getRevenueChart(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getMaVaiTro() != VaiTroConstants.ADMIN) {
+            throw new RuntimeException("Không có quyền truy cập");
+        }
+        return homeService.getDoanhThuTheoThang();
+    }
+}

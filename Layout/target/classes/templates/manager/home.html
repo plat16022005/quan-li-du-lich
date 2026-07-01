@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị Du Lịch - Tổng Quan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-bar {
+            transition: height 0.5s ease-out;
+        }
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none" id="sidebar">
+            <div class="flex items-center justify-center h-20 border-b border-gray-700">
+                <i class="fas fa-route text-3xl text-blue-400"></i>
+                <span class="ml-3 text-2xl font-bold">TravelGO</span>
+            </div>
+            <nav class="mt-8 px-4">
+                <a href="/manager/home" class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md">
+                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
+                    <span class="ml-4">Tổng quan</span>
+                </a>
+                <a href="/manager/tour" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-map-marked-alt w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Tour</span>
+                </a>
+                <a href="/manager/guest" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-users w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Khách hàng</span>
+                </a>
+                <a href="/manager/staff" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-user-tie w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Nhân viên</span>
+                </a>
+                <a href="/manager/promotion" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-tags w-6 text-center"></i>
+                    <span class="ml-4">Quản lý Khuyến mãi</span>
+                </a>
+                <a href="/manager/report" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-chart-pie w-6 text-center"></i>
+                    <span class="ml-4">Xuất báo cáo</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+                 <a href="/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                    <span class="ml-4">Đăng xuất</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <!-- Header -->
+            <header class="flex items-center justify-between p-6 bg-white border-b border-gray-200">
+                <div class="flex items-center">
+                    <button id="menu-button" class="md:hidden mr-4 text-gray-600">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Bảng điều khiển</h1>
+                </div>
+                <div class="flex items-center space-x-6">
+
+                    <div class="flex items-center">
+                        <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=BQ" alt="Avatar" class="h-10 w-10 rounded-full object-cover">
+                        <div class="ml-3">
+                            <p class="text-sm font-semibold text-gray-800">Ban Quản Lý</p>
+                            <p class="text-xs text-gray-500">Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="flex-1 p-6">
+                <!-- Stat cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tổng doanh thu (Tháng)</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="total-revenue">1.250M ₫</p>
+                            <p class="text-xs text-green-500 flex items-center mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i> 12.5% so với tháng trước
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 text-blue-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tour đang hoạt động</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="active-tours">32</p>
+                             <p class="text-xs text-gray-500 flex items-center mt-1">
+                                &nbsp; <!-- Placeholder for alignment -->
+                            </p>
+                        </div>
+                        <div class="bg-green-100 text-green-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-route text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Khách hàng mới</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="new-customers">152</p>
+                            <p class="text-xs text-green-500 flex items-center mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i> 8% so với tháng trước
+                            </p>
+                        </div>
+                         <div class="bg-yellow-100 text-yellow-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-user-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Tổng nhân viên</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2" id="total-staff">>48</p>
+                             <p class="text-xs text-gray-500 flex items-center mt-1">
+                                &nbsp; <!-- Placeholder for alignment -->
+                            </p>
+                        </div>
+                         <div class="bg-indigo-100 text-indigo-500 rounded-full h-16 w-16 flex items-center justify-center">
+                            <i class="fas fa-user-tie text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Phân tích Doanh thu</h3>
+                        <div class="h-80 mt-4 flex items-end justify-around" id="revenue-chart">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800">Cơ cấu Tour</h3>
+						<div class="h-80 mt-4 flex items-center justify-center">
+						    <canvas id="customer-marketing-chart" class="w-full h-full"></canvas>
+						</div>
+
+                    </div>
+                </div>
+
+                <!-- Recent activities and upcoming tours -->
+					<div class="w-full mt-6">
+					  <div class="bg-white p-6 rounded-lg shadow-sm w-full">
+					      <h3 class="text-lg font-semibold text-gray-800">Tour Sắp Khởi Hành</h3>
+					      <div class="mt-4 overflow-x-auto">
+					          <table class="w-full text-sm text-left text-gray-500">
+					              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+					                  <tr>
+					                      <th scope="col" class="px-6 py-3">Tên Tour</th>
+					                      <th scope="col" class="px-6 py-3">Ngày Đi</th>
+					                  </tr>
+					              </thead>
+					              <tbody id="upcoming-tours-body">
+					                  <!-- JS sẽ tự động đổ dữ liệu -->
+					              </tbody>
+					          </table>
+					      </div>
+					  </div>
+					</div>
+
+                 </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Script for mobile sidebar toggle
+        const menuButton = document.getElementById('menu-button');
+        const sidebar = document.getElementById('sidebar');
+
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        
+        // Load real revenue chart data from backend
+        async function loadRevenueChart() {
+            try {
+                const response = await fetch('/manager/home/revenue-chart');
+                const data = await response.json();
+                
+                const chartContainer = document.getElementById('revenue-chart');
+                chartContainer.innerHTML = ''; // Clear existing content
+                
+                const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+                
+                // Find max value for scaling
+                const maxValue = Math.max(...months.map(month => data[month] || 0));
+                
+                months.forEach((month, index) => {
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'flex flex-col items-center h-full justify-end';
+                    
+                    const bar = document.createElement('div');
+                    const revenue = data[month] || 0;
+                    const height = maxValue > 0 ? (revenue / maxValue) * 100 : 0;
+                    bar.className = 'chart-bar w-8 md:w-10 bg-blue-500 rounded-t-lg hover:bg-blue-600 cursor-pointer';
+                    bar.style.height = '0%'; // Start at 0
+                    bar.title = `${month}: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(revenue)}`;
+                    
+                    const label = document.createElement('span');
+                    label.className = 'text-xs text-gray-500 mt-2';
+                    label.textContent = month;
+                    
+                    barWrapper.appendChild(bar);
+                    barWrapper.appendChild(label);
+                    chartContainer.appendChild(barWrapper);
+                    
+                    // Animate bar height
+                    setTimeout(() => {
+                        bar.style.height = `${height}%`;
+                    }, 100 * (index + 1));
+                });
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu biểu đồ doanh thu:', error);
+                // Fallback to show error message
+                const chartContainer = document.getElementById('revenue-chart');
+                chartContainer.innerHTML = '<div class="text-center text-gray-500">Không thể tải dữ liệu biểu đồ</div>';
+            }
+        }
+        
+        // Load chart when page loads
+        document.addEventListener('DOMContentLoaded', loadRevenueChart);
+    </script>
+    <script>
+fetch('/manager/home/stats')
+  .then(res => res.json())
+  .then(data => {
+          document.getElementById('active-tours').textContent = data.chuyenDangDienRa;
+          document.getElementById('new-customers').textContent = data.khachHangMoi;
+          document.getElementById('total-staff').textContent = data.tongNhanVien;
+          // set total revenue, format as VND
+          const totalRevenueEl = document.getElementById('total-revenue');
+          if (totalRevenueEl && data.totalRevenue != null) {
+              const value = Number(data.totalRevenue);
+              totalRevenueEl.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+          }
+  })
+  .catch(err => console.error(err));
+</script>
+    <script>
+    // Small script to mark active sidebar link based on current path
+    (() => {
+        try {
+            const links = Array.from(document.querySelectorAll('aside#sidebar a'));
+            const path = window.location.pathname.replace(/\/$/, '');
+            links.forEach(a => {
+                const href = (a.getAttribute('href') || '').replace(/\/$/, '');
+                if (href === path) {
+                    a.classList.remove('text-gray-300');
+                    a.classList.add('bg-gray-700', 'text-white');
+                }
+            });
+        } catch (e) { console.warn('Active link script error', e); }
+    })();
+    </script>
+<script>
+fetch('/manager/home/upcoming-tours')
+.then(res => res.json())
+.then(data => {
+  const tbody = document.getElementById('upcoming-tours-body');
+  tbody.innerHTML = '';
+
+  if (data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="2" class="text-center py-4 text-gray-500">
+          Không có tour sắp khởi hành
+        </td>
+      </tr>`;
+    return;
+  }
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    row.className = 'bg-white border-b hover:bg-gray-50';
+    row.innerHTML = `
+      <td class="px-6 py-4 font-medium text-gray-900">${item.tenTour}</td>
+      <td class="px-6 py-4">${new Date(item.ngayBatDau).toLocaleDateString('vi-VN')}</td>
+    `;
+    tbody.appendChild(row);
+  });
+})
+.catch(err => console.error('Lỗi tải tour:', err));
+
+</script>
+<script>
+const marketingCtx = document.getElementById('customer-marketing-chart').getContext('2d');
+let marketingChart;
+
+const labelMapping = {
+    friend: 'Người quen giới thiệu',
+    facebook: 'Facebook',
+    tiktok: 'Tiktok',
+    google: 'Tìm kiếm trên Google',
+    youtube: 'Quảng cáo Youtube',
+    website: 'Website/Blog khác',
+    other: 'Khác'
+};
+
+async function loadMarketingChart() {
+    try {
+        const res = await fetch('/manager/report/api/marketing');
+        if (!res.ok) throw new Error('Lỗi API');
+        const data = await res.json();
+
+        const labels = Object.keys(data).map(key => labelMapping[key] || key);
+        const values = Object.values(data);
+
+        if (marketingChart) marketingChart.destroy();
+
+        marketingChart = new Chart(marketingCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        '#3B82F6', '#EF4444', '#10B981',
+                        '#F59E0B', '#8B5CF6', '#0EA5E9', '#6B7280'
+                    ],
+                    borderColor: [
+                        '#3B82F6', '#EF4444', '#10B981',
+                        '#F59E0B', '#8B5CF6', '#0EA5E9', '#6B7280'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom', // 👈 bạn có thể điều chỉnh vị trí
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const value = context.parsed;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${percentage}% (${value} khách)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error('Lỗi tải biểu đồ marketing:', err);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', loadMarketingChart);
+</script>
+
+
+</body>
+</html>

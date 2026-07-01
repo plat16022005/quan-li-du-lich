@@ -1,0 +1,61 @@
+@startuml
+title Activity Diagram - Quy trình Quản lý Tài khoản (Nhân sự / Khách hàng)
+
+|Quản lý / Nhân viên|
+start
+:Truy cập menu "Quản lý Khách hàng" hoặc "Quản lý Nhân sự";
+
+|Hệ thống|
+:Truy vấn danh sách (KhachHang / Nhanvien) từ CSDL;
+:Hiển thị danh sách lên giao diện (Datatable);
+
+|Quản lý / Nhân viên|
+:Chọn hành động muốn thực hiện (Thêm/Sửa/Khóa/Xóa);
+
+split
+    -[Thêm Mới]->
+    :Điền form tạo mới tài khoản \n(User, Mật khẩu, Vai trò, Chức vụ / Loại khách);
+    :Bấm "Lưu";
+    |Hệ thống|
+    :Kiểm tra trùng lặp (Email/Username đã tồn tại?);
+    if (Trùng lặp?) then (Có)
+        :Báo lỗi "Email/SĐT đã được sử dụng";
+    else (Không)
+        :Mã hóa mật khẩu;
+        :Thêm bản ghi vào bảng User;
+        :Thêm bản ghi vào bảng NhanVien/KhachHang;
+    endif
+    
+split again
+    -[Cập nhật / Sửa]->
+    :Chọn một bản ghi muốn sửa;
+    :Cập nhật các thông tin;
+    |Hệ thống|
+    :Validate thông tin;
+    :Cập nhật vào CSDL;
+
+split again
+    -[Khóa / Mở Khóa tài khoản]->
+    :Chọn thay đổi 'Trạng Thái' (trangThai) của User;
+    |Hệ thống|
+    :Set trangThai = true / false;
+    :Lưu thay đổi CSDL;
+    :Thông báo "Khóa/Mở Khóa thành công";
+    
+split again
+    -[Xóa (Ít sử dụng, chủ yếu Khóa)]->
+    :Chọn xóa bản ghi;
+    |Hệ thống|
+    :Kiểm tra ràng buộc (Đã có giao dịch/đặt chỗ/phân công chưa?);
+    if (Đã có dữ liệu liên kết?) then (Có)
+        :Báo lỗi "Không thể xóa do ràng buộc dữ liệu. Chỉ có thể khóa!";
+    else (Không)
+        :Xóa an toàn khỏi CSDL;
+    endif
+end split
+
+|Quản lý / Nhân viên|
+:Nhận thông báo kết quả;
+:Tải lại danh sách;
+stop
+@enduml

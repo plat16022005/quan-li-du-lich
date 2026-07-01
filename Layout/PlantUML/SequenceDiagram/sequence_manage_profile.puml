@@ -1,0 +1,55 @@
+@startuml
+title Sequence Diagram - Quy trình Quản lý Tài khoản Cá nhân (Đổi mật khẩu)
+
+actor "Người dùng (User)" as User
+boundary "Trang Hồ Sơ (Profile)" as UI
+participant "ProfileController" as Ctrl
+participant "UserService" as Svc
+participant "UserRepository" as Repo
+database "Database" as DB
+
+User -> UI : Điền mật khẩu cũ, mật khẩu mới\nBấm "Cập nhật / Đổi mật khẩu"
+activate UI
+
+UI -> Ctrl : POST /profile/change-password (PasswordDTO)
+activate Ctrl
+
+Ctrl -> Svc : changePassword(userId, oldPass, newPass)
+activate Svc
+
+Svc -> Repo : findById(userId)
+activate Repo
+Repo -> DB : SELECT * FROM User WHERE MaTaiKhoan = ?
+DB --> Repo : return UserEntity
+Repo --> Svc : return UserEntity
+deactivate Repo
+
+Svc -> Svc : So khớp Bcrypt oldPass với UserEntity.getPassword()
+alt Mật khẩu cũ không khớp
+    Svc --> Ctrl : throw Exception("Mật khẩu cũ không chính xác!")
+else Mật khẩu cũ hợp lệ
+    Svc -> Svc : Mã hóa mật khẩu mới (Bcrypt.encode)
+    Svc -> Svc : UserEntity.setPassword(hashedNewPass)
+    
+    Svc -> Repo : save(UserEntity)
+    activate Repo
+    Repo -> DB : UPDATE User SET MatKhau = ? WHERE ...
+    DB --> Repo : Success
+    Repo --> Svc : Success
+    deactivate Repo
+    
+    Svc --> Ctrl : return Success
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Thông báo "Đổi mật khẩu thành công"
+else Thất bại
+    Ctrl -> UI : Hiển thị lỗi (Validation / Sai mật khẩu cũ)
+end
+deactivate Ctrl
+
+UI --> User : Trả về kết quả
+deactivate UI
+
+@enduml

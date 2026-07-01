@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhân viên - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 bg-gray-700 text-white rounded-lg shadow-md"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a th:href="@{/nhanvien/manager_tour}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-map-marked-alt w-6 text-center"></i><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a th:href="@{/nhanvien/finance}" class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg">
+              <i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="ml-4">Thu/Chi chuyến</span>
+          </a>          
+          <a
+            th:href="@{/nhanvien/report}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-200"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i>
+            <span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <!-- Logout link (bottom-left) -->
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-800">
+          <a th:href="@{/logout}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <h1 class="text-2xl font-semibold text-gray-800">Bảng điều khiển</h1>
+          <div class="flex items-center">
+            <div class="ml-3">
+              <p
+                class="text-sm font-semibold text-gray-800"
+                th:text="${session.user.hoTen}"
+              ></p>
+              <p class="text-xs text-gray-500">Nhân viên</p>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <a
+              th:href="@{/nhanvien/bookings(status='Chờ xác nhận')}"
+              class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300"
+            >
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Đơn hàng chờ xử lý
+                </p>
+                <p
+                  class="text-3xl font-bold text-gray-800 mt-2"
+                  id="pending-bookings"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-yellow-100 text-yellow-500 rounded-full h-16 w-16 flex items-center justify-center"
+              >
+                <i class="fas fa-hourglass-half text-2xl"></i>
+              </div>
+            </a>
+
+            <a
+              th:href="@{/nhanvien/bookings(status='Sắp diễn ra')}"
+              class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300"
+            >
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Chuyến đi sắp diễn ra
+                </p>
+                <p
+                  class="text-3xl font-bold text-gray-800 mt-2"
+                  id="upcoming-trips"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-blue-100 text-blue-500 rounded-full h-16 w-16 flex items-center justify-center"
+              >
+                <i class="fas fa-plane-departure text-2xl"></i>
+              </div>
+            </a>
+
+            <a
+              th:href="@{/nhanvien/customers}"
+              class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300"
+            >
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Tổng khách hàng
+                </p>
+                <p
+                  class="text-3xl font-bold text-gray-800 mt-2"
+                  id="total-customers"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-green-100 text-green-500 rounded-full h-16 w-16 flex items-center justify-center"
+              >
+                <i class="fas fa-users text-2xl"></i>
+              </div>
+            </a>
+
+            <a
+              th:href="@{/nhanvien/manager_tour}"
+              class="stat-card bg-white p-6 rounded-lg shadow-sm flex items-center justify-between transition-all duration-300"
+            >
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Tour đang hoạt động
+                </p>
+                <p
+                  class="text-3xl font-bold text-gray-800 mt-2"
+                  id="active-tours"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-purple-100 text-purple-500 rounded-full h-16 w-16 flex items-center justify-center"
+              >
+                <i class="fas fa-map-marked-alt text-2xl"></i>
+              </div>
+            </a>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="mt-6 grid grid-cols-1 gap-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Tác vụ nhanh</h3>
+              <div class="space-y-3">
+                <a th:href="@{/nhanvien/bookings}" 
+                   class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+                  <div class="bg-blue-500 text-white rounded-full p-2 mr-3">
+                    <i class="fas fa-plus text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800">Quản lý booking</p>
+                    <p class="text-sm text-gray-500">Xem và quản lý đặt chỗ</p>
+                  </div>
+                </a>
+                
+                <a th:href="@{/nhanvien/customers}" 
+                   class="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+                  <div class="bg-green-500 text-white rounded-full p-2 mr-3">
+                    <i class="fas fa-users text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800">Quản lý khách hàng</p>
+                    <p class="text-sm text-gray-500">Xem danh sách khách hàng</p>
+                  </div>
+                </a>
+                
+                <a th:href="@{/nhanvien/report}" 
+                   class="flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+                  <div class="bg-purple-500 text-white rounded-full p-2 mr-3">
+                    <i class="fas fa-chart-bar text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800">Xuất báo cáo</p>
+                    <p class="text-sm text-gray-500">Xem thống kê và báo cáo</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Chart -->
+          <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">Doanh thu 7 ngày gần đây</h3>
+              <div class="text-sm text-gray-500">
+                <span id="revenue-trend" class="inline-flex items-center">
+                  <i class="fas fa-spinner fa-spin mr-1"></i>
+                  Đang tải...
+                </span>
+              </div>
+            </div>
+            <div class="h-48">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      let revenueChart;
+
+      // Load main stats
+      async function loadStats() {
+        try {
+          const response = await fetch("/nhanvien/dashboard/api/stats");
+          
+          if (!response.ok) {
+            throw new Error('API not available');
+          }
+          
+          const data = await response.json();
+
+          document.getElementById("pending-bookings").textContent =
+            data.pendingBookings || 0;
+          document.getElementById("upcoming-trips").textContent =
+            data.upcomingTrips || 0;
+          document.getElementById("total-customers").textContent =
+            data.totalCustomers || 0;
+          document.getElementById("active-tours").textContent =
+            data.activeTours || 0;
+        } catch (error) {
+          console.error("Lỗi tải thống kê, sử dụng dữ liệu mẫu:", error);
+          // Set sample data on error
+          document.getElementById("pending-bookings").textContent = "12";
+          document.getElementById("upcoming-trips").textContent = "8";
+          document.getElementById("total-customers").textContent = "247";
+          document.getElementById("active-tours").textContent = "15";
+        }
+      }
+
+      // Load revenue chart
+      async function loadRevenueChart() {
+        let labels, values;
+        
+        try {
+          const response = await fetch("/nhanvien/dashboard/api/revenue-week");
+          
+          if (!response.ok) {
+            throw new Error('API not available');
+          }
+          
+          const data = await response.json();
+          labels = data.labels || ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+          values = data.values || [0, 0, 0, 0, 0, 0, 0];
+        } catch (error) {
+          console.error("Lỗi tải biểu đồ doanh thu, sử dụng dữ liệu mẫu:", error);
+          
+          // Sử dụng dữ liệu mẫu
+          labels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+          values = [5200000, 8500000, 6300000, 12000000, 9800000, 15200000, 11700000];
+        }
+        
+        try {
+          const ctx = document.getElementById('revenueChart').getContext('2d');
+          
+          if (revenueChart) {
+            revenueChart.destroy();
+          }
+          
+          revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: values,
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function(value) {
+                      return new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                        notation: 'compact'
+                      }).format(value);
+                    }
+                  }
+                }
+              },
+              elements: {
+                point: {
+                  radius: 4,
+                  hoverRadius: 6
+                }
+              }
+            }
+          });
+
+          // Update trend indicator
+          const total = values.reduce((a, b) => a + b, 0);
+          const trendElement = document.getElementById("revenue-trend");
+          if (total > 0) {
+            trendElement.innerHTML = `
+              <i class="fas fa-chart-line text-green-500 mr-1"></i>
+              ${new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                notation: 'compact'
+              }).format(total)}
+            `;
+          } else {
+            trendElement.innerHTML = `
+              <i class="fas fa-chart-line text-gray-400 mr-1"></i>
+              Chưa có dữ liệu
+            `;
+          }
+        } catch (chartError) {
+          console.error("Lỗi tạo biểu đồ:", chartError);
+          document.getElementById("revenue-trend").innerHTML = `
+            <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+            Lỗi hiển thị biểu đồ
+          `;
+        }
+      }
+
+      // Initialize dashboard
+      document.addEventListener("DOMContentLoaded", async () => {
+        await Promise.all([
+          loadStats(),
+          loadRevenueChart()
+        ]);
+      });
+    </script>
+  </body>
+</html>

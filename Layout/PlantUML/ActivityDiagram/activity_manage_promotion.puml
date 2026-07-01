@@ -1,0 +1,50 @@
+@startuml
+title Activity Diagram - Quy trình Quản lý Khuyến Mãi (Promotion)
+
+|Quản lý|
+start
+:Truy cập menu "Quản lý Khuyến Mãi (KhuyenMai)";
+
+|Hệ thống|
+:Truy vấn toàn bộ Voucher / Khuyến mãi từ CSDL;
+:Hiển thị Danh sách (Grid / Table);
+
+|Quản lý|
+:Thực hiện CRUD Khuyến mãi;
+split
+    -[Thêm Khuyến mãi mới]->
+    :Nhập Mã KM, Tên KM, % Giảm giá, Thời gian Bắt đầu & Kết thúc;
+    :Lưu dữ liệu;
+    
+    |Hệ thống|
+    :Validate (Ngày kết thúc phải lớn hơn ngày bắt đầu);
+    if (Hợp lệ?) then (Có)
+        :Lưu xuống Database;
+    else (Không)
+        :Báo lỗi Validation;
+    endif
+    
+split again
+    -[Cập nhật]->
+    :Sửa các thuộc tính của 1 cấu hình Khuyến mãi;
+    |Hệ thống|
+    :Kiểm tra Validation;
+    :Cập nhật CSDL;
+    
+split again
+    -[Xóa Khuyến mãi]->
+    :Chọn Khuyến mãi để xóa;
+    
+    |Hệ thống|
+    :Kiểm tra Khuyến mãi đã từng được \náp dụng cho "DatCho" nào chưa?;
+    if (Khuyến mãi đã áp dụng) then (Đã áp dụng)
+        :Báo lỗi không thể xóa, chỉ có thể đánh dấu Expired\n(Đổi ngày kết thúc để hết hạn);
+    else (Chưa áp dụng)
+        :Tiến hành Xóa khỏi CSDL;
+    endif
+end split
+
+|Quản lý|
+:Hoàn thành thao tác;
+stop
+@enduml

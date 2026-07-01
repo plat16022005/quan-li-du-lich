@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGO - Khám Phá Thế Giới</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+
+        .hero-section {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .tour-card:hover .tour-image {
+            transform: scale(1.05);
+        }
+
+        .promotion-section {
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('https://images.unsplash.com/photo-1522165078649-823cf4dbaf46?q=80&w=1935&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Header blur */
+        header.sticky-active {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50" id="home">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed w-full z-20 top-0 transition">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="flex items-center">
+                <i class="fas fa-route text-3xl text-blue-600"></i>
+                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
+                <a href="#tours" class="text-gray-600 hover:text-blue-600">Tour Du Lịch</a>
+                <a href="#promotions" class="text-gray-600 hover:text-blue-600 font-semibold">Ưu Đãi</a>
+                <a href="#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-4">
+                 <a href="/profile" class="flex items-center space-x-2 text-blue-600">
+                    <span th:text="'Xin chào, ' + ${user.hoTen}" class="font-semibold">Xin chào, An!</span>
+                </a>
+            </div>
+            <button class="md:hidden text-gray-600 text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section h-screen flex items-center justify-center text-white pt-20">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Khám Phá Thế Giới, Mở Lối Ước Mơ</h1>
+                <p class="mt-4 text-lg md:text-xl text-gray-200">Tìm kiếm chuyến đi hoàn hảo của bạn với TravelGO</p>
+                <form action="home/tour" method="get">
+	                <div class="mt-8 bg-white p-4 rounded-full shadow-xl max-w-3xl mx-auto flex items-center space-x-2 hover:shadow-2xl transition">
+	                    <div class="flex-grow flex items-center">
+	                        <i class="fas fa-map-marker-alt text-gray-400 mx-3"></i>
+	                        <input name="destination" type="text" placeholder="Bạn muốn đi đâu?" class="w-full focus:outline-none text-gray-700">
+	                    </div>
+	                    <button class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition">
+	                        <i class="fas fa-search"></i>
+	                    </button>
+	                </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- All Tours Section -->
+		<section id="tours" class="py-16 relative">
+		    <div class="container mx-auto px-6">
+				<div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between">
+				    <div>
+				        <h2 class="text-3xl font-bold text-gray-800 mb-2">Tất Cả Tour Du Lịch</h2>
+				        <p class="text-gray-500">Khám phá những điểm đến tuyệt vời đang chờ bạn</p>
+				    </div>
+				    <a href="/home/tour"
+				       class="mt-4 md:mt-0 bg-white text-blue-600 border border-blue-600 text-md font-bold py-2 px-6 rounded-lg hover:bg-blue-50 transition">
+				        Xem Tất Cả
+				    </a>
+				</div>
+
+				<!-- Slider Controls -->
+				<button id="prevBtn" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow hover:bg-gray-100">
+				    <i class="fas fa-chevron-left"></i>
+				</button>
+				<button id="nextBtn" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow hover:bg-gray-100">
+				    <i class="fas fa-chevron-right"></i>
+				</button>
+
+		        <div id="tour-slider" class="flex overflow-x-auto space-x-8 pb-4 scroll-smooth">
+		            <div th:each="tour : ${tours}" class="tour-card bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 flex-shrink-0 w-80 md:w-96">
+		                <div class="overflow-hidden h-56">
+		                    <img th:src="${tour.hinhAnh}" alt="Ảnh tour" class="tour-image w-full h-full object-cover transition duration-300">
+		                </div>
+		                <div class="p-6">
+		                    <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${tour.tenTour}"></h3>
+		                    <div class="flex items-center text-gray-600 mb-4">
+		                        <i class="fas fa-clock mr-2"></i>
+		                        <span th:text="${tour.soNgay + ' ngày'}"></span>
+		                    </div>
+		                    <div class="flex justify-between items-center">
+		                        <p class="text-xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(tour.giaCoBan, 0, 'COMMA', 0, 'POINT')} + '₫'"></p>
+		                        <a th:href="@{'home/tour/' + ${tour.maTour}}" 
+		                           class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-200 transition">
+		                           Xem Các Chuyến
+		                        </a>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</section>
+
+        <!-- Promotions Section -->
+        <section id="promotions" class="py-16 promotion-section">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold text-white mb-2">Ưu Đãi Hấp Dẫn</h2>
+                <p class="text-gray-300 mb-10">Đừng bỏ lỡ các mã giảm giá độc quyền từ TravelGO!</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div th:each="khuyenMai : ${khuyenMais}" class="bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20 text-white transform hover:scale-105 transition-transform duration-300">
+                        <div class="mb-4">
+                            <span class="bg-yellow-400 text-gray-900 text-sm font-bold px-3 py-1 rounded-full" 
+                                  th:text="${'GIẢM ' + #numbers.formatDecimal(khuyenMai.tiLeGiam , 0, 'COMMA', 0, 'POINT') + '%'}">GIẢM 15%</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2" th:text="${khuyenMai.tenKM}">Ưu Đãi Mùa Hè</h3>
+                        <p class="text-gray-300 mb-6" th:text="${khuyenMai.moTa}">Giảm giá cho tất cả các tour biển trong tháng 6.</p>
+                        <div class="bg-white/10 border-2 border-dashed border-white/30 rounded-lg p-3 flex justify-between items-center">
+                            <span class="text-lg font-mono tracking-widest" th:text="${khuyenMai.maCode}">SUMMER15</span>
+							<button class="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded hover:bg-yellow-300 transition"
+							        th:attr="data-code=${khuyenMai.maCode}"
+							        onclick="copyCode(this)">
+							    SAO CHÉP
+							</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Why Choose Us Section -->
+        <section id="about-us" class="bg-white py-16">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Tại Sao Chọn TravelGO?</h2>
+                <p class="text-gray-500 mb-10">Chúng tôi cam kết mang đến những trải nghiệm tuyệt vời nhất</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div class="p-6">
+                        <div class="bg-blue-100 text-blue-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mt-4 mb-2">Giá Tốt Nhất</h3>
+                        <p class="text-gray-600">Luôn có những ưu đãi tốt nhất cho mọi hành trình.</p>
+                    </div>
+                     <div class="p-6">
+                        <div class="bg-green-100 text-green-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mt-4 mb-2">Hướng Dẫn Viên Chuyên Nghiệp</h3>
+                        <p class="text-gray-600">Đội ngũ am hiểu, nhiệt tình và giàu kinh nghiệm.</p>
+                    </div>
+                     <div class="p-6">
+                        <div class="bg-yellow-100 text-yellow-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mt-4 mb-2">Hỗ Trợ 24/7</h3>
+                        <p class="text-gray-600">Sẵn sàng giải đáp mọi thắc mắc của bạn mọi lúc, mọi nơi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">TravelGO</h3>
+                    <p class="text-gray-400">Cùng bạn khám phá mọi miền đất hứa, tạo nên những kỷ niệm khó phai.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Liên kết nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about-us" class="text-gray-400 hover:text-white">Về Chúng Tôi</a></li>
+                        <li><a href="#tours" class="text-gray-400 hover:text-white">Tour Du Lịch</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Điều khoản</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Liên hệ</h4>
+                     <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> Dĩ An, Bình Dương</li>
+                        <li class="flex items-center"><i class="fas fa-phone-alt mr-2"></i> (+84) 123 456 789</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2"></i> contact@travelgo.com</li>
+                    </ul>
+                </div>
+                <div>
+                     <h4 class="font-semibold mb-4">Theo dõi chúng tôi</h4>
+                     <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-youtube"></i></a>
+                     </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500">
+                <p>&copy; 2025 TravelGO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+<script>
+  // ✅ Copy mã khuyến mãi có hiệu ứng
+  function copyCode(btn) {
+    const code = btn.getAttribute('data-code');
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Đã sao chép ✅';
+      btn.classList.remove('bg-yellow-400', 'text-gray-900');
+      btn.classList.add('bg-green-500', 'text-white');
+
+      setTimeout(() => {
+        btn.textContent = 'SAO CHÉP';
+        btn.classList.remove('bg-green-500', 'text-white');
+        btn.classList.add('bg-yellow-400', 'text-gray-900');
+      }, 2000);
+    }).catch(err => console.error('Lỗi khi sao chép mã:', err));
+  }
+
+  // 🧭 Scroll blur Header
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) header.classList.add('sticky-active');
+    else header.classList.remove('sticky-active');
+  });
+
+  // 🖱 Điều hướng Slider
+  const slider = document.getElementById('tour-slider');
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    slider.scrollBy({ left: 400, behavior: 'smooth' });
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    slider.scrollBy({ left: -400, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>

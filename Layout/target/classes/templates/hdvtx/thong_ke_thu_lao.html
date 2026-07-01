@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thống kê thù lao</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-100">
+	<div class="flex h-screen overflow-hidden">
+		<!-- Sidebar -->
+		<aside th:replace="~{hdvtx/dashboard :: aside}"></aside>
+
+		<div class="flex-1 flex flex-col overflow-y-auto">
+			<!-- Header -->
+			<header th:replace="~{hdvtx/dashboard :: header}"></header>
+
+			<main class="flex-1 p-6">
+				<!-- Tiêu đề -->
+				<div class="mb-8">
+					<h2 class="text-3xl font-bold text-gray-800 mb-2">
+						<i class="fas fa-chart-bar mr-2 text-blue-600"></i>Thống kê Thù lao
+					</h2>
+					<p class="text-gray-600">Xem chi tiết thu nhập từ các chuyến đi</p>
+				</div>
+
+				<!-- Bộ lọc -->
+				<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+					<div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+						<div>
+							<label class="block text-sm font-semibold text-gray-700 mb-2">Loại thống kê</label>
+							<select id="typeSelect"
+								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+								<option value="yearly">Theo năm</option>
+								<option value="monthly">Theo tháng</option>
+							</select>
+						</div>
+						<div>
+							<label class="block text-sm font-semibold text-gray-700 mb-2">Năm</label>
+							<select id="yearSelect"
+								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+								<option th:value="${#dates.format(#dates.createNow(),'yyyy')}"
+									th:text="${#dates.format(#dates.createNow(),'yyyy')}" selected>2025</option>
+								<option value="2024">2024</option>
+								<option value="2023">2023</option>
+								<option value="2022">2022</option>
+							</select>
+						</div>
+						<div id="monthSelectWrapper">
+							<label class="block text-sm font-semibold text-gray-700 mb-2">Tháng</label>
+							<select id="monthSelect"
+								class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+								<option value="1">Tháng 1</option>
+								<option value="2">Tháng 2</option>
+								<option value="3">Tháng 3</option>
+								<option value="4">Tháng 4</option>
+								<option value="5">Tháng 5</option>
+								<option value="6">Tháng 6</option>
+								<option value="7">Tháng 7</option>
+								<option value="8">Tháng 8</option>
+								<option value="9">Tháng 9</option>
+								<option value="10">Tháng 10</option>
+								<option value="11">Tháng 11</option>
+								<option value="12">Tháng 12</option>
+							</select>
+						</div>
+						<div>
+							<button id="filterBtn"
+								class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+								<i class="fas fa-filter mr-2"></i>Xem thống kê
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Thống kê tổng quan -->
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+					<div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+						<div class="flex items-center justify-between">
+							<div>
+								<p class="text-gray-600 text-sm font-semibold">Tổng chuyến</p>
+								<p id="totalTrips" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+							</div>
+							<i class="fas fa-route text-4xl text-blue-300"></i>
+						</div>
+					</div>
+
+					<div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+						<div class="flex items-center justify-between">
+							<div>
+								<p class="text-gray-600 text-sm font-semibold">Lương cơ bản</p>
+								<p id="totalBaseSalary" class="text-2xl font-bold text-gray-800 mt-2">0₫</p>
+							</div>
+							<i class="fas fa-money-bill-wave text-4xl text-yellow-300"></i>
+						</div>
+					</div>
+
+					<div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+						<div class="flex items-center justify-between">
+							<div>
+								<p class="text-gray-600 text-sm font-semibold">Tiền thuê chuyến</p>
+								<p id="totalTripSalary" class="text-2xl font-bold text-gray-800 mt-2">0₫</p>
+							</div>
+							<i class="fas fa-hand-holding-usd text-4xl text-green-300"></i>
+						</div>
+					</div>
+
+					<div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-red-500">
+						<div class="flex items-center justify-between">
+							<div>
+								<p class="text-gray-600 text-sm font-semibold">Tổng thu nhập</p>
+								<p id="totalSalary" class="text-2xl font-bold text-gray-800 mt-2">0₫</p>
+							</div>
+							<i class="fas fa-piggy-bank text-4xl text-red-300"></i>
+						</div>
+					</div>
+				</div>
+
+				<!-- Biểu đồ -->
+				<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+					<h3 class="text-lg font-semibold text-gray-800 mb-4">
+						<i class="fas fa-chart-line mr-2 text-blue-600"></i>Biểu đồ thu nhập
+					</h3>
+
+					<div class="relative h-80">
+						<canvas id="salaryChart"></canvas>
+					</div>
+				</div>
+
+				<!-- Bảng chi tiết -->
+				<div class="bg-white p-6 rounded-lg shadow-md">
+					<h3 class="text-lg font-semibold text-gray-800 mb-4">
+						<i class="fas fa-table mr-2 text-blue-600"></i>Chi tiết chuyến đi
+					</h3>
+					<div class="overflow-x-auto">
+						<table class="w-full text-sm text-left">
+							<thead class="bg-gray-50 border-b">
+								<tr>
+									<th class="px-6 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Thời gian</th>
+									<th class="px-6 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Mã chuyến</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Lương cơ bản</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Tiền thuê</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Thưởng</th>
+									<th class="px-6 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Tổng</th>
+								</tr>
+							</thead>
+							<tbody id="salaryTableBody">
+								<tr>
+									<td colspan="6" class="text-center py-6 text-gray-500">Đang tải dữ liệu...</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</main>
+		</div>
+	</div>
+
+	<script>
+        $(function () {
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+            
+            $('#yearSelect').val(currentYear);
+            $('#monthSelect').val(currentMonth);
+            
+            // Hiển thị/ẩn dropdown tháng theo loại thống kê
+            function toggleMonthSelector() {
+                const type = $('#typeSelect').val();
+                if (type === 'monthly') {
+                    $('#monthSelectWrapper').show();
+                } else {
+                    $('#monthSelectWrapper').hide();
+                }
+            }
+            
+            $('#typeSelect').on('change', toggleMonthSelector);
+            toggleMonthSelector(); // Init
+
+            loadStats();
+
+            $('#filterBtn').on('click', loadStats);
+
+            let salaryChart;
+
+            function loadStats() {
+                const year = $('#yearSelect').val();
+                const month = $('#monthSelect').val();
+                const type = $('#typeSelect').val();
+
+                let url = '';
+                
+                if (type === 'yearly') {
+                    url = `/hdvtx/api/salary/year?year=${year}`;
+                } else if (type === 'monthly') {
+                    url = `/hdvtx/api/salary/month?year=${year}&month=${month}`;
+                } else {
+                    // Tạm thời dùng yearly cho period
+                    url = `/hdvtx/api/salary/year?year=${year}`;
+                }
+
+                $.getJSON(url)
+                    .done(function (data) {
+                        updateStats(data, type);
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error('Lỗi:', textStatus, errorThrown);
+                        showError('Không thể tải dữ liệu thống kê');
+                    });
+            }
+
+            function updateStats(data, type) {
+                // Cập nhật các số liệu tổng quan
+                $('#totalTrips').text(data.totalTrips || 0);
+                $('#totalBaseSalary').text(formatCurrency(data.totalBaseSalary || 0));
+                $('#totalTripSalary').text(formatCurrency(data.totalTripSalary || 0));
+                $('#totalSalary').text(formatCurrency(data.totalSalary || 0));
+
+                // Cập nhật bảng chi tiết
+                const details = data.details || [];
+                let html = '';
+                
+                if (details.length === 0) {
+                    html = '<tr><td colspan="6" class="text-center py-6 text-gray-500">Không có dữ liệu</td></tr>';
+                } else {
+                    if (type === 'yearly') {
+                        // Hiển thị theo tháng
+                        details.forEach((item, index) => {
+                            const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                            const baseSalary = item.baseSalary || 0;
+                            const tripSalary = item.tripSalary || 0;
+                            const bonus = item.bonus || 0;
+                            const total = item.totalSalary || 0;
+                            
+                            html += `
+                                <tr class="${rowClass} border-b hover:bg-blue-50 transition">
+                                    <td class="px-6 py-3 text-gray-800 whitespace-nowrap">Tháng ${item.month}</td>
+                                    <td class="px-6 py-3 text-gray-600 whitespace-nowrap">${item.completedTrips} chuyến</td>
+                                    <td class="px-6 py-3 text-right text-yellow-600 font-medium whitespace-nowrap">${formatCurrency(baseSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-blue-600 font-medium whitespace-nowrap">${formatCurrency(tripSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-green-600 font-semibold whitespace-nowrap">${formatCurrency(bonus)}</td>
+                                    <td class="px-6 py-3 text-right font-bold text-blue-700 whitespace-nowrap">${formatCurrency(total)}</td>
+                                </tr>`;
+                        });
+                    } else {
+                        // Hiển thị chi tiết từng chuyến
+                        details.forEach((item, index) => {
+                            const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                            const tripSalary = item.tripSalary || 0;
+                            const bonus = item.bonus || 0;
+                            const total = item.totalSalary || 0;
+                            
+                            html += `
+                                <tr class="${rowClass} border-b hover:bg-blue-50 transition">
+                                    <td class="px-6 py-3 text-gray-800 whitespace-nowrap">${item.period || '-'}</td>
+                                    <td class="px-6 py-3 text-blue-600 font-medium whitespace-nowrap">#${item.maChuyen || '-'}</td>
+                                    <td class="px-6 py-3 text-right text-gray-400 whitespace-nowrap">-</td>
+                                    <td class="px-6 py-3 text-right text-blue-600 font-medium whitespace-nowrap">${formatCurrency(tripSalary)}</td>
+                                    <td class="px-6 py-3 text-right text-green-600 font-semibold whitespace-nowrap">${formatCurrency(bonus)}</td>
+                                    <td class="px-6 py-3 text-right font-bold text-blue-700 whitespace-nowrap">${formatCurrency(total)}</td>
+                                </tr>`;
+                        });
+                    }
+                }
+                $('#salaryTableBody').html(html);
+
+                // Cập nhật biểu đồ nếu có dữ liệu
+                if (data.chartData && data.chartData.labels && data.chartData.labels.length > 0) {
+                    if (salaryChart) {
+                        salaryChart.destroy();
+                    }
+                    const ctx = document.getElementById('salaryChart').getContext('2d');
+                    salaryChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.chartData.labels,
+                            datasets: [
+                                {
+                                    label: 'Thu nhập',
+                                    data: data.chartData.values,
+                                    backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                                    borderColor: 'rgba(59, 130, 246, 1)',
+                                    borderWidth: 1,
+                                    borderRadius: 4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Thu nhập: ' + formatCurrency(context.parsed.y);
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return formatCurrency(value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function formatCurrency(amount) {
+                if (amount === null || amount === undefined || amount === 0) return '0₫';
+                return new Intl.NumberFormat('vi-VN').format(amount) + '₫';
+            }
+
+            function showError(message) {
+                const errorHtml = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>${message}
+                    </div>`;
+                $('#salaryTableBody').html(`<tr><td colspan="6">${errorHtml}</td></tr>`);
+            }
+        });
+    </script>
+</body>
+</html>

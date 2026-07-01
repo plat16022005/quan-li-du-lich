@@ -1,0 +1,33 @@
+@startuml
+title Activity Diagram - Quy trình Tìm kiếm và Lọc Tour (Khách hàng)
+
+|Khách hàng|
+start
+:Truy cập Trang chủ / Danh sách Tour;
+
+repeat
+    :Nhập từ khóa tìm kiếm;
+    :Chọn bộ lọc;
+    :Bấm "Tìm kiếm";
+
+    |Hệ thống|
+    :Tiếp nhận yêu cầu;
+    :Truy vấn CSDL;
+
+    if (Có kết quả?) then (Có)
+        :Sắp xếp + phân trang;
+        |Khách hàng|
+        :Hiển thị danh sách;
+    else (Không)
+        |Khách hàng|
+        :Thông báo không có kết quả;
+    endif
+
+    |Khách hàng|
+repeat while (Tiếp tục tìm kiếm?) is (Có)
+
+:Chọn Tour;
+:Xem chi tiết;
+stop
+
+@enduml

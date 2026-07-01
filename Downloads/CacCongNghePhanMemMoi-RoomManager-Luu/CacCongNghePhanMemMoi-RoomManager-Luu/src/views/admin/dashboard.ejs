@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <div class="main-content">
+      <%- include('partials/topbar') %>
+
+      <!-- Dashboard Tab -->
+      <%- include('tabs/dashboard') %>
+
+      <!-- Profile Tab -->
+      <%- include('tabs/profile') %>
+
+      <!-- Users Tab -->
+      <%- include('tabs/users') %>
+
+      <!-- Settings Tab -->
+      <%- include('tabs/settings') %>
+
+      <!-- Rooms Tab -->
+      <%- include('tabs/rooms') %>
+
+      <!-- Hủy phòng & Hoàn cọc Tab -->
+      <%- include('tabs/cancellation') %>
+
+      <!-- Testing Lab Tab -->
+      <%- include('tabs/testing_lab') %>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/admin.js"></script>
+    <script src="/js/testing-lab.js"></script>
+  </body>
+</html>

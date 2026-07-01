@@ -1,0 +1,42 @@
+<!-- Settings Tab -->
+<div id="settingsTab" style="display: none">
+  <div class="section-header">
+    <h2><i class="fa-solid fa-gear"></i> Cài đặt Hệ thống</h2>
+  </div>
+
+  <div class="section">
+    <h3><i class="fa-solid fa-shield-halved"></i> Bảo mật & Phân quyền</h3>
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);" />
+        <span style="font-size: 15px;">Yêu cầu xác thực hai yếu tố (2FA) cho Admin</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);" />
+        <span style="font-size: 15px;">Bật rào cản chống Spam (Rate limit API)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);" />
+        <span style="font-size: 15px;">Ghi log toàn bộ hoạt động của hệ thống</span>
+      </label>
+    </div>
+
+    <h3 style="margin-top: 40px;"><i class="fa-solid fa-envelope"></i> Cấu hình Thông báo (Email/SMS)</h3>
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);" />
+        <span style="font-size: 15px;">Gửi hóa đơn tự động qua Email cư dân</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);" />
+        <span style="font-size: 15px;">Thông báo nhắc nợ trước 3 ngày qua Zalo/SMS</span>
+      </label>
+    </div>
+    
+    <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 24px;">
+      <button class="btn btn-primary">
+        <i class="fa-solid fa-floppy-disk"></i> Lưu Cấu hình
+      </button>
+    </div>
+  </div>
+</div>

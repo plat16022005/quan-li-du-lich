@@ -1,0 +1,45 @@
+@startuml
+title Sequence Diagram - Quy trình Xuất Lịch trình PDF (HDV / Tài xế)
+
+actor "HDV / Tài xế" as HDV
+boundary "Dashboard Hành Trình" as UI
+participant "TripPdfExportController" as Ctrl
+participant "TripExportPdfService" as Svc
+participant "ChuyenDuLichRepository" as Repo
+database "Database" as DB
+
+HDV -> UI : Chọn Chuyến đi (maChuyen)\nBấm nút "Xuất PDF"
+activate UI
+
+UI -> Ctrl : GET /export/trip/pdf?maChuyen={ID}
+activate Ctrl
+
+Ctrl -> Svc : exportTripToPdf(HttpServletResponse, maChuyen)
+activate Svc
+
+Svc -> Repo : findById(maChuyen)
+activate Repo
+Repo -> DB : SELECT * FROM ChuyenDuLich WHERE ...
+DB --> Repo : return ChuyenDuLich entity
+Repo --> Svc : return ChuyenDuLich
+deactivate Repo
+
+alt Không tìm thấy chuyến đi
+    Svc --> Ctrl : throw RuntimeException
+    Ctrl -> UI : Hiển thị lỗi
+else Hợp lệ
+    Svc -> Svc : Lấy thông tin Tour, Lịch trình, Danh sách Khách
+    Svc -> Svc : Khởi tạo thư viện PDF (iText / PDFBox)
+    Svc -> Svc : Draw PDF Elements (Header, Table, Text)
+    
+    Svc -> Ctrl : Write PDF bytes to HttpServletResponse.OutputStream
+end
+deactivate Svc
+
+Ctrl --> UI : Trả về File Download (application/pdf)
+deactivate Ctrl
+
+UI --> HDV : Trình duyệt tự tải xuống thư mục máy tính
+deactivate UI
+
+@enduml

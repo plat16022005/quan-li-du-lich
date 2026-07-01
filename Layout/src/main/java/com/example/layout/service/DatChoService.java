@@ -1,0 +1,194 @@
+package com.example.layout.service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.example.layout.entity.ChiTietDatCho;
+import com.example.layout.entity.ChuyenDuLich;
+import com.example.layout.entity.DatCho;
+import com.example.layout.entity.KhachHang;
+import com.example.layout.repository.ChiTietDatChoRepository;
+import com.example.layout.repository.ChuyenDuLichRepository;
+import com.example.layout.repository.DatChoRepository;
+import com.example.layout.repository.KhachHangRepository;
+import com.example.layout.dto.BookingDTO;
+import com.example.layout.dto.DatChoDTO;
+import jakarta.transaction.Transactional;
+
+@Service
+public class DatChoService implements IDatChoService {
+    private final DatChoRepository datChoRepository;
+    private final ChiTietDatChoRepository chiTietDatChoRepository;
+    private final ChuyenDuLichRepository chuyenDuLichRepository;
+    private final KhachHangRepository khachHangRepository;
+
+    public DatChoService(DatChoRepository datChoRepository,
+                        ChiTietDatChoRepository chiTietDatChoRepository,
+                        ChuyenDuLichRepository chuyenDuLichRepository,
+                        KhachHangRepository khachHangRepository) {
+        this.datChoRepository = datChoRepository;
+        this.chiTietDatChoRepository = chiTietDatChoRepository;
+        this.chuyenDuLichRepository = chuyenDuLichRepository;
+        this.khachHangRepository = khachHangRepository;
+    }
+
+    @Override
+    public Optional<DatCho> findById(Integer id) {
+        return datChoRepository.findById(id);
+    }
+    
+    @Override
+    public Page<DatCho> findall(Pageable pageable){
+    	return datChoRepository.findAll(pageable);
+    }
+    
+    @Override
+    public Page<DatCho> searchAndFilter(String keyword, String status, Pageable pageable) {
+        return datChoRepository.searchAndFilter(keyword, status, pageable);
+    }
+
+    @Override
+    @Transactional
+    public Page<com.example.layout.dto.BookingApiDTO> searchAndFilterDto(String keyword, String status, Pageable pageable) {
+        Page<DatCho> page = datChoRepository.searchAndFilter(keyword, status, pageable);
+        return page.map(dc -> {
+            // eager access inside transaction
+            com.example.layout.dto.BookingApiDTO.KhachHangSummary kh = new com.example.layout.dto.BookingApiDTO.KhachHangSummary(
+                    dc.getKhachHang().getMaKhachHang(), dc.getKhachHang().getTaiKhoan().getHoTen());
+
+            com.example.layout.dto.BookingApiDTO.ChuyenSummary ch = new com.example.layout.dto.BookingApiDTO.ChuyenSummary(
+                    dc.getChuyenDuLich().getMaChuyen(), dc.getChuyenDuLich().getTour().getTenTour());
+
+            java.util.List<com.example.layout.dto.ChiTietDatChoDTO> chiTiet = dc.getChiTietDatChos().stream().map(ct ->
+                    new com.example.layout.dto.ChiTietDatChoDTO(ct.getMaChiTiet(), ct.getSoLuong(), ct.getDonGia(), ct.getThanhTien(), ct.getLoaiVe())
+            ).toList();
+
+            return new com.example.layout.dto.BookingApiDTO(dc.getMaDatCho(), dc.getNgayDat(), dc.getTrangThai(), kh, ch, chiTiet);
+        });
+    }
+
+    @Override
+    public List<DatCho> findByKhachHangId(Integer maKhachHang) {
+        return datChoRepository.findByKhachHang_MaKhachHang(maKhachHang);
+    }
+
+
+    @Override
+    @Transactional
+    public DatCho createBooking(DatChoDTO datChoDTO) {
+        ChuyenDuLich chuyen = chuyenDuLichRepository.findById(datChoDTO.getMaChuyen())
+                .orElseThrow(() -> new RuntimeException("Chuyến đi không tồn tại"));
+        
+        KhachHang khach = khachHangRepository.findById(datChoDTO.getMaKhachHang())
+                .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
+
+        int soNguoiDaDat = chuyenDuLichRepository.getTotalParticipants(chuyen.getMaChuyen());
+        if (soNguoiDaDat + datChoDTO.getSoLuong() > chuyen.getSoLuongToiDa()) {
+            throw new RuntimeException("Chuyến đi không còn đủ chỗ");
+        }
+
+        DatCho newDatCho = new DatCho();
+        newDatCho.setChuyenDuLich(chuyen);
+        newDatCho.setKhachHang(khach);
+        newDatCho.setTrangThai("Chờ xác nhận");
+        DatCho savedDatCho = datChoRepository.save(newDatCho);
+
+        ChiTietDatCho chiTiet = new ChiTietDatCho();
+        chiTiet.setDatCho(savedDatCho);
+        chiTiet.setSoLuong(datChoDTO.getSoLuong());
+        chiTiet.setDonGia(chuyen.getTour().getGiaCoBan());
+        
+        BigDecimal thanhTien = chiTiet.getDonGia().multiply(new BigDecimal(chiTiet.getSoLuong()));
+        chiTiet.setThanhTien(thanhTien);
+        chiTiet.setLoaiVe("Người lớn");
+        
+        chiTietDatChoRepository.save(chiTiet);
+        
+        return savedDatCho;
+    }
+
+    @Override
+    @Transactional
+    public com.example.layout.dto.BookingApiDTO getBookingApiDtoById(Integer bookingId) {
+    DatCho dc = datChoRepository.findById(bookingId)
+        .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+    // Build KhachHang summary
+    com.example.layout.dto.BookingApiDTO.KhachHangSummary kh = new com.example.layout.dto.BookingApiDTO.KhachHangSummary(
+        dc.getKhachHang().getMaKhachHang(), dc.getKhachHang().getTaiKhoan().getHoTen());
+
+    // Build Chuyen summary
+    com.example.layout.dto.BookingApiDTO.ChuyenSummary ch = new com.example.layout.dto.BookingApiDTO.ChuyenSummary(
+        dc.getChuyenDuLich().getMaChuyen(), dc.getChuyenDuLich().getTour().getTenTour());
+
+    java.util.List<com.example.layout.dto.ChiTietDatChoDTO> chiTiet = dc.getChiTietDatChos() == null ? java.util.List.of() :
+        dc.getChiTietDatChos().stream().map(ct ->
+            new com.example.layout.dto.ChiTietDatChoDTO(ct.getMaChiTiet(), ct.getSoLuong(), ct.getDonGia(), ct.getThanhTien(), ct.getLoaiVe())
+        ).toList();
+
+    return new com.example.layout.dto.BookingApiDTO(dc.getMaDatCho(), dc.getNgayDat(), dc.getTrangThai(), kh, ch, chiTiet);
+    }
+
+    @Override
+    public DatCho cancelBooking(Integer maDatCho) {
+        DatCho datCho = datChoRepository.findById(maDatCho)
+                .orElseThrow(() -> new RuntimeException("Đơn đặt chỗ không tồn tại"));
+        
+        if ("Chờ xác nhận".equals(datCho.getTrangThai()) || "Đã xác nhận".equals(datCho.getTrangThai())) {
+            datCho.setTrangThai("Đã hủy");
+            return datChoRepository.save(datCho);
+        } else {
+            throw new RuntimeException("Không thể hủy đơn đặt chỗ ở trạng thái " + datCho.getTrangThai());
+        }
+    }
+    
+    @Override
+    public DatCho confirmBooking(Integer maDatCho) {
+        DatCho datCho = datChoRepository.findById(maDatCho)
+                .orElseThrow(() -> new RuntimeException("Đơn đặt chỗ không tồn tại"));
+
+        if ("Chờ xác nhận".equals(datCho.getTrangThai())) {
+            datCho.setTrangThai("Đã xác nhận");
+            return datChoRepository.save(datCho);
+        } else {
+            throw new RuntimeException("Chỉ có thể xác nhận các đơn ở trạng thái 'Chờ xác nhận'.");
+        }
+    }
+    
+    @Override
+    public List<BookingDTO> getBookingsByTourId(Integer tourId) {
+        List<DatCho> bookings = datChoRepository.findByChuyenDuLich_Tour_MaTour(tourId);
+        
+        return bookings.stream().map(booking -> {
+            KhachHang khachHang = booking.getKhachHang();
+            return new BookingDTO(
+                booking.getMaDatCho(),
+                khachHang.getTaiKhoan().getHoTen(),
+                khachHang.getTaiKhoan().getSoDienThoai(),
+                booking.getNgayDat(),
+                booking.getTrangThai()
+            );
+        }).collect(Collectors.toList());
+    }
+    
+    @Override
+    public Long getSoldTicketCount(Integer maChuyen) {
+        return datChoRepository.getSoldTicketCount(maChuyen);
+    }
+
+    @Override
+    public List<com.example.layout.dto.TopCustomerDTO> findTopCustomers() {
+        return datChoRepository.findTopCustomers();
+    }
+
+    @Override
+    public List<DatCho> findByChuyenDuLich_Tour_MaTour(Integer maTour) {
+        return datChoRepository.findByChuyenDuLich_Tour_MaTour(maTour);
+    }
+}

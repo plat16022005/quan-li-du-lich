@@ -1,0 +1,62 @@
+@startuml
+title Sequence Diagram - Quy trình Quản lý Danh mục (Khách sạn / Địa điểm / Xe)
+
+actor "Quản lý" as NV
+boundary "Giao diện Quản lý Danh mục" as UI
+participant "CategoryController\n(KhachSanController)" as Ctrl
+participant "CategoryService\n(KhachSanService)" as Svc
+participant "CategoryRepository" as Repo
+participant "LichTrinhRepository" as LTRepo
+database "Database" as DB
+
+NV -> UI : Bấm nút "Xóa" một (Khách sạn/Địa điểm)
+activate UI
+
+UI -> Ctrl : POST /manage/khachsan/delete/{id}
+activate Ctrl
+
+Ctrl -> Svc : deleteKhachSan(id)
+activate Svc
+
+Svc -> Repo : findById(id)
+activate Repo
+Repo -> DB : SELECT * FROM KhachSan WHERE ...
+DB --> Repo : return Entity
+Repo --> Svc : return KhachSan
+deactivate Repo
+
+alt Không tìm thấy
+    Svc --> Ctrl : throw Exception("Bản ghi không tồn tại")
+else Hợp lệ
+    Svc -> LTRepo : existsByKhachSanId(id)
+    activate LTRepo
+    LTRepo -> DB : SELECT COUNT(*) FROM LichTrinh WHERE MaKhachSan = ...
+    DB --> LTRepo : boolean result
+    LTRepo --> Svc : boolean result
+    deactivate LTRepo
+    
+    alt Đang được sử dụng trong Lịch Trình (count > 0)
+        Svc --> Ctrl : throw Exception("Không thể xóa do ràng buộc FK")
+    else Không bị ràng buộc (An toàn)
+        Svc -> Repo : deleteById(id)
+        activate Repo
+        Repo -> DB : DELETE FROM KhachSan WHERE MaKhachSan = ...
+        DB --> Repo : Success
+        Repo --> Svc : Success
+        deactivate Repo
+        Svc --> Ctrl : return Success
+    end
+end
+deactivate Svc
+
+alt Xóa thành công
+    Ctrl -> UI : Thông báo "Xóa thành công"
+else Lỗi Constraint
+    Ctrl -> UI : Thông báo "Lỗi ràng buộc khóa ngoại (FK constraint)"
+end
+deactivate Ctrl
+
+UI --> NV : Reload Datatable Danh mục
+deactivate UI
+
+@enduml

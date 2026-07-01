@@ -1,0 +1,64 @@
+@startuml
+title Sequence Diagram - Quy trình Quản lý Tài khoản (Thêm mới Nhân sự / Khách hàng)
+
+actor "Quản lý" as NV
+boundary "Giao diện Quản lý Tài khoản" as UI
+participant "ManagerStaffController" as Ctrl
+participant "UserService" as Svc
+participant "UserRepository" as Repo
+participant "NhanvienRepository" as NVRepo
+database "Database" as DB
+
+NV -> UI : Nhập Form thông tin (Username, Email, SĐT, Role, Lương)\nBấm "Tạo tài khoản"
+activate UI
+
+UI -> Ctrl : POST /manage/users/add (UserDTO)
+activate Ctrl
+
+Ctrl -> Svc : createUser(UserDTO)
+activate Svc
+
+Svc -> Repo : existsByTenDangNhap(UserDTO.username)
+activate Repo
+Repo -> DB : SELECT COUNT(*) FROM User WHERE TenDangNhap = ...
+DB --> Repo : count
+Repo --> Svc : boolean
+deactivate Repo
+
+alt Tên đăng nhập đã tồn tại
+    Svc --> Ctrl : throw Exception("Tên đăng nhập đã tồn tại")
+else Hợp lệ
+    Svc -> Svc : Hash Password (Bcrypt)
+    Svc -> Repo : save(newUserEntity)
+    activate Repo
+    Repo -> DB : INSERT INTO User (...)
+    DB --> Repo : return SavedUser (có ID)
+    Repo --> Svc : return SavedUser
+    deactivate Repo
+    
+    alt Nếu Role là Nhân viên
+        Svc -> NVRepo : save(new NhanvienEntity(SavedUser.ID, Lương...))
+        activate NVRepo
+        NVRepo -> DB : INSERT INTO Nhanvien (...)
+        DB --> NVRepo : Success
+        NVRepo --> Svc : Success
+        deactivate NVRepo
+    else Nếu Role là Khách hàng
+        Svc -> Svc : Tương tự lưu vào bảng KhachHang
+    end
+    
+    Svc --> Ctrl : return Success
+end
+deactivate Svc
+
+alt Thành công
+    Ctrl -> UI : Thông báo "Thêm tài khoản thành công" (Redirect)
+else Thất bại
+    Ctrl -> UI : Hiển thị lỗi Validation / Trùng lặp
+end
+deactivate Ctrl
+
+UI --> NV : Hiển thị bảng danh sách cập nhật mới
+deactivate UI
+
+@enduml

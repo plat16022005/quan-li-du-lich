@@ -1,0 +1,150 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' ================= CLASSES =================
+
+class User {
+    - maTaiKhoan: Integer
+    - tenDangNhap: String
+    - matKhau: String
+    - hoTen: String
+    - email: String
+    - soDienThoai: String
+    - trangThai: Boolean
+}
+
+class Vaitro {
+    - maVaiTro: Integer
+    - tenVaiTro: String
+}
+
+class KhachHang {
+    - maKhachHang: Integer
+    - loaiKhach: String
+    - diemTichLuy: Integer
+}
+
+class Nhanvien {
+    - maNhanVien: Integer
+    - chucVu: String
+    - luongCoBan: BigDecimal
+    - ngayVaoLam: LocalDate
+    - thuLaoTheoNgay: BigDecimal
+}
+
+class Tour {
+    - maTour: Integer
+    - tenTour: String
+    - moTa: String
+    - soNgay: Integer
+    - giaCoBan: BigDecimal
+    - hinhAnh: String
+}
+
+class ChuyenDuLich {
+    - maChuyen: Integer
+    - ngayBatDau: LocalDate
+    - ngayKetThuc: LocalDate
+    - trangThai: String
+    - soLuongToiDa: int
+    - soLuongHienTai: int
+    - giaThueHDV: BigDecimal
+    - giaThueTX: BigDecimal
+}
+
+class LichTrinh {
+    - maLichTrinh: Integer
+    - thuTuNgay: Integer
+    - hoatDong: String
+}
+
+class DiaDiem {
+    - maDiaDiem: Integer
+    - tenDiaDiem: String
+    - moTa: String
+}
+
+class KhachSan {
+    - maKhachSan: Integer
+    - tenKhachSan: String
+    - diaChi: String
+    - giaMoiDem: BigDecimal
+}
+
+class PhuongTien {
+    - maPhuongTien: Integer
+    - loaiPhuongTien: String
+    - bienSo: String
+    - soChoNgoi: Integer
+    - giaTheoNgay: BigDecimal
+}
+
+class DatCho {
+    - maDatCho: Integer
+    - ngayDat: LocalDate
+    - trangThai: String
+    - tiLeGiam: BigDecimal
+}
+
+class ChiTietDatCho {
+    - maChiTiet: Integer
+    - loaiHanhKhach: String
+    - soLuong: int
+    - donGia: BigDecimal
+}
+
+class ThanhToan {
+    - maThanhToan: Integer
+    - ngayThanhToan: LocalDate
+    - soTien: BigDecimal
+    - hinhThuc: String
+}
+
+class KhuyenMai {
+    - maKM: Integer
+    - tenKM: String
+    - phanTramGiam: BigDecimal
+    - ngayBatDau: LocalDate
+    - ngayKetThuc: LocalDate
+}
+
+class PhanHoi {
+    - maPhanHoi: Integer
+    - noiDung: String
+    - danhGia: Integer
+    - ngayTao: LocalDateTime
+}
+
+' ================= RELATIONSHIPS =================
+
+User "n" -up- "1" Vaitro : thuộc >
+KhachHang "1" -up- "1" User : liên kết tài khoản >
+Nhanvien "1" -up- "1" User : liên kết tài khoản >
+
+KhachHang "1" -- "n" DatCho : đặt >
+DatCho "n" -- "1" ChuyenDuLich : thuộc về >
+DatCho "1" -- "n" ChiTietDatCho : bao gồm >
+ThanhToan "n" -- "1" DatCho : thanh toán cho >
+DatCho "n" -- "m" KhuyenMai : áp dụng <
+
+ChuyenDuLich "n" -- "1" Tour : thuộc >
+ChuyenDuLich "n" -- "1" Nhanvien : HDV (hướng dẫn) >
+ChuyenDuLich "n" -- "1" Nhanvien : TX (lái xe) >
+
+Tour "1" -- "n" LichTrinh : có >
+Tour "n" -- "m" DiaDiem : đi qua >
+
+LichTrinh "n" -- "1" DiaDiem : tham quan >
+LichTrinh "n" -- "1" KhachSan : lưu trú >
+LichTrinh "n" -- "1" PhuongTien : di chuyển bằng >
+
+PhanHoi "n" -- "1" KhachHang : gửi bởi >
+PhanHoi "n" -- "1" ChuyenDuLich : đánh giá >
+
+@enduml
+

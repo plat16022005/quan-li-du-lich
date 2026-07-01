@@ -1,0 +1,73 @@
+<!-- Dashboard Tab -->
+<div id="dashboardTab">
+  <div class="dashboard-grid">
+    <div class="card">
+      <div class="card-icon" style="color: var(--primary);"><i class="fa-solid fa-users"></i></div>
+      <h3>Tổng cư dân</h3>
+      <p>Số tài khoản đang hoạt động</p>
+      <div class="card-value" id="totalUsers">--</div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="color: var(--success);"><i class="fa-solid fa-user-check"></i></div>
+      <h3>Cư dân kích hoạt</h3>
+      <p>Tài khoản đã xác thực KYC</p>
+      <div class="card-value" id="activeUsers">--</div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="color: var(--warning);"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+      <h3>Yêu cầu hỗ trợ</h3>
+      <p>Ticket bảo trì & khiếu nại</p>
+      <div class="card-value">42</div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="color: var(--accent);"><i class="fa-solid fa-chart-line"></i></div>
+      <h3>Tăng trưởng</h3>
+      <p>Khách thuê mới trong tháng</p>
+      <div class="card-value">+12</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top: 48px;">
+    <h2><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Truy cập nhanh Phân hệ Quản lý</h2>
+  </div>
+  <div class="dashboard-grid">
+    <div class="card" style="cursor: pointer;" onclick="switchTab('rooms')">
+      <div class="card-icon" style="color: var(--primary);"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <h3>1. Hóa đơn & Điện nước</h3>
+      <p>Quản lý chỉ số, phát hành hóa đơn tự động hàng tháng</p>
+    </div>
+
+    <div class="card" style="cursor: pointer;" onclick="switchTab('cancellation')">
+      <div class="card-icon" style="color: var(--danger);"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+      <h3>2. Thanh lý hợp đồng</h3>
+      <p>Quy trình trả phòng, kiểm kê tài sản và hoàn tiền cọc</p>
+    </div>
+
+    <div class="card" style="cursor: pointer;" onclick="switchTab('testing-lab'); setTimeout(() => switchSubTab('fine'), 100);">
+      <div class="card-icon" style="color: var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3>3. Xử lý vi phạm</h3>
+      <p>Báo cáo sự cố, tính phí đền bù tài sản hư hỏng</p>
+    </div>
+
+    <div class="card" style="cursor: pointer;" onclick="switchTab('testing-lab'); setTimeout(() => switchSubTab('credit'), 100);">
+      <div class="card-icon" style="color: var(--success);"><i class="fa-solid fa-medal"></i></div>
+      <h3>4. Điểm tín nhiệm</h3>
+      <p>Chấm điểm cư dân, xét duyệt chính sách gia hạn thuê</p>
+    </div>
+
+    <div class="card" style="cursor: pointer;" onclick="switchTab('testing-lab'); setTimeout(() => switchSubTab('salary'), 100);">
+      <div class="card-icon" style="color: var(--secondary);"><i class="fa-solid fa-money-check-dollar"></i></div>
+      <h3>5. Lương & KPI Nhân sự</h3>
+      <p>Hệ thống tính lương, thưởng và phạt cho nhân sự tòa nhà</p>
+    </div>
+
+    <div class="card" style="cursor: pointer;" onclick="switchTab('testing-lab'); setTimeout(() => switchSubTab('renovation'), 100);">
+      <div class="card-icon" style="color: var(--accent);"><i class="fa-solid fa-paint-roller"></i></div>
+      <h3>6. Dự toán cải tạo</h3>
+      <p>Tính toán chi phí vật tư nâng cấp và sửa chữa phòng</p>
+    </div>
+  </div>
+</div>

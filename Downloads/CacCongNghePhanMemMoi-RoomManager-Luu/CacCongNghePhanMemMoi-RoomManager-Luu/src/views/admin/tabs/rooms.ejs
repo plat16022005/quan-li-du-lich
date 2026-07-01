@@ -1,0 +1,228 @@
+<!-- Rooms Tab -->
+<div id="roomsTab" style="display: none">
+  <div class="section-header">
+    <h2><i class="fa-solid fa-building-user"></i> Quản lý Phòng & Hóa đơn</h2>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px">
+    <!-- Danh sách phòng -->
+    <div class="section">
+      <h3><i class="fa-solid fa-list"></i> Danh sách phòng trọ</h3>
+      <div class="table-wrapper" style="margin-top: 16px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Số phòng</th>
+              <th>Giá cơ bản</th>
+              <th>Trạng thái</th>
+              <th>Khách thuê</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="roomsTableBody">
+            <tr>
+              <td colspan="5" style="padding: 24px; text-align: center; color: var(--text-muted);">
+                <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu phòng...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Thêm phòng mới -->
+    <div class="section">
+      <h3><i class="fa-solid fa-plus"></i> Thêm phòng mới</h3>
+      <form id="createRoomForm" onsubmit="handleCreateRoom(event)" style="margin-top: 16px">
+        <div class="form-group">
+          <label>Số phòng</label>
+          <input type="text" id="newRoomNumber" class="form-control" placeholder="Ví dụ: 305" required />
+        </div>
+        <div class="form-group">
+          <label>Giá phòng cơ bản (VND)</label>
+          <input type="number" id="newRoomBasePrice" class="form-control" placeholder="Ví dụ: 3000000" required />
+        </div>
+        <div class="form-group">
+          <label>Trạng thái ban đầu</label>
+          <select id="newRoomStatus" class="form-control">
+            <option value="available">Trống (Available)</option>
+            <option value="maintenance">Bảo trì (Maintenance)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit" style="width: 100%; margin-top: 12px;">
+          <i class="fa-solid fa-plus"></i> Thêm phòng
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Khung Gán khách thuê -->
+  <div id="assignTenantSection" class="section" style="display: none; margin-top: 24px">
+    <h3>
+      <i class="fa-solid fa-user-plus"></i> Gán khách thuê vào phòng
+      <span id="assignRoomNumber" style="color: var(--primary); margin-left: 8px;"></span>
+    </h3>
+    <div style="display: flex; gap: 16px; align-items: flex-end; margin-top: 16px;">
+      <div class="form-group" style="flex: 1; margin-bottom: 0;">
+        <label>Chọn khách thuê (User đã xác thực KYC & chưa thuê phòng)</label>
+        <select id="tenantSelect" class="form-control">
+          <option value="">-- Chọn khách thuê --</option>
+        </select>
+      </div>
+      <input type="hidden" id="assignRoomId" />
+      <button class="btn btn-primary" onclick="submitAssignTenant()">
+        <i class="fa-solid fa-check"></i> Xác nhận gán
+      </button>
+      <button class="btn btn-secondary" onclick="cancelAssign()">
+        Hủy bỏ
+      </button>
+    </div>
+  </div>
+
+  <!-- Khung Chỉnh sửa phòng trọ -->
+  <div id="editRoomSection" class="section" style="display: none; margin-top: 24px">
+    <h3>
+      <i class="fa-solid fa-pen-to-square"></i> Cập nhật thông tin phòng
+      <span id="editRoomNumberHeader" style="color: var(--primary); margin-left: 8px;"></span>
+    </h3>
+    <form id="editRoomForm" onsubmit="submitEditRoom(event)" style="margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: flex-end;">
+      <input type="hidden" id="editRoomId" />
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Số phòng</label>
+        <input type="text" id="editRoomNumber" class="form-control" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Giá phòng cơ bản (VND)</label>
+        <input type="number" id="editRoomBasePrice" class="form-control" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Trạng thái phòng</label>
+        <select id="editRoomStatus" class="form-control">
+          <option value="available">Trống (Available)</option>
+          <option value="occupied">Đã thuê (Occupied)</option>
+          <option value="maintenance">Bảo trì (Maintenance)</option>
+        </select>
+      </div>
+
+      <div style="grid-column: span 3; display: flex; gap: 16px; justify-content: flex-end; margin-top: 16px;">
+        <button class="btn btn-primary" type="submit">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+        </button>
+        <button class="btn btn-secondary" type="button" onclick="cancelEditRoom()">
+          Hủy bỏ
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Khung Tính hóa đơn dịch vụ -->
+  <div id="invoiceSection" class="section" style="display: none; margin-top: 24px">
+    <h3>
+      <i class="fa-solid fa-file-invoice-dollar"></i> Lập hóa đơn phòng
+      <span id="invoiceRoomNumber" style="color: var(--primary); margin-left: 8px;"></span>
+    </h3>
+    <form id="invoiceForm" onsubmit="submitInvoice(event)" style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+      <input type="hidden" id="invoiceRoomId" />
+
+      <div class="form-group">
+        <label>Kỳ xuất hóa đơn (Tháng/Năm)</label>
+        <input type="text" id="invoiceMonth" class="form-control" value="06/2026" required />
+      </div>
+      <div class="form-group">
+        <label>Chỉ số điện cũ (kWh)</label>
+        <input type="number" id="oldElec" class="form-control" value="100" required />
+      </div>
+      <div class="form-group">
+        <label>Chỉ số điện mới (kWh)</label>
+        <input type="number" id="newElec" class="form-control" value="180" required />
+      </div>
+
+      <div class="form-group">
+        <label>Chỉ số nước cũ (m3)</label>
+        <input type="number" id="oldWater" class="form-control" value="10" required />
+      </div>
+      <div class="form-group">
+        <label>Chỉ số nước mới (m3)</label>
+        <input type="number" id="newWater" class="form-control" value="18" required />
+      </div>
+      <div class="form-group">
+        <label>Số ngày thanh toán trễ</label>
+        <input type="number" id="lateDays" class="form-control" value="0" required />
+      </div>
+
+      <div class="form-group">
+        <label>Số người cư trú thực tế</label>
+        <input type="number" id="memberCount" class="form-control" value="2" required />
+      </div>
+      <div class="form-group">
+        <label>Sử dụng bãi đỗ xe máy?</label>
+        <select id="hasVehicle" class="form-control" onchange="toggleVehicleInput()">
+          <option value="true">Có</option>
+          <option value="false">Không</option>
+        </select>
+      </div>
+      <div class="form-group" id="vehicleCountGroup">
+        <label>Số lượng phương tiện</label>
+        <input type="text" id="vehicleCount" class="form-control" value="2" placeholder="Nhập số lượng" />
+      </div>
+
+      <div class="form-group">
+        <label>Chu kỳ hợp đồng (Tháng)</label>
+        <input type="number" id="contractMonths" class="form-control" value="12" required />
+      </div>
+
+      <div style="grid-column: span 3; display: flex; gap: 16px; margin-top: 16px;">
+        <button class="btn btn-primary" type="submit">
+          <i class="fa-solid fa-calculator"></i> Lập hóa đơn & Lưu
+        </button>
+        <button class="btn btn-secondary" type="button" onclick="cancelInvoice()">
+          Đóng
+        </button>
+      </div>
+    </form>
+
+    <!-- Kết quả tính hóa đơn -->
+    <div id="invoiceResultSection" class="result-box" style="display: none;">
+      <h4 style="display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-receipt"></i> Bảng tính chi tiết Hóa đơn
+      </h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <span style="color: var(--text-muted);">Giá thuê cơ bản:</span>
+          <span style="float: right;"><strong><span id="resRoomFee">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Phạt trễ hạn:</span>
+          <span style="float: right;"><strong style="color: var(--danger);"><span id="resPenalty">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Phí điện sinh hoạt:</span>
+          <span style="float: right;"><strong><span id="resElecFee">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Phí nước sinh hoạt:</span>
+          <span style="float: right;"><strong><span id="resWaterFee">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Phí dịch vụ & Vệ sinh:</span>
+          <span style="float: right;"><strong><span id="resServiceFee">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Phí gửi xe:</span>
+          <span style="float: right;"><strong><span id="resVehicleFee">0</span></strong> VND</span>
+        </div>
+        <div>
+          <span style="color: var(--text-muted);">Chiết khấu khách hàng:</span>
+          <span style="float: right;"><strong style="color: var(--success);">-<span id="resDiscount">0</span></strong> VND</span>
+        </div>
+        <div class="total" style="grid-column: span 2;">
+          <span style="color: var(--text-muted);">Tổng Thanh Toán:</span>
+          <span style="float: right; color: var(--primary); font-size: 24px;"><span id="resTotalBill">0</span> VND</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

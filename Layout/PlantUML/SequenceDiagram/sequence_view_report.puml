@@ -1,0 +1,50 @@
+@startuml
+title Sequence Diagram - Quy trình Xem Báo Cáo Thống Kê (Quản lý)
+
+actor "Quản lý" as NV
+boundary "Giao diện Báo cáo" as UI
+participant "ManagerReportController" as Ctrl
+participant "ReportService" as ReportSvc
+participant "SalaryStatService" as SalarySvc
+participant "Repository (DatCho/ChiTiet)" as Repos
+database "Database" as DB
+
+NV -> UI : Mở trang Báo cáo\nChọn thời gian (Từ ngày - Đến ngày)\nBấm "Xem Báo cáo"
+activate UI
+
+UI -> Ctrl : GET /report/finance?startDate={...}&endDate={...}
+activate Ctrl
+
+Ctrl -> ReportSvc : getRevenueStats(startDate, endDate)
+activate ReportSvc
+
+ReportSvc -> Repos : findSuccessfulBookingsBetween(startDate, endDate)
+activate Repos
+Repos -> DB : SELECT * FROM DatCho WHERE TrangThai='Thành công' ...
+DB --> Repos : return ResultSet
+Repos --> ReportSvc : return List<DatCho>
+deactivate Repos
+
+ReportSvc -> ReportSvc : Aggregate data (Doanh thu theo ngày/tháng)
+ReportSvc --> Ctrl : return RevenueDTO
+deactivate ReportSvc
+
+Ctrl -> SalarySvc : getSalaryStats(startDate, endDate)
+activate SalarySvc
+SalarySvc -> Repos : findCompletedTrips()
+activate Repos
+Repos --> SalarySvc : List<ChuyenDuLich>
+deactivate Repos
+
+SalarySvc -> SalarySvc : Aggregate HDV/TX Salary
+SalarySvc --> Ctrl : return SalaryDTO
+deactivate SalarySvc
+
+Ctrl -> Ctrl : Build ModelAttributes
+Ctrl --> UI : Render View (Thymeleaf/JSON) kèm Dữ liệu Biểu đồ
+deactivate Ctrl
+
+UI --> NV : Hiển thị Biểu đồ và Bảng danh sách Cảnh báo báo cáo
+deactivate UI
+
+@enduml

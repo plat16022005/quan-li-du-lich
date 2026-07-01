@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{nhanvien/layout}"
+>
+  <head>
+    <title>Tạo Đơn Đặt Chỗ Mới</title>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="container-fluid">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-semibold text-gray-800">
+            Tạo Đơn Đặt Chỗ Mới
+          </h1>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="text-blue-600 hover:underline"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách
+          </a>
+        </div>
+
+        <div
+          th:if="${errorMessage}"
+          class="mt-4 p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
+          role="alert"
+        >
+          <span class="font-medium">Lỗi!</span>
+          <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="mt-6 bg-white p-6 rounded-lg shadow-sm">
+          <form
+            th:action="@{/nhanvien/bookings/save}"
+            th:object="${datChoDTO}"
+            method="post"
+          >
+            <div class="mb-4">
+              <label
+                for="customer"
+                class="block text-sm font-medium text-gray-700"
+                >Chọn Khách Hàng</label
+              >
+              <select
+                id="customer"
+                th:field="*{maKhachHang}"
+                class="mt-1 block w-full px-3 py-2 border rounded-md"
+                required
+              >
+                <option value="">-- Chọn một khách hàng --</option>
+                <option
+                  th:each="customer : ${customerList}"
+                  th:value="${customer.maKhachHang}"
+                  th:text="${customer.taiKhoan.hoTen} + ' - ' + ${customer.taiKhoan.email}"
+                ></option>
+              </select>
+              <p
+                th:if="${#fields.hasErrors('maKhachHang')}"
+                th:errors="*{maKhachHang}"
+                class="text-sm text-red-600 mt-1"
+              ></p>
+            </div>
+
+            <div class="mb-4">
+              <label for="trip" class="block text-sm font-medium text-gray-700"
+                >Chọn Chuyến Đi</label
+              >
+              <select
+                id="trip"
+                th:field="*{maChuyen}"
+                class="mt-1 block w-full px-3 py-2 border rounded-md"
+                required
+              >
+                <option value="">-- Chọn một chuyến đi --</option>
+                <option
+                  th:each="trip : ${tripList}"
+                  th:value="${trip.maChuyen}"
+                  th:text="${trip.tour.tenTour} + ' (Khởi hành: ' + ${#temporals.format(trip.ngayBatDau, 'dd-MM-yyyy')} + ')'"
+                ></option>
+              </select>
+              <p
+                th:if="${#fields.hasErrors('maChuyen')}"
+                th:errors="*{maChuyen}"
+                class="text-sm text-red-600 mt-1"
+              ></p>
+            </div>
+
+            <div class="mb-4">
+              <label
+                for="soLuong"
+                class="block text-sm font-medium text-gray-700"
+                >Số Lượng Vé</label
+              >
+              <input
+                type="number"
+                id="soLuong"
+                th:field="*{soLuong}"
+                min="1"
+                class="mt-1 block w-full px-3 py-2 border rounded-md"
+                required
+              />
+              <p
+                th:if="${#fields.hasErrors('soLuong')}"
+                th:errors="*{soLuong}"
+                class="text-sm text-red-600 mt-1"
+              ></p>
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="maKhuyenMai"
+                class="block text-sm font-medium text-gray-700"
+                >Mã Khuyến Mãi (nếu có)</label
+              >
+              <input
+                type="text"
+                id="maKhuyenMai"
+                th:field="*{maKhuyenMai}"
+                class="mt-1 block w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+
+            <div class="flex items-center justify-end gap-4">
+              <a
+                th:href="@{/nhanvien/bookings}"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg"
+                >Hủy</a
+              >
+              <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+              >
+                <i class="fas fa-save mr-2"></i>Lưu Đơn Đặt Chỗ
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

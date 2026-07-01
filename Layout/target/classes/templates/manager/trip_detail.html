@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chi tiết Chuyến đi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside th:replace="~{manager/tour :: #sidebar}"></aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="p-6 bg-white border-b">
+          <a
+            th:href="@{/manager/tour/{id}/trips(id=${chuyen.tour.maTour})}"
+            class="text-blue-600 hover:underline"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách chuyến
+          </a>
+          <h1 class="text-2xl font-semibold mt-2">
+            Chi tiết Chuyến đi:
+            <span class="text-blue-600" th:text="${chuyen.tour.tenTour}"></span>
+          </h1>
+          <p
+            class="text-sm text-gray-500"
+            th:text="'Khởi hành: ' + ${#temporals.format(chuyen.ngayBatDau, 'dd/MM/yyyy')}"
+          ></p>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div class="bg-white p-8 rounded-lg shadow-sm">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-4 mb-6">
+              Lịch trình chi tiết
+            </h3>
+
+            <div th:if="${not #lists.isEmpty(lichTrinhList)}" class="space-y-6">
+              <div th:each="item : ${lichTrinhList}">
+                <h4
+                  class="text-lg font-semibold text-blue-600"
+                  th:text="'Ngày ' + ${item.thuTuNgay}"
+                ></h4>
+                <p class="mt-2 text-gray-700" th:text="${item.hoatDong}"></p>
+                <div class="mt-3 text-sm text-gray-500 space-y-1">
+                  <p th:if="${item.diaDiem != null}">
+                    <i class="fas fa-map-marker-alt w-5"></i>
+                    <strong>Địa điểm:</strong>
+                    <span th:text="${item.diaDiem.tenDiaDiem}"></span>
+                  </p>
+                  <p th:if="${item.phuongTien != null}">
+                    <i class="fas fa-bus w-5"></i>
+                    <strong>Phương tiện:</strong>
+                    <span th:text="${item.phuongTien.loaiPhuongTien}"></span>
+                  </p>
+                  <p th:if="${item.khachSan != null}">
+                    <i class="fas fa-hotel w-5"></i>
+                    <strong>Khách sạn:</strong>
+                    <span th:text="${item.khachSan.tenKhachSan}"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              th:if="${#lists.isEmpty(lichTrinhList)}"
+              class="text-center py-8"
+            >
+              <p class="text-gray-500">
+                Chưa có lịch trình chi tiết cho tour này.
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

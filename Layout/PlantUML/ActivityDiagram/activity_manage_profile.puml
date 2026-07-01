@@ -1,0 +1,46 @@
+@startuml
+title Activity Diagram - Quy trình Quản lý Tài khoản Cá nhân (Profile)
+
+|Người dùng (Nhân viên, Quản lý, HDV/TX)|
+start
+:Đăng nhập thành công;
+:Bấm vào avatar / menu "Hồ sơ của tôi";
+
+|Hệ thống|
+:Truy vấn dữ liệu User (TaiKhoan / Nhanvien);
+:Hiển thị form Thông tin cá nhân;
+
+|Người dùng (Nhân viên, Quản lý, HDV/TX)|
+:Thực hiện thay đổi;
+split
+    -[Cập nhật thông tin]->
+    :Nhập thông tin mới (SĐT, Email, Họ tên);
+    :Bấm "Lưu thay đổi";
+    |Hệ thống|
+    :Validate định dạng dữ liệu (ValidatorUtil);
+    if (Dữ liệu hợp lệ?) then (Có)
+        :Cập nhật vào CSDL;
+        :Thông báo "Cập nhật thành công";
+    else (Không)
+        :Báo lỗi Validation;
+    endif
+    
+split again
+    -[Đổi mật khẩu]->
+    :Nhập Mật khẩu cũ và Mật khẩu mới;
+    :Bấm "Đổi mật khẩu";
+    |Hệ thống|
+    :Mã hóa và so khớp mật khẩu cũ;
+    if (Khớp mật khẩu?) then (Đúng)
+        :Mã hóa mật khẩu mới (Bcrypt/...);
+        :Lưu mật khẩu vào CSDL;
+        :Thông báo "Đổi mật khẩu thành công";
+    else (Sai)
+        :Báo lỗi "Mật khẩu cũ không chính xác";
+    endif
+end split
+
+|Người dùng (Nhân viên, Quản lý, HDV/TX)|
+:Tiếp tục sử dụng hệ thống;
+stop
+@enduml

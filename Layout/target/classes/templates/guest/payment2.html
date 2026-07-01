@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Bằng Ví MoMo - TravelGO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed w-full z-20 top-0">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="customer-homepage.html" class="flex items-center">
+                <i class="fas fa-route text-3xl text-blue-600"></i>
+                <span class="ml-3 text-2xl font-bold text-gray-800">TravelGO</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                 <a href="customer-homepage.html" class="text-gray-600 hover:text-blue-600 font-semibold">Trang Chủ</a>
+                <a href="all-tours.html" class="text-gray-600 hover:text-blue-600 font-semibold">Tour Du Lịch</a>
+                <a href="customer-homepage.html#about-us" class="text-gray-600 hover:text-blue-600">Về Chúng Tôi</a>
+                <a href="customer-homepage.html#contact" class="text-gray-600 hover:text-blue-600">Liên Hệ</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-4">
+                 <!-- User section if logged in -->
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-12">
+        <div class="container mx-auto px-6">
+             <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
+                <div class="flex justify-center items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo Logo" class="h-12">
+                    <h1 class="text-2xl font-bold text-gray-800 ml-4">Quét Mã QR Để Thanh Toán</h1>
+                </div>
+
+                <p class="text-gray-500 mt-4">Vui lòng sử dụng ứng dụng <span class="font-semibold text-pink-600">MoMo</span> của bạn để quét mã QR dưới đây và hoàn tất thanh toán.</p>
+                
+                <div class="my-6">
+				  <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + ${maThanhToan}"
+				       alt="QR Code Thanh Toán"
+				       class="mx-auto rounded-lg border-4 border-gray-200">
+                </div>
+
+                <div class="text-left bg-gray-50 p-6 rounded-lg space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Nhà cung cấp:</span>
+                        <span class="font-bold text-gray-800">CTY TNHH DU LICH TRAVELGO</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Số tiền:</span>
+                        <span class="font-bold text-2xl text-red-600">3.800.000₫</span>
+                    </div>
+                     <div class="flex justify-between items-start">
+                        <span class="text-gray-600">Nội dung thanh toán:</span>
+                        <div class="text-right">
+                             <span class="font-bold text-blue-600 flex items-center">
+                                TGO123XYZ
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <p class="text-sm text-gray-500">Sau khi thanh toán thành công, hệ thống sẽ tự động xác nhận và gửi vé điện tử vào email của bạn.</p>
+					<a href="/home" class="mt-4 inline-block w-64 text-center bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition">
+					    Xác nhận thanh toán
+					</a>
+					<a href="/home" class="mt-4 inline-block w-64 text-center bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition">
+					    Thanh toán sau
+					</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-10 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
+                <p>&copy; 2025 TravelGO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
+

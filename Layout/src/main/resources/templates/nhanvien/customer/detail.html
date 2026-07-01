@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết Khách hàng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white flex-shrink-0 md:relative md:transform-none flex flex-col"
+        id="sidebar"
+      >
+        <div
+          class="flex items-center justify-center h-20 border-b border-gray-700"
+        >
+          <i class="fas fa-route text-3xl text-blue-400"></i>
+          <span class="ml-3 text-2xl font-bold">TravelGO</span>
+        </div>
+        <nav class="mt-8 px-4">
+          <a
+            th:href="@{/nhanvien/dashboard}"
+            class="flex items-center px-4 py-3 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/dashboard.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-tachometer-alt w-6 text-center"></i
+            ><span class="ml-4">Dashboard</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/bookings}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/bookings.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-book-open w-6 text-center"></i
+            ><span class="ml-4">Quản lý Đặt chỗ</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/customers}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/customers.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-users w-6 text-center"></i
+            ><span class="ml-4">Quản lý Khách hàng</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/manager_tour}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/manager_tour.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-map-marked-alt w-6 text-center"></i
+            ><span class="ml-4">Quản lý Tour</span>
+          </a>
+          <a
+            th:href="@{/nhanvien/finance}"
+            class="flex items-center px-4 py-3 mt-4 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-file-invoice-dollar w-6 text-center"></i
+            ><span class="ml-4">Thu/Chi chuyến</span>
+          </a>
+
+          <a
+            th:href="@{/nhanvien/report}"
+            class="flex items-center px-4 py-3 mt-4 rounded-lg"
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.matches('^/nhanvien/report.*') ? ' bg-gray-700 text-white shadow-md' : ' text-gray-300 hover:bg-gray-700'}"
+          >
+            <i class="fas fa-chart-pie w-6 text-center"></i
+            ><span class="ml-4">Xuất báo cáo</span>
+          </a>
+        </nav>
+        <div class="mt-auto w-full p-4 border-t border-gray-800">
+          <a
+            th:href="@{/logout}"
+            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg"
+          >
+            <i class="fas fa-sign-out-alt w-6 text-center"></i>
+            <span class="ml-4">Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header
+          class="flex items-center justify-between p-6 bg-white border-b border-gray-200"
+        >
+          <div>
+            <a
+              th:href="@{/nhanvien/customers}"
+              class="text-blue-600 hover:underline"
+              ><i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách</a
+            >
+            <h1
+              id="customer-header"
+              class="text-2xl font-semibold text-gray-800 mt-2"
+            >
+              Chi tiết Khách hàng
+            </h1>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Thông tin cá nhân
+                </h3>
+                <div class="space-y-3 text-sm">
+                  <p><strong>Họ tên:</strong> <span id="hoTen"></span></p>
+                  <p><strong>Email:</strong> <span id="email"></span></p>
+                  <p><strong>SĐT:</strong> <span id="soDienThoai"></span></p>
+                  <p><strong>Địa chỉ:</strong> <span id="diaChi"></span></p>
+                  <p><strong>Ngày sinh:</strong> <span id="ngaySinh"></span></p>
+                  <p><strong>Giới tính:</strong> <span id="gioiTinh"></span></p>
+                  <p>
+                    <strong>Ngày tham gia:</strong>
+                    <span id="ngayThamGia"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-2">
+              <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">
+                  Lịch sử đặt chỗ
+                </h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                      <tr>
+                        <th scope="col" class="px-6 py-3">Mã Đơn</th>
+                        <th scope="col" class="px-6 py-3">Tên Tour</th>
+                        <th scope="col" class="px-6 py-3">Ngày Đặt</th>
+                        <th scope="col" class="px-6 py-3">Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody id="booking-history-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <input type="hidden" id="customerId" th:value="${customerId ?: 0}" />
+    <script th:inline="javascript">
+      // ✅ Nếu customerId không tồn tại trong model, gán mặc định là 0 để tránh lỗi cú pháp
+      const customerId = parseInt(document.getElementById("customerId").value);
+
+      function getStatusBadge(status) {
+        const base = "px-2 py-1 text-xs font-semibold rounded-full";
+        if (status === "Đã thanh toán")
+          return `<span class="${base} bg-green-100 text-green-800">${status}</span>`;
+        if (status === "Đã hủy")
+          return `<span class="${base} bg-red-100 text-red-800">${status}</span>`;
+        if (status === "Đã xác nhận")
+          return `<span class="${base} bg-blue-100 text-blue-800">${status}</span>`;
+        return `<span class="${base} bg-yellow-100 text-yellow-800">${status}</span>`;
+      }
+
+      async function loadCustomerDetails() {
+        if (!customerId || customerId === 0) {
+          console.error("❌ customerId không hợp lệ!");
+          return;
+        }
+
+        try {
+          const response = await fetch(`/nhanvien/customers/api/${customerId}`);
+          if (!response.ok) throw new Error(`API lỗi: ${response.status}`);
+          const data = await response.json();
+
+          const customer = data.customer;
+          const bookingHistory = data.bookingHistory || [];
+
+          // 🪪 Thông tin cá nhân
+          document.getElementById(
+            "customer-header"
+          ).textContent = `Chi tiết: ${customer.hoTen}`;
+          document.getElementById("hoTen").textContent = customer.hoTen;
+          document.getElementById("email").textContent = customer.email;
+          document.getElementById("soDienThoai").textContent =
+            customer.soDienThoai;
+          document.getElementById("diaChi").textContent =
+            customer.diaChi || "Chưa cập nhật";
+          document.getElementById("ngaySinh").textContent = customer.ngaySinh
+            ? new Date(customer.ngaySinh).toLocaleDateString("vi-VN")
+            : "Chưa cập nhật";
+          document.getElementById("gioiTinh").textContent =
+            customer.gioiTinh || "Chưa cập nhật";
+          document.getElementById("ngayThamGia").textContent =
+            customer.ngayThamGia
+              ? new Date(customer.ngayThamGia).toLocaleDateString("vi-VN")
+              : "Chưa cập nhật";
+
+          // 📜 Lịch sử đặt chỗ
+          const historyBody = document.getElementById("booking-history-body");
+          historyBody.innerHTML = "";
+
+          if (bookingHistory.length === 0) {
+            historyBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">
+            Khách hàng này chưa đặt tour nào.
+          </td></tr>`;
+          } else {
+            bookingHistory.forEach((booking) => {
+              historyBody.innerHTML += `
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4 font-bold text-gray-900">
+                <a href="/nhanvien/bookings/${booking.maDatCho}" 
+                   class="text-blue-600 hover:underline">#${
+                     booking.maDatCho
+                   }</a>
+              </td>
+              <td class="px-6 py-4">${booking.tenTour}</td>
+              <td class="px-6 py-4">${new Date(
+                booking.ngayDat
+              ).toLocaleDateString("vi-VN")}</td>
+              <td class="px-6 py-4">${getStatusBadge(booking.trangThai)}</td>
+            </tr>
+          `;
+            });
+          }
+        } catch (error) {
+          console.error("❌ Lỗi tải chi tiết khách hàng:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCustomerDetails);
+    </script>
+    <script>
+          const customer = data.customer;
+          const bookingHistory = data.bookingHistory;
+
+          // Điền thông tin cá nhân
+          // Thay đổi các dòng này
+          document.getElementById(
+            "customer-header"
+          ).textContent = `Chi tiết: ${customer.hoTen}`;
+          document.getElementById("hoTen").textContent = customer.hoTen;
+          document.getElementById("email").textContent = customer.email;
+          document.getElementById("soDienThoai").textContent =
+            customer.soDienThoai;
+          document.getElementById("diaChi").textContent =
+            customer.diaChi || "Chưa cập nhật";
+          document.getElementById("ngaySinh").textContent = customer.ngaySinh
+            ? new Date(customer.ngaySinh).toLocaleDateString("vi-VN")
+            : "Chưa cập nhật";
+          document.getElementById("gioiTinh").textContent =
+            customer.gioiTinh || "Chưa cập nhật";
+          document.getElementById("ngayThamGia").textContent =
+            customer.ngayThamGia
+              ? new Date(customer.ngayThamGia).toLocaleDateString("vi-VN")
+              : "Chưa cập nhật";
+
+          // Điền lịch sử đặt chỗ
+          const historyBody = document.getElementById("booking-history-body");
+          historyBody.innerHTML = "";
+          if (bookingHistory.length === 0) {
+            historyBody.innerHTML =
+              '<tr><td colspan="4" class="text-center py-4 text-gray-500">Khách hàng này chưa đặt tour nào.</td></tr>';
+          } else {
+            bookingHistory.forEach((booking) => {
+              const row = `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-bold text-gray-900">
+                                <a href="/nhanvien/bookings/${
+                                  booking.maDatCho
+                                }" class="text-blue-600 hover:underline">#${
+                booking.maDatCho
+              }</a>
+                            </td>
+                            <td class="px-6 py-4">${booking.tenTour}</td>
+                            <td class="px-6 py-4">${new Date(
+                              booking.ngayDat
+                            ).toLocaleDateString("vi-VN")}</td>
+                            <td class="px-6 py-4">${getStatusBadge(
+                              booking.trangThai
+                            )}</td>
+                        </tr>
+                    `;
+              historyBody.innerHTML += row;
+            });
+          }
+        } catch (error) {
+          console.error("Lỗi tải chi tiết khách hàng:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCustomerDetails);
+    </script>
+  </body>
+</html>
